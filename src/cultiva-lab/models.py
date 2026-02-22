@@ -17,6 +17,7 @@ User Dataclass implementation, with its respective attributes.
 """
 @dataclass
 class User:
+    id: str
     username: str
     password_hash: str
     role: UserRole      
