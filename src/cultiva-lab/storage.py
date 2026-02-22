@@ -3,6 +3,7 @@ from typing import Protocol
 from .models import User, Crop, CropType, UserRole, DailyCondition
 from pathlib import Path
 from dataclasses import asdict
+from datetime import datetime
 
 """
 Database class created as a Protocol in order to use SOLID
@@ -185,17 +186,190 @@ class JSONStorage:
 
     def get_crops(self) -> list[Crop]:
         crops = self.read().get("crops", [])
-        crops_list = []
+        crops_list = []  # Same algorithm as get_users method
 
         for crop in crops:
             crop_data = crop.copy()
             conditions = crop_data.get("conditions", [])
-            conditions_list = []
+            conditions_list = []  # List prepared for conditions conversion
 
             for condition in conditions:
-                conditions_list.append(DailyCondition(**condition))
+                conditions_list.append(
+                    DailyCondition(**condition)
+                )  # Appending the conditions in a DailyCondition Type for the object.
 
-            crop_data["conditions"] = conditions_list
+            crop_data["start_date"] = datetime.fromisoformat(crop_data["start_date"])
+            crop_data["last_sim_date"] = datetime.fromisoformat(
+                crop_data["last_sim_date"]
+            )
+            # Date fields converted to datetime type from the ISO format.
+
+            crop_data["conditions"] = (
+                conditions_list  # Conditions in crop_data is conditions_list with the conditions in the right type.
+            )
             crops_list.append(Crop(**crop_data))
 
         return crops_list
+
+    """
+    Get crop by id method created to find a crop searching by its ID.
+    """
+
+    def get_crop_by_id(self, crop_id: str) -> Crop | None:
+        crops = self.read().get("crops", [])  # Init the crop list.
+
+        for crop in crops:
+            if crop["id"] == crop_id:  # If the crop id is the same as the parameter:
+                crop_data = crop.copy()  # Creates a copy of the crop.
+                conditions = crop_data.get("conditions", [])
+                conditions_list = []  # Init a new conditions list for conditions in DailyCondition type.
+
+                for condition in conditions:
+                    conditions_list.append(
+                        DailyCondition(**condition)
+                    )  # Unpackage the conditions and append it on conditionslist in DailyCondition type.
+
+                crop_data["start_date"] = datetime.fromisoformat(
+                    crop_data["start_date"]
+                )
+                crop_data["last_sim_date"] = datetime.fromisoformat(
+                    crop_data["last_sim_date"]
+                )
+                # Adjust the date fields to datetime type
+
+                crop_data["conditions"] = conditions_list
+                return Crop(**crop_data)  # Returning the crop searched.
+        return None
+
+    """
+    Get crop by user method created to find the crops created by an user
+    using their ID.
+    """
+
+    def get_crops_by_user(self, user_id: str) -> list[Crop]:
+        crops = self.read().get("crops", [])
+        user_crops = []  # Init a new list where the crops created by the user will be added.
+
+        for crop in crops:
+            if crop["user_id"] == user_id:
+                crop_data = crop.copy()  # Using the same algorithm as last method.
+
+                conditions = crop_data.get("conditions", [])
+                conditions_list = []
+                for condition in conditions:
+                    conditions_list.append(
+                        DailyCondition(**condition)
+                    )  # Appending the conditions in the right format.
+                crop_data["conditions"] = conditions_list
+
+                crop_data["start_date"] = datetime.fromisoformat(
+                    crop_data["start_date"]
+                )
+                crop_data["last_sim_date"] = datetime.fromisoformat(
+                    crop_data["last_sim_date"]
+                )
+
+                new_crop = Crop(
+                    **crop_data
+                )  # Creating a new crop object for each crop that is created by the user.
+                user_crops.append(new_crop)  # Appending it to our list.
+        return user_crops  # Returning the list.
+
+    """
+    Get crop by user method created to find same type crops.
+    """
+
+    def get_crops_by_type(self, crop_type_id: str) -> list[Crop]:
+        crops = self.read().get("crops", [])
+        crops_in_crop_type = []
+
+        for crop in crops:
+            if crop["crop_type_id"] == crop_type_id:
+                crop_data = crop.copy()
+
+                conditions = crop_data.get("conditions", [])
+                conditions_list = []
+                for condition in conditions:
+                    conditions_list.append(DailyCondition(**condition))
+                crop_data["conditions"] = conditions_list
+
+                crop_data["start_date"] = datetime.fromisoformat(
+                    crop_data["start_date"]
+                )
+                crop_data["last_sim_date"] = datetime.fromisoformat(
+                    crop_data["last_sim_date"]
+                )
+
+                new_crop = Crop(**crop_data)
+                crops_in_crop_type.append(
+                    new_crop
+                )  # Using the same algorithm as before.
+        return crops_in_crop_type  # Returning the list.
+
+    """
+    Get crop by user method created to find active crops.
+    """
+
+    def get_active_crops(self) -> list[Crop]:
+        crops = self.read().get("crops", [])
+        active_crops = []
+
+        for crop in crops:
+            if crop["active"]:  # If crop is active (active attribute equals True):
+                crop_data = crop.copy()
+
+                conditions = crop_data.get("conditions", [])
+                conditions_list = []
+                for condition in conditions:
+                    conditions_list.append(DailyCondition(**condition))
+                crop_data["conditions"] = conditions_list
+
+                crop_data["start_date"] = datetime.fromisoformat(
+                    crop_data["start_date"]
+                )
+                crop_data["last_sim_date"] = datetime.fromisoformat(
+                    crop_data["last_sim_date"]
+                )
+
+                new_crop = Crop(**crop_data)
+                active_crops.append(new_crop)  # Appending active crops.
+        return active_crops  # Returning crops that are active.
+
+    """
+    Save crop method created to save a crop in the list if it doesn't exists yet.
+    If it already exists in the DB, the method overwrites the past information.
+    """
+
+    def save_crop(self, crop: Crop) -> None:
+        data = self.read()
+        crops = data["crops"]
+        crop_dict = asdict(
+            crop
+        )  # The object is created as a dictionary, the daily conditions are set to dictionaries too.
+
+        crop_dict["start_date"] = crop.start_date.isoformat()
+        crop_dict["last_sim_date"] = crop.last_sim_date.isoformat()
+        # The format of dates is in ISO format now; JSON does not understand datetime type.
+
+        for i, c in enumerate(crops):
+            if c["id"] == crop_dict["id"]:
+                crops[i] = crop_dict
+                self.save(data)
+                return  # Overwriting crop if it already exists
+
+        crops.append(crop_dict)  # Appending it on the dictionary
+        self.save(data)  # Saving the information.
+
+    """
+    Delete crop method created to delete a crop based on its ID.
+    """
+
+    def delete_crop(self, crop_id: str) -> None:
+        data = self.read()
+        crops = data["crops"]
+
+        for i, c in enumerate(crops):
+            if c["id"] == crop_id:
+                crops.pop(i)
+                self.save(data)
+                return  # Deletes the crop if it finds a crop with the same ID.
