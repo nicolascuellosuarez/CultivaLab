@@ -49,6 +49,8 @@ class CropType:
     # Needed light in hours per day
     days_cycle: int
     # Days needed for harvest
+    initial_biomass: float
+    # Initial biomass level in g / (m ^ 2)
     potential_performance: float
     # Max biomass level in g / (m ^ 2)
 
