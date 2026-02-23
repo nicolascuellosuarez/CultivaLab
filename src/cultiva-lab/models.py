@@ -1,4 +1,4 @@
-from typing import dataclass
+from dataclasses import dataclass
 from enum import Enum
 from datetime import datetime
 
