@@ -44,7 +44,7 @@ class InvalidCredentialsError(UserError):
     of the credentials does not match.
     """
 
-    def __init__(self, username: str, password_hash=str):
+    def __init__(self, username: str, password_hash: str):
         self.username: str = username
         self.password_hash: str = password_hash
         super().__init__("Usuario o Contraseña incorrectos.")
@@ -96,6 +96,16 @@ class UnauthorizedAccessError(AuthorizationError):
         super().__init__(
             f"Usuario con username: {username} no tiene acceso al perfil de administrador."
         )
+
+
+class ResourceOwnershipError(AuthorizationError):
+    """
+    Exception raised when a consumer tries to make changes
+    on resources that does not own.
+    """
+
+    def __init__(self, message):
+        super().__init__(message)
 
 
 class InvalidInputError(CultivaLabError):

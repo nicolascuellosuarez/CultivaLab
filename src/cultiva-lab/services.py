@@ -1,4 +1,4 @@
-from .models import User, Crop, CropType, DailyCondition
+from .models import User, Crop, CropType, DailyCondition, UserRole
 from .storage import Database
 from .exceptions import (
     UserNotFoundError,
@@ -9,8 +9,10 @@ from .exceptions import (
     AuthorizationError,
     UnauthorizedAccessError,
     InvalidInputError,
+    ResourceOwnershipError,
 )
 from datetime import datetime, timedelta
+import uuid
 
 """
 Class CropService created to include the service logic
@@ -108,9 +110,21 @@ class CropService:
     """
 
     def simulate_day(
-        self, crop_id: str, temperature: float, rain: float, sun_hours: float
+        self,
+        crop_id: str,
+        user_id: str,
+        temperature: float,
+        rain: float,
+        sun_hours: float,
     ) -> Crop:
+        if (temperature >= 56.7) or temperature < -10:
+            raise InvalidInputError("La temperatura ingresada no es real.")
+        if rain < 0:
+            raise InvalidInputError("Valor de lluvia inválido.")
+        if sun_hours < 0 or sun_hours > 24:
+            raise InvalidInputError("Las horas sol no son válidas.")
         crop = self.storage.get_crop_by_id(crop_id)
+        # Method validations
         if not crop:
             raise CropNotFoundError(crop_id)
         crop_type = self.storage.get_crop_type_by_id(crop.crop_type_id)
@@ -118,6 +132,10 @@ class CropService:
             raise CropTypeNotFoundError(crop.crop_type_id)
         if not crop.active:
             raise InvalidInputError("The crop is already harvested.")
+        if crop.user_id != user_id:
+            raise ResourceOwnershipError("No puedes simular este crop.")
+        if len(crop.conditions) >= crop_type.days_cycle:
+            raise InvalidInputError("El ciclo del cultivo ya terminó")
 
         # Simulating logic implementation; values of factors are taken from their methods
         env_factor = self._calculate_environment_factor(
@@ -148,8 +166,94 @@ class CropService:
         crop.conditions.append(new_condition)
         crop.last_sim_date += timedelta(days=1)
 
-        if len(crop.conditions) == crop_type.days_cycle:
-            crop.active = False
-
         self.storage.save_crop(crop)
         return crop
+
+    """
+    Method created to allow a user to make new crops.
+    """
+
+    def create_crop(
+        self, name: str, crop_type_id: str, user_id: str, start_date: datetime
+    ) -> Crop:
+        user = self.storage.get_user_by_id(user_id)
+        crop_type = self.storage.get_crop_type_by_id(crop_type_id)
+        # Method validations
+        if not user:
+            raise UserNotFoundError(user_id)
+        if not crop_type:
+            raise CropTypeNotFoundError(crop_type_id)
+
+        crop_unique_id = str(uuid.uuid4())
+
+        # New object creation.
+        new_crop = Crop(
+            crop_unique_id,
+            name,
+            user_id,
+            crop_type_id,
+            start_date,
+            start_date,
+            [],
+            True,
+        )
+        self.storage.save_crop(new_crop)
+        return new_crop
+
+    """
+    Method created to get a crop based on its ID.
+    """
+
+    def get_crop_by_id(self, crop_id: str, requesting_user_id: str) -> Crop:
+        requesting_user = self.storage.get_user_by_id(requesting_user_id)
+        crop = self.storage.get_crop_by_id(crop_id)
+        if not requesting_user:
+            raise UserNotFoundError(requesting_user_id)
+        if not crop:
+            raise CropNotFoundError(crop_id)
+        if (
+            requesting_user_id != crop.user_id
+        ) and requesting_user.role != UserRole.ADMIN:
+            raise ResourceOwnershipError("No puedes acceder a este cultivo.")
+        return crop
+
+    """
+    Method created to get the crops created by an user.
+    """
+
+    def get_crops_by_user(self, user_id: str, requesting_user_id: str) -> list[Crop]:
+        requesting_user = self.storage.get_user_by_id(requesting_user_id)
+        crops = self.storage.get_crops_by_user(user_id)
+        if not requesting_user:
+            raise UserNotFoundError(requesting_user_id)
+        if requesting_user_id != user_id and requesting_user.role != UserRole.ADMIN:
+            raise ResourceOwnershipError("No puedes acceder a estos cultivos.")
+        return crops
+
+    """
+    Method created to see the history of conditions of a crop.
+    """
+
+    def get_crop_history(
+        self, crop_id: str, requesting_user_id: str
+    ) -> list[DailyCondition]:
+        requesting_user = self.storage.get_user_by_id(requesting_user_id)
+        crop = self.storage.get_crop_by_id(crop_id)
+        if not requesting_user:
+            raise UserNotFoundError(requesting_user_id)
+        if not crop:
+            raise CropNotFoundError(crop_id)
+        if (
+            requesting_user_id != crop.user_id
+            and requesting_user.role != UserRole.ADMIN
+        ):
+            raise ResourceOwnershipError("No puedes acceder a estos cultivos.")
+        return crop.conditions
+
+    def update_crops(self, crop_id: str, requesting_user_id: str, **kwargs) -> Crop:
+        requesting_user = self.storage.get_user_by_id(requesting_user_id)
+        crop = self.storage.get_crop_by_id(crop_id)
+        if not requesting_user:
+            raise UserNotFoundError(requesting_user_id)
+        if not crop:
+            raise CropNotFoundError(crop_id)

@@ -81,6 +81,7 @@ A crop class, that the user can use to create new crops.
 @dataclass
 class Crop:
     id: str
+    name: str
     user_id: str
     crop_type_id: str
     start_date: datetime
