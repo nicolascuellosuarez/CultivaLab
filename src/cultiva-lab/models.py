@@ -69,7 +69,7 @@ class DailyCondition:
     rain: float
     # Rain volume in mm
     sun_hours: float
-    expected_biomass = float
+    estimated_biomass: float
     # Expected biomass otd in g / (m ^ 2)
 
 
