@@ -24,7 +24,7 @@ class UserNotFoundError(UserError):
 
     def __init__(self, user_id: str):
         self.user_id: str = user_id
-        super().__init__(f"Usuario con el ID {user_id} no encontrado.")
+        super().__init__(f"Usuario con el ID / User {user_id} no encontrado.")
 
 
 class UserAlreadyExistsError(UserError):
@@ -35,7 +35,7 @@ class UserAlreadyExistsError(UserError):
 
     def __init__(self, user_id: str):
         self.user_id: str = user_id
-        super().__init__(f"Usuario con el ID {user_id} ya existe.")
+        super().__init__(f"Usuario con el ID / User {user_id} ya existe.")
 
 
 class InvalidCredentialsError(UserError):
@@ -83,7 +83,8 @@ class CropTypeNotFoundError(CropError):
 class AuthorizationError(CultivaLabError):
     """
     AuthorizationError class created to raise an Error if
-    there are authorization - related errors in a Log - In.
+    there are authorization - related errors in a Log - In or
+    Sign - In.
     """
 
     pass
@@ -106,6 +107,16 @@ class ResourceOwnershipError(AuthorizationError):
 
     def __init__(self, message):
         super().__init__(message)
+
+
+class AdminAlreadyExistsError(AuthorizationError):
+    """
+    Exception raised when a consumer tries to create
+    a new admin, but there is already one.
+    """
+
+    def __init__(self):
+        super().__init__("El usuario administrador ya existe.")
 
 
 class InvalidInputError(CultivaLabError):

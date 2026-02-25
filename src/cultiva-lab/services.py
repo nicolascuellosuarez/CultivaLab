@@ -8,11 +8,15 @@ from .exceptions import (
     CropTypeNotFoundError,
     AuthorizationError,
     UnauthorizedAccessError,
+    AdminAlreadyExistsError,
     InvalidInputError,
     ResourceOwnershipError,
 )
 from datetime import datetime, timedelta
 import uuid
+import bcrypt
+
+MASTER_KEY = "admin12345"
 
 """
 Class CropService created to include the service logic
@@ -275,12 +279,13 @@ class CropService:
         # Are the arguments in the changes - allowed fields ?
         allowed_fields = ["name", "active"]
         for key, value in kwargs.items():
-            if key in allowed_fields:
-                setattr(crop, key, value)
-            else:
+            if key not in allowed_fields:
                 raise InvalidInputError(
                     "El atributo ingresado NO existe, o no puede ser cambiado."
                 )
+
+        for key, value in kwargs.items():
+            setattr(crop, key, value)
 
         self.storage.save_crop(crop)
         return crop
@@ -293,11 +298,13 @@ class CropService:
         # Validations
         requesting_user = self.storage.get_user_by_id(requesting_user_id)
         crop = self.storage.get_crop_by_id(crop_id)
-        owner = self.storage.get_user_by_id(crop.user_id)
         if not requesting_user:
             raise UserNotFoundError(requesting_user_id)
         if not crop:
             raise CropNotFoundError(crop_id)
+        owner = self.storage.get_user_by_id(crop.user_id)
+        if not owner:
+            raise UserNotFoundError(crop.user_id)
         if (
             requesting_user_id != crop.user_id
             and requesting_user.role != UserRole.ADMIN
@@ -369,3 +376,111 @@ class CropService:
             "stress_days": stress_days,
             "performance_ratio": performance_ratio,
         }
+
+
+class UserService:
+    def __init__(self, storage: Database) -> None:
+        self.storage: Database = storage
+
+    def register_user(self, username: str, password: str) -> User:
+        if (not username) or (not username.strip()):
+            raise InvalidInputError("El nombre de usuario no puede estar vacío.")
+        if (not password) or (not password.strip()):
+            raise InvalidInputError("La contraseña no puede estar vacía.")
+        if len(password) < 8:
+            raise InvalidInputError("La contraseña es demasiado corta.")
+
+        searched_user = self.storage.get_user_by_username(username)
+        if searched_user:
+            raise UserAlreadyExistsError(searched_user.id)
+
+        user_unique_id = str(uuid.uuid4())
+        # Password Hash
+        hashed_pwd = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode(
+            "utf-8"
+        )
+
+        # New user creation
+        new_user = User(user_unique_id, username, hashed_pwd, UserRole.USER)
+
+        self.storage.save_user(new_user)
+        return new_user
+
+    def register_admin(self, admin_key: str, username: str, password: str) -> User:
+        if (not username) or (not username.strip()):
+            raise InvalidInputError("El nombre de usuario no puede estar vacío.")
+        if (not password) or (not password.strip()):
+            raise InvalidInputError("La contraseña no puede estar vacía.")
+        if (not admin_key) or (not admin_key.strip()):
+            raise InvalidInputError("La llave de administrador no puede estar vacía.")
+        if len(password) < 8:
+            raise InvalidInputError("La contraseña es demasiado corta.")
+        users = self.storage.get_users()
+        for user in users:
+            if user.role == UserRole.ADMIN:
+                raise AdminAlreadyExistsError()
+        if admin_key != MASTER_KEY:
+            raise UnauthorizedAccessError("La llave de administrador no es correcta.")
+        if self.storage.get_user_by_username(username):
+            raise UserAlreadyExistsError(username)
+
+        user_unique_id = str(uuid.uuid4())
+        hashed_pwd = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode(
+            "utf-8"
+        )
+
+        new_admin = User(user_unique_id, username, hashed_pwd, UserRole.ADMIN)
+
+        self.storage.save_user(new_admin)
+        return new_admin
+
+    def login(self, username: str, password: str) -> User:
+        if (not username) or (not username.strip()):
+            raise InvalidInputError("El nombre de usuario no puede estar vacío.")
+        if (not password) or (not password.strip()):
+            raise InvalidInputError("La contraseña no puede estar vacía.")
+        user = self.storage.get_user_by_username(username)
+        if not user:
+            raise UserNotFoundError(username)
+
+        entered_password = password.encode("utf-8")
+        stored_hash = user.password_hash.encode("utf-8")
+        # Checkpw compares two of the passwords
+        if not bcrypt.checkpw(entered_password, stored_hash):
+            raise AuthorizationError("La contraseña o el usuario es incorrecto.")
+
+        return user
+
+    def get_user_by_id(self, user_id: str, requesting_user_id: str) -> User | None:
+        if (not user_id) or (not user_id.strip()):
+            raise InvalidInputError("El ID del usuario no puede estar vacío.")
+        if (not requesting_user_id) or (not requesting_user_id.strip()):
+            raise InvalidInputError("El ID no puede estar vacío.")
+        requesting_user = self.storage.get_user_by_id(requesting_user_id)
+        user = self.storage.get_user_by_id(user_id)
+
+        if not requesting_user:
+            raise UserNotFoundError(requesting_user_id)
+        if not user:
+            raise UserNotFoundError(user_id)
+        if (requesting_user_id != user.id) and requesting_user.role != UserRole.ADMIN:
+            raise ResourceOwnershipError("No puedes acceder a esta información.")
+
+        return user
+
+    def get_user_by_username(self, username: str, requesting_user_id: str):
+        if (not username) or (not username.strip()):
+            raise InvalidInputError("El Username del usuario no puede estar vacío.")
+        if (not requesting_user_id) or (not requesting_user_id.strip()):
+            raise InvalidInputError("El ID no puede estar vacío.")
+        requesting_user = self.storage.get_user_by_id(requesting_user_id)
+        user = self.storage.get_user_by_username(username)
+
+        if not requesting_user:
+            raise UserNotFoundError(requesting_user_id)
+        if not user:
+            raise UserNotFoundError(username)
+        if (requesting_user_id != user.id) and requesting_user.role != UserRole.ADMIN:
+            raise ResourceOwnershipError("No puedes acceder a esta información.")
+
+        return user
