@@ -183,6 +183,8 @@ class CropService:
             raise UserNotFoundError(user_id)
         if not crop_type:
             raise CropTypeNotFoundError(crop_type_id)
+        if not name or not name.strip():
+            raise InvalidInputError("El nombre no es válido. ")
 
         crop_unique_id = str(uuid.uuid4())
 
@@ -224,6 +226,9 @@ class CropService:
     def get_crops_by_user(self, user_id: str, requesting_user_id: str) -> list[Crop]:
         requesting_user = self.storage.get_user_by_id(requesting_user_id)
         crops = self.storage.get_crops_by_user(user_id)
+        owner = self.storage.get_user_by_id(user_id)
+        if not owner:
+            raise UserNotFoundError(user_id)
         if not requesting_user:
             raise UserNotFoundError(requesting_user_id)
         if requesting_user_id != user_id and requesting_user.role != UserRole.ADMIN:
@@ -250,6 +255,10 @@ class CropService:
             raise ResourceOwnershipError("No puedes acceder a estos cultivos.")
         return crop.conditions
 
+    """
+    Method created to update name or state of a crop.
+    """
+
     def update_crops(self, crop_id: str, requesting_user_id: str, **kwargs) -> Crop:
         requesting_user = self.storage.get_user_by_id(requesting_user_id)
         crop = self.storage.get_crop_by_id(crop_id)
@@ -257,3 +266,106 @@ class CropService:
             raise UserNotFoundError(requesting_user_id)
         if not crop:
             raise CropNotFoundError(crop_id)
+        if (
+            requesting_user_id != crop.user_id
+            and requesting_user.role != UserRole.ADMIN
+        ):
+            raise ResourceOwnershipError("No puedes acceder a estos cultivos.")
+
+        # Are the arguments in the changes - allowed fields ?
+        allowed_fields = ["name", "active"]
+        for key, value in kwargs.items():
+            if key in allowed_fields:
+                setattr(crop, key, value)
+            else:
+                raise InvalidInputError(
+                    "El atributo ingresado NO existe, o no puede ser cambiado."
+                )
+
+        self.storage.save_crop(crop)
+        return crop
+
+    """
+    Method created to delete a crop.
+    """
+
+    def delete_crop(self, crop_id: str, requesting_user_id: str) -> None:
+        # Validations
+        requesting_user = self.storage.get_user_by_id(requesting_user_id)
+        crop = self.storage.get_crop_by_id(crop_id)
+        owner = self.storage.get_user_by_id(crop.user_id)
+        if not requesting_user:
+            raise UserNotFoundError(requesting_user_id)
+        if not crop:
+            raise CropNotFoundError(crop_id)
+        if (
+            requesting_user_id != crop.user_id
+            and requesting_user.role != UserRole.ADMIN
+        ):
+            raise ResourceOwnershipError("No puedes acceder a estos cultivos.")
+
+        # Eliminating crop ID from user crop ID's list
+        if crop_id in owner.crop_ids:
+            owner.crop_ids.remove(crop_id)
+            self.storage.save_user(owner)
+
+        self.storage.delete_crop(crop_id)
+
+    def get_crop_statistics(self, crop_id: str, requesting_user_id: str) -> dict:
+        requesting_user = self.storage.get_user_by_id(requesting_user_id)
+        if not requesting_user:
+            raise UserNotFoundError(requesting_user_id)
+        # Crop Validation
+        crop = self.storage.get_crop_by_id(crop_id)
+        if not crop:
+            raise CropNotFoundError(crop_id)
+        # Ownership Validation
+        if (
+            requesting_user_id != crop.user_id
+            and requesting_user.role != UserRole.ADMIN
+        ):
+            raise ResourceOwnershipError("No puedes acceder a este cultivo.")
+        crop_type = self.storage.get_crop_type_by_id(crop.crop_type_id)
+        if not crop_type:
+            raise CropTypeNotFoundError(crop.crop_type_id)
+        conditions = crop.conditions
+
+        if not conditions:
+            return {
+                "average_temperature": 0,
+                "average_rain": 0,
+                "average_sun_hours": 0,
+                "total_growth": 0,
+                "stress_days": 0,
+                "performance_ratio": 0,
+            }
+
+        # Averaging the main factors.
+        avg_temp = sum(c.temperature for c in conditions) / len(conditions)
+        avg_rain = sum(c.rain for c in conditions) / len(conditions)
+        avg_sun = sum(c.sun_hours for c in conditions) / len(conditions)
+
+        initial_biomass = crop_type.initial_biomass
+        final_biomass = conditions[-1].estimated_biomass
+        total_growth = final_biomass - initial_biomass
+
+        # Stress days, moving on temperatures.
+        stress_days = 0
+        lower_temp = crop_type.optimal_temp * 0.8
+        upper_temp = crop_type.optimal_temp * 1.2
+
+        for c in conditions:
+            if c.temperature < lower_temp or c.temperature > upper_temp:
+                stress_days += 1
+
+        # Rendimiento estimado vs potencial
+        performance_ratio = final_biomass / crop_type.potential_performance
+
+        return {
+            "average_temperature": avg_temp,
+            "average_rain": avg_rain,
+            "average_sun_hours": avg_sun,
+            "total_growth": total_growth,
+            "stress_days": stress_days,
+            "performance_ratio": performance_ratio,
+        }
