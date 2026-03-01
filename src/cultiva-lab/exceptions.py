@@ -87,7 +87,9 @@ class CropTypeNotFoundError(CropError):
 
     def __init__(self, crop_type_id: str):
         self.crop_type_id: str = crop_type_id
-        super().__init__(f"Tipo de cultivo con ID {crop_type_id} no encontrado.")
+        super().__init__(
+            f"Tipo de cultivo con ID / username {crop_type_id} no encontrado."
+        )
 
 
 class AuthorizationError(CultivaLabError):

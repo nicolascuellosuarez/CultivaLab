@@ -3,7 +3,6 @@ from .storage import Database
 from .exceptions import (
     UserNotFoundError,
     UserAlreadyExistsError,
-    InvalidCredentialsError,
     CropNotFoundError,
     CropTypeNotFoundError,
     AuthorizationError,
@@ -11,6 +10,7 @@ from .exceptions import (
     AdminAlreadyExistsError,
     InvalidInputError,
     ResourceOwnershipError,
+    DuplicateDataError,
 )
 from datetime import datetime, timedelta
 import uuid
@@ -648,3 +648,216 @@ class UserService:
             raise ResourceOwnershipError("No puedes acceder a esta información.")
 
         return self.storage.get_crops_by_user(user_id)
+
+
+"""
+CropTypeService class created to implement the logic
+of crop types in CultivaLab; needed for creation and elections
+of crop types.
+"""
+
+
+class CropTypeService:
+    def __init__(self, storage: Database, user_service: UserService):
+        self.storage: Database = storage
+        self.user_service: UserService = user_service
+
+    """
+    Method implemented for the admin to create new crop types.
+    """
+
+    def create_crop_type(
+        self,
+        admin_id: str,
+        name: str,
+        optimal_temp: float,
+        needed_water: float,
+        needed_light: float,
+        days_cycle: int,
+        initial_biomass: float,
+        potential_performance: float,
+    ) -> CropType:
+        # Initial validations, values can not be 0 or lesser.
+        if (not admin_id) or (not admin_id.strip()):
+            raise InvalidInputError("El ID no puede estar vacío.")
+        if (not name) or not (name.strip()):
+            raise InvalidInputError("El nombre no puede estar vacío.")
+        if any(
+            val <= 0
+            for val in [
+                needed_water,
+                needed_light,
+                days_cycle,
+                initial_biomass,
+                potential_performance,
+            ]
+        ):
+            raise InvalidInputError("El/los valor/es ingresados no son válidos.")
+        if optimal_temp < -7:
+            raise InvalidInputError("El valor no es permitido.")
+        admin_user = self.storage.get_user_by_id(admin_id)
+        if not admin_user:
+            raise UserNotFoundError(admin_id)
+        if admin_user.role != UserRole.ADMIN:
+            raise ResourceOwnershipError("No puedes acceder a esta información.")
+
+        name = name.strip().capitalize()
+        existing_type = self.storage.get_crop_type_by_name(name)
+        if existing_type:
+            raise DuplicateDataError("El tipo de cultivo ya existe.")
+
+        crop_type_unique_id = str(uuid.uuid4())
+        new_crop_type = CropType(
+            crop_type_unique_id,
+            name,
+            optimal_temp,
+            needed_water,
+            needed_light,
+            days_cycle,
+            initial_biomass,
+            potential_performance,
+        )
+
+        self.storage.save_crop_type(new_crop_type)
+        return new_crop_type
+
+    """
+    Method created to get a crop type based on its ID.
+    """
+
+    def get_crop_type_by_id(self, crop_type_id: str) -> CropType:
+        if (not crop_type_id) or (not crop_type_id.strip()):
+            raise InvalidInputError("El valor de entrada no puede estar vacío.")
+
+        searched_crop_type = self.storage.get_crop_type_by_id(crop_type_id)
+        if not searched_crop_type:
+            raise CropTypeNotFoundError(crop_type_id)
+
+        return searched_crop_type
+
+    """
+    Method created to get a crop type based on its name.
+    """
+
+    def get_crop_type_by_name(self, crop_type_name: str) -> CropType:
+        if (not crop_type_name) or (not crop_type_name.strip()):
+            raise InvalidInputError("El valor de entrada no puede estar vacío.")
+        crop_type_name = crop_type_name.strip().capitalize()
+        searched_crop_type = self.storage.get_crop_type_by_name(crop_type_name)
+        if not searched_crop_type:
+            raise CropTypeNotFoundError(crop_type_name)
+
+        return searched_crop_type
+
+    """
+    Method created to get a list of every crop type created
+    by admin. 
+    """
+
+    def get_crop_types(self) -> list[CropType]:
+        return self.storage.get_crop_types()
+
+    """
+    update_crop_type method created to update information
+    or arguments about a crop type; every attribute is
+    allowed for changes excepting the ID.
+    """
+
+    def update_crop_type(self, admin_id: str, crop_type_id: str, **kwargs) -> CropType:
+        if (not admin_id) or (not admin_id.strip()):
+            raise InvalidInputError("El valor de entrada no puede estar vacío.")
+        if (not crop_type_id) or (not crop_type_id.strip()):
+            raise InvalidInputError("El valor de entrada no puede estar vacío.")
+
+        crop_type = self.storage.get_crop_type_by_id(crop_type_id)
+        searched_user = self.storage.get_user_by_id(admin_id)
+
+        if not searched_user:
+            raise UserNotFoundError(admin_id)
+        elif searched_user.role != UserRole.ADMIN:
+            raise ResourceOwnershipError(
+                "No tienes permisos para realizar esta acción."
+            )
+        if not crop_type:
+            raise CropTypeNotFoundError(crop_type_id)
+
+        allowed_fields = [
+            "name",
+            "optimal_temp",
+            "needed_water",
+            "needed_light",
+            "days_cycle",
+            "initial_biomass",
+            "potential_performance",
+        ]
+
+        for key, value in kwargs.items():
+            if key not in allowed_fields:
+                raise InvalidInputError(
+                    "El atributo ingresado NO existe, o no puede ser cambiado."
+                )
+            # No empty names.
+            if key == "name" and (not str(value).strip()):
+                raise InvalidInputError("El nombre no puede estar vacío.")
+            # No negative values for arguments
+            if key in [
+                "optimal_temp",
+                "needed_water",
+                "needed_light",
+                "days_cycle",
+                "initial_biomass",
+                "potential_performance",
+            ]:
+                if float(value) <= 0:
+                    raise InvalidInputError(
+                        f"El valor para '{key}' debe ser mayor a cero."
+                    )
+            setattr(crop_type, key, value)
+
+        self.storage.save_crop_type(crop_type)
+        return crop_type
+
+    """
+    Get the stats of active crops of every crop type, and the
+    average performance of every crop type.
+    """
+
+    def get_crop_types_with_stats(self, admin_id: str) -> list[dict]:
+        if (not admin_id) or (not admin_id.strip()):
+            raise InvalidInputError("El valor no puede estar vacío.")
+        admin_user = self.storage.get_user_by_id(admin_id)
+        if not admin_user:
+            raise UserNotFoundError(admin_id)
+        if admin_user.role != UserRole.ADMIN:
+            raise ResourceOwnershipError(
+                "No estas autorizado para acceder a esta información."
+            )
+
+        crop_types = self.storage.get_crop_types()
+        crops = self.storage.get_crops()
+        result = []
+
+        for crop_type in crop_types:
+            related_crops = [
+                crop for crop in crops if crop.crop_type_id == crop_type.id
+            ]
+            active_crops = [c for c in related_crops if c.is_active]
+            active_count = len(active_crops)
+
+            if related_crops:
+                avg_performance = sum(c.performance for c in related_crops) / len(
+                    related_crops
+                )
+            else:
+                avg_performance = 0.0
+
+            result.append(
+                {
+                    "crop_type_id": crop_type.id,
+                    "name": crop_type.name,
+                    "active_crops": active_count,
+                    "average_performance": avg_performance,
+                }
+            )
+
+        return result
