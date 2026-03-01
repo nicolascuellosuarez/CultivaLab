@@ -50,6 +50,16 @@ class InvalidCredentialsError(UserError):
         super().__init__("Usuario o Contraseña incorrectos.")
 
 
+class DuplicateDataError(UserError):
+    """
+    Class DuplicateDataError created to raise an Error if any
+    of the entries in renovation - actions equals the last one.
+    """
+
+    def __init__(self, message: str):
+        super.__init__(message)
+
+
 class CropError(CultivaLabError):
     """
     CropError class created to report Crops - related Errors.

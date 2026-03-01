@@ -318,6 +318,11 @@ class CropService:
 
         self.storage.delete_crop(crop_id)
 
+    """
+    Method created to see the crop statistics in
+    its history.
+    """
+
     def get_crop_statistics(self, crop_id: str, requesting_user_id: str) -> dict:
         requesting_user = self.storage.get_user_by_id(requesting_user_id)
         if not requesting_user:
@@ -378,9 +383,21 @@ class CropService:
         }
 
 
+"""
+UserService class created as a logic layer in CultivaLab;
+it's the brain of business service in the app, and connects
+the actions in the ICL and the Storage.
+"""
+
+
 class UserService:
     def __init__(self, storage: Database) -> None:
         self.storage: Database = storage
+
+    """
+    Method created to implement the logic needed to
+    register a new user.
+    """
 
     def register_user(self, username: str, password: str) -> User:
         if (not username) or (not username.strip()):
@@ -405,6 +422,11 @@ class UserService:
 
         self.storage.save_user(new_user)
         return new_user
+
+    """
+    Method created to allow the unique admin registration;
+    the master key is hard - coded at the beginning of this module.
+    """
 
     def register_admin(self, admin_key: str, username: str, password: str) -> User:
         if (not username) or (not username.strip()):
@@ -434,6 +456,10 @@ class UserService:
         self.storage.save_user(new_admin)
         return new_admin
 
+    """
+    Method created to implement the logic of the log - in in app.
+    """
+
     def login(self, username: str, password: str) -> User:
         if (not username) or (not username.strip()):
             raise InvalidInputError("El nombre de usuario no puede estar vacío.")
@@ -450,6 +476,11 @@ class UserService:
             raise AuthorizationError("La contraseña o el usuario es incorrecto.")
 
         return user
+
+    """
+    Method created to get the user information by its ID;
+    it can be used by the admin or the user.
+    """
 
     def get_user_by_id(self, user_id: str, requesting_user_id: str) -> User | None:
         if (not user_id) or (not user_id.strip()):
@@ -468,6 +499,11 @@ class UserService:
 
         return user
 
+    """
+    Method created to get the user information by its username;
+    it can be used by the admin or the user.
+    """
+
     def get_user_by_username(self, username: str, requesting_user_id: str):
         if (not username) or (not username.strip()):
             raise InvalidInputError("El Username del usuario no puede estar vacío.")
@@ -484,3 +520,131 @@ class UserService:
             raise ResourceOwnershipError("No puedes acceder a esta información.")
 
         return user
+
+    """
+    Method created to get all the users registered in app;
+    it can be used by the admin only.
+    """
+
+    def get_all_users(self, requesting_user_id: str) -> list[User]:
+        if not (requesting_user_id) or not (requesting_user_id.strip()):
+            raise InvalidInputError("El ID no puede estar vacío.")
+        requesting_user = self.storage.get_user_by_id(requesting_user_id)
+        if not requesting_user:
+            raise UserNotFoundError(requesting_user_id)
+        if requesting_user.role != UserRole.ADMIN:
+            raise ResourceOwnershipError("No puedes acceder a esta información.")
+
+        return self.storage.get_users()
+
+    """
+    Method created for the users (or admin) to change their passwords.
+    """
+
+    def update_password(
+        self, user_id: str, old_password: str, new_password: str
+    ) -> None:
+        if not (user_id) or not (user_id.strip()):
+            raise InvalidInputError("El ID del usuario no puede estar vacío.")
+        if not old_password:
+            raise InvalidInputError(
+                "El campo de la contraseña vieja no puede estar vacío."
+            )
+        if not new_password:
+            raise InvalidInputError(
+                "El campo de la contraseña nueva no puede estar vacío."
+            )
+        if len(new_password) < 8:
+            raise InvalidInputError("La nueva contraseña es demasiado corta.")
+
+        user = self.storage.get_user_by_id(user_id)
+        if not user:
+            raise UserNotFoundError(user_id)
+
+        first_entered_password = old_password.encode("utf-8")
+        stored_hash = user.password_hash.encode("utf-8")
+
+        if not bcrypt.checkpw(first_entered_password, stored_hash):
+            raise AuthorizationError("La contraseña es incorrecta.")
+        new_hashed_password = bcrypt.hashpw(
+            new_password.encode("utf-8"), bcrypt.gensalt()
+        ).decode("utf-8")
+        if not (user.password_hash == new_hashed_password):
+            user.password_hash = new_hashed_password
+
+        self.storage.save_user(user)
+
+    """
+    Method created for the users (or admin) to change their usernames.
+    """
+
+    def update_username(
+        self, user_id: str, new_username: str, requesting_user_id: str
+    ) -> None:
+        if (not user_id) or (not user_id.strip()):
+            raise InvalidInputError("El ID del usuario no puede estar vacío.")
+        if (not new_username) or (not new_username.strip()):
+            raise InvalidInputError("El username nuevo no puede estar vacío.")
+        if (not requesting_user_id) or (not requesting_user_id.strip()):
+            raise InvalidInputError("El ID no puede estar vacío.")
+
+        user = self.storage.get_user_by_id(user_id)
+        requesting_user = self.storage.get_user_by_id(requesting_user_id)
+        if not user:
+            raise UserNotFoundError(user_id)
+        if not requesting_user:
+            raise UserNotFoundError(requesting_user_id)
+        if user_id != requesting_user_id:
+            raise ResourceOwnershipError("No puedes acceder a esta información.")
+
+        searched_user = self.storage.get_user_by_username(new_username)
+        if user.username == new_username:
+            raise
+        if searched_user:
+            raise UserAlreadyExistsError("Ya existe un usuario con ese username.")
+
+        user.username = new_username
+        self.storage.save_user(user)
+
+    """
+    Method created for the users to delete their "accounts".
+    It can only be used by users.
+    """
+
+    def delete_user(self, user_id: str, requesting_user_id: str) -> None:
+        if (not user_id) or (not user_id.strip()):
+            raise InvalidInputError("El ID del usuario no puede estar vacío.")
+        if (not requesting_user_id) or (not requesting_user_id.strip()):
+            raise InvalidInputError("El ID no puede estar vacío.")
+
+        user = self.storage.get_user_by_id(user_id)
+        requesting_user = self.storage.get_user_by_id(requesting_user_id)
+        if not user:
+            raise UserNotFoundError(user_id)
+        if not requesting_user:
+            raise UserNotFoundError(requesting_user_id)
+        if (user_id != requesting_user_id) and (requesting_user.role != UserRole.ADMIN):
+            raise ResourceOwnershipError("No puedes acceder a esta información.")
+        self.storage.delete_user(user)
+
+    """
+    Method created for the users to get all their crops.
+    It can be used by users and admin.
+    """
+
+    def get_user_crops(self, user_id: str, requesting_user_id: str) -> list[Crop]:
+        if (not user_id) or (not user_id.strip()):
+            raise InvalidInputError("El ID del usuario no puede estar vacío.")
+        if (not requesting_user_id) or (not requesting_user_id.strip()):
+            raise InvalidInputError("El ID no puede estar vacío.")
+
+        user = self.storage.get_user_by_id(user_id)
+        requesting_user = self.storage.get_user_by_id(requesting_user_id)
+        if not user:
+            raise UserNotFoundError(user_id)
+        if not requesting_user:
+            raise UserNotFoundError(requesting_user_id)
+        if (user_id != requesting_user_id) and (requesting_user.role != UserRole.ADMIN):
+            raise ResourceOwnershipError("No puedes acceder a esta información.")
+
+        return self.storage.get_crops_by_user(user_id)
