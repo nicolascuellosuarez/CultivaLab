@@ -14,5 +14,3 @@ from src.cultiva_lab.exceptions import (
     ResourceOwnershipError,
     DuplicateDataError,
 )
-
-

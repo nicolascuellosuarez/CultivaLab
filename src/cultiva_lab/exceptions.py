@@ -140,3 +140,13 @@ class InvalidInputError(CultivaLabError):
     def __init__(self, message: str, field: str = None):
         self.field: None = field
         super().__init__(message)
+
+
+class BusinessRuleViolationError(CultivaLabError):
+    """
+    Exception raised when a business rule is violated by
+    an user or admin.
+    """
+
+    def __init__(self, message: str):
+        super().__init__(message)

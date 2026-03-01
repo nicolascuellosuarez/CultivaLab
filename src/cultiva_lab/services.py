@@ -11,6 +11,7 @@ from .exceptions import (
     InvalidInputError,
     ResourceOwnershipError,
     DuplicateDataError,
+    BusinessRuleViolationError,
 )
 from datetime import datetime, timedelta
 import uuid
@@ -818,6 +819,36 @@ class CropTypeService:
         return crop_type
 
     """
+    Deletes a crop type only if there is no crops of that crop type
+    in Database.
+    """
+
+    def delete_crop_type(self, admin_id: str, crop_type_to_eliminate_id: str) -> None:
+        if (not admin_id) or (not admin_id.strip()):
+            raise InvalidInputError("El valor de entrada no puede estar vacío.")
+        if (not crop_type_to_eliminate_id) or (not crop_type_to_eliminate_id.strip()):
+            raise InvalidInputError("El valor de entrada no puede estar vacío.")
+
+        searched_user = self.storage.get_user_by_id(admin_id)
+        crop_type = self.storage.get_crop_type_by_id(crop_type_to_eliminate_id)
+
+        if not searched_user:
+            raise UserNotFoundError(admin_id)
+        if searched_user.role != UserRole.ADMIN:
+            raise ResourceOwnershipError("No puedes acceder a esta información")
+        if not crop_type:
+            raise CropTypeNotFoundError(crop_type_to_eliminate_id)
+
+        crops = self.storage.get_crops()
+        for crop in crops:
+            if crop.crop_type_id == crop_type.id:
+                raise BusinessRuleViolationError(
+                    "Este tipo de cultivo está en uso; no puede ser eliminado."
+                )
+
+        self.storage.delete_crop_type(crop_type_to_eliminate_id)
+
+    """
     Get the stats of active crops of every crop type, and the
     average performance of every crop type.
     """
@@ -861,3 +892,10 @@ class CropTypeService:
             )
 
         return result
+
+
+"""
+AuthService and a Session Manager left for a second
+report; classes will be used for control of logins
+in a future web app.
+"""
