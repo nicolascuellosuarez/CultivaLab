@@ -782,6 +782,10 @@ class CropTypeService:
         if not crop_type:
             raise CropTypeNotFoundError(crop_type_id)
 
+        crops_using_crop_type = self.storage.get_crops_by_type(crop_type_id)
+        if len(crops_using_crop_type) > 0:
+            raise BusinessRuleViolationError("No se puede editar esta información")
+
         allowed_fields = [
             "name",
             "optimal_temp",

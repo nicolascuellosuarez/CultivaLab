@@ -1,6 +1,5 @@
-import pytest
 from src.cultiva_lab.storage import JSONStorage
-from src.cultiva_lab.models import User, Crop, CropType, DailyCondition, UserRole
+from src.cultiva_lab.models import User, Crop, CropType, UserRole
 from datetime import datetime
 
 """
@@ -190,7 +189,9 @@ def test_save_crop_updates_existing_instead_of_duplicate(tmp_path):
     crop = Crop("123", "Cultivo de Bananas", "123", "123", now, now, [], True)
     storage.save_crop(crop)
 
-    evaluating_crop = Crop("123", "Cultivo de Bananas #2", "123", "123", now, now, [], True)
+    evaluating_crop = Crop(
+        "123", "Cultivo de Bananas #2", "123", "123", now, now, [], True
+    )
     storage.save_crop(evaluating_crop)
 
     crops = storage.get_crops()
@@ -218,7 +219,7 @@ def test_delete_crop_removes_from_storage(tmp_path):
     )
     storage.save_crop_type(banana_crop_type)
     now = datetime.now()
-    
+
     crop1 = Crop("123", "Cultivo de Bananas", "123", "123", now, now, [], True)
     storage.save_crop(crop1)
     crop2 = Crop("1234", "Cultivo de Bananas #2", "123", "123", now, now, [], True)
@@ -253,7 +254,7 @@ def test_get_crop_by_id_works_and_returns_none_if_not_found(tmp_path):
     )
     storage.save_crop_type(banana_crop_type)
     now = datetime.now()
-    
+
     crop = Crop("123", "Cultivo de Bananas", "123", "123", now, now, [], True)
     storage.save_crop(crop)
 
@@ -283,7 +284,7 @@ def test_get_crops_by_user_returns_only_that_user_crops(tmp_path):
         "123", "Cultivo de Bananas", 27, 5.83, 12, 360, 0.75, 50
     )
     storage.save_crop_type(banana_crop_type)
-    
+
     now = datetime.now()
     crop1 = Crop("c1", "Cultivo de Bananas", "123", "123", now, now, [], True)
     storage.save_crop(crop1)
@@ -352,7 +353,7 @@ def test_get_active_crops_only_returns_active_crops(tmp_path):
         "123", "Cultivo de Bananas", 27, 5.83, 12, 360, 0.75, 50
     )
     storage.save_crop_type(banana_crop_type)
-    
+
     now = datetime.now()
     crop1 = Crop("c1", "Cultivo de Bananas", "123", "123", now, now, [], False)
     storage.save_crop(crop1)
@@ -369,4 +370,156 @@ def test_get_active_crops_only_returns_active_crops(tmp_path):
     assert crop3.id in active_ids
 
 
+"""
+Test created to supervise the operations of get_crop_type
+and save_crop_type methods.
+"""
 
+
+def test_save_and_get_crop_types(tmp_path):
+    temp_path = tmp_path / "test_db.json"
+    storage = JSONStorage(temp_path)
+
+    banana_crop_type = CropType(
+        "123", "Cultivo de Bananas", 27, 5.83, 12, 360, 0.75, 50
+    )
+    storage.save_crop_type(banana_crop_type)
+
+    crop_types = storage.get_crop_types()
+    assert len(crop_types) == 1
+    assert crop_types[0].id == banana_crop_type.id
+    assert crop_types[0].name == banana_crop_type.name
+
+
+"""
+Method created to validate the update of a crop type
+that already exists, instead of making a new one with 
+the same ID.
+"""
+
+
+def test_save_crop_type_updates_instead_of_duplicate(tmp_path):
+    temp_path = tmp_path / "test_db.json"
+    storage = JSONStorage(temp_path)
+
+    banana_crop_type = CropType(
+        "123", "Cultivo de Bananas", 27, 5.83, 12, 360, 0.75, 50
+    )
+    storage.save_crop_type(banana_crop_type)
+    new_crop_type = CropType("123", "Cultivo de Bananas", 28, 5.83, 12, 360, 0.75, 50)
+    storage.save_crop_type(new_crop_type)
+
+    crop_types_created = storage.get_crop_types()
+    assert len(crop_types_created) == 1
+    assert crop_types_created[0].id == new_crop_type.id
+    assert crop_types_created[0].optimal_temp == new_crop_type.optimal_temp
+
+
+"""
+Method created to see if the delete_crop_type method works;
+eliminating the crop type from the DataBase.
+"""
+
+
+def test_delete_crop_type_removes_from_storage(tmp_path):
+    temp_path = tmp_path / "test_db.json"
+    storage = JSONStorage(temp_path)
+
+    banana_crop_type = CropType(
+        "123", "Cultivo de Bananas", 27, 5.83, 12, 360, 0.75, 50
+    )
+    storage.save_crop_type(banana_crop_type)
+    apple_crop_type = CropType(
+        "1234", "Cultivo de Manzanas", 21.5, 4, 9, 145, 2.25, 200
+    )
+    storage.save_crop_type(apple_crop_type)
+
+    crop_types = storage.get_crop_types()
+    assert len(crop_types) == 2
+    assert crop_types[0].id == banana_crop_type.id
+    assert crop_types[1].id == apple_crop_type.id
+
+    storage.delete_crop_type(banana_crop_type.id)
+    updated_crop_types = storage.get_crop_types()
+    assert len(updated_crop_types) == 1
+    assert updated_crop_types[0].id == apple_crop_type.id
+    assert updated_crop_types[0].name == apple_crop_type.name
+
+
+"""
+Method created to see the operation of the get_crop_type_by_id function.
+"""
+
+
+def test_get_crop_type_by_id_works_and_returns_none_if_not_found(tmp_path):
+    temp_path = tmp_path / "test_db.json"
+    storage = JSONStorage(temp_path)
+
+    banana_crop_type = CropType(
+        "123", "Cultivo de Bananas", 27, 5.83, 12, 360, 0.75, 50
+    )
+    storage.save_crop_type(banana_crop_type)
+
+    crop_type_in_db = storage.get_crop_type_by_id(banana_crop_type.id)
+    assert crop_type_in_db is not None
+    assert crop_type_in_db.id == banana_crop_type.id
+    assert crop_type_in_db.name == banana_crop_type.name
+    assert storage.get_crop_type_by_id("4567") is None
+
+
+"""
+Method created to see the operation of the get_crop_type_by_name function.
+"""
+
+
+def test_get_crop_type_by_name_works_and_returns_none_if_not_found(tmp_path):
+    temp_path = tmp_path / "test_db.json"
+    storage = JSONStorage(temp_path)
+
+    banana_crop_type = CropType(
+        "123", "Cultivo de Bananas", 27, 5.83, 12, 360, 0.75, 50
+    )
+    storage.save_crop_type(banana_crop_type)
+
+    crop_type_in_db = storage.get_crop_type_by_name(banana_crop_type.name)
+    assert crop_type_in_db is not None
+    assert crop_type_in_db.id == banana_crop_type.id
+    assert crop_type_in_db.name == banana_crop_type.name
+    assert storage.get_crop_type_by_name("Cultivo de Manzanas") is None
+
+
+"""
+Multiple operations (save, update, delete) should maintain
+consistent data in storage.
+"""
+
+
+def test_storage_maintains_data_integrity_after_multiple_ops(tmp_path):
+    db_file = tmp_path / "test_db.json"
+    storage = JSONStorage(db_file)
+
+    user1 = User("123", "nico", "hash1", UserRole.USER, crop_ids=[])
+    storage.save_user(user1)
+    user2 = User("1234", "catima", "hash2", UserRole.ADMIN, crop_ids=[])
+    storage.save_user(user2)
+
+    updated_user1 = User("123", "nicolas", "hash1_updated", UserRole.USER, crop_ids=[])
+    storage.save_user(updated_user1)
+
+    banana_crop_type = CropType(
+        "123", "Cultivo de Bananas", 27, 5.83, 12, 360, 0.75, 50
+    )
+    storage.save_crop_type(banana_crop_type)
+
+    storage.delete_user("1234")
+    users = storage.get_users()
+    crop_types = storage.get_crop_types()
+
+    assert len(users) == 1
+    assert users[0].id == "123"
+    assert users[0].username == "nicolas"
+    assert users[0].password_hash == "hash1_updated"
+
+    assert len(crop_types) == 1
+    assert crop_types[0].id == "123"
+    assert crop_types[0].name == "Cultivo de Bananas"
