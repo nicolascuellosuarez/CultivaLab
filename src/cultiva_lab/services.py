@@ -126,7 +126,7 @@ class CropService:
             raise InvalidInputError("La temperatura ingresada no es real.")
         if rain < 0:
             raise InvalidInputError("Valor de lluvia inválido.")
-        if sun_hours < 0 or sun_hours > 24:
+        if sun_hours < 0 or sun_hours > 12:
             raise InvalidInputError("Las horas sol no son válidas.")
         crop = self.storage.get_crop_by_id(crop_id)
         # Method validations
@@ -222,7 +222,7 @@ class CropService:
             raise CropNotFoundError(crop_id)
         if (
             requesting_user_id != crop.user_id
-        ) and requesting_user.role != UserRole.ADMIN:
+        ) and requesting_user.role.value != UserRole.ADMIN.value:
             raise ResourceOwnershipError("No puedes acceder a este cultivo.")
         return crop
 
@@ -260,7 +260,7 @@ class CropService:
             raise CropNotFoundError(crop_id)
         if (
             requesting_user_id != crop.user_id
-            and requesting_user.role != UserRole.ADMIN
+            and requesting_user.role.value != UserRole.ADMIN.value
         ):
             raise ResourceOwnershipError("No puedes acceder a estos cultivos.")
         return crop.conditions
@@ -278,7 +278,7 @@ class CropService:
             raise CropNotFoundError(crop_id)
         if (
             requesting_user_id != crop.user_id
-            and requesting_user.role != UserRole.ADMIN
+            and requesting_user.role.value != UserRole.ADMIN.value
         ):
             raise ResourceOwnershipError("No puedes acceder a estos cultivos.")
 
@@ -340,7 +340,7 @@ class CropService:
         # Ownership Validation
         if (
             requesting_user_id != crop.user_id
-            and requesting_user.role != UserRole.ADMIN
+            and requesting_user.role.value != UserRole.ADMIN.value
         ):
             raise ResourceOwnershipError("No puedes acceder a este cultivo.")
         crop_type = self.storage.get_crop_type_by_id(crop.crop_type_id)
@@ -424,7 +424,7 @@ class UserService:
         )
 
         # New user creation
-        new_user = User(user_unique_id, username, hashed_pwd, UserRole.USER)
+        new_user = User(user_unique_id, username, hashed_pwd, UserRole.USER, [])
 
         self.storage.save_user(new_user)
         return new_user
@@ -445,10 +445,10 @@ class UserService:
             raise InvalidInputError("La contraseña es demasiado corta.")
         users = self.storage.get_users()
         for user in users:
-            if user.role == UserRole.ADMIN:
+            if user.role.value == UserRole.ADMIN.value:
                 raise AdminAlreadyExistsError()
         if admin_key != MASTER_KEY:
-            raise UnauthorizedAccessError("La llave de administrador no es correcta.")
+            raise InvalidInputError("La llave de administrador no es correcta.")
         if self.storage.get_user_by_username(username):
             raise UserAlreadyExistsError(username)
 
@@ -457,7 +457,7 @@ class UserService:
             "utf-8"
         )
 
-        new_admin = User(user_unique_id, username, hashed_pwd, UserRole.ADMIN)
+        new_admin = User(user_unique_id, username, hashed_pwd, UserRole.ADMIN, [])
 
         self.storage.save_user(new_admin)
         return new_admin
@@ -500,7 +500,7 @@ class UserService:
             raise UserNotFoundError(requesting_user_id)
         if not user:
             raise UserNotFoundError(user_id)
-        if (requesting_user_id != user.id) and requesting_user.role != UserRole.ADMIN:
+        if (requesting_user_id != user.id) and requesting_user.role.value != UserRole.ADMIN.value:
             raise ResourceOwnershipError("No puedes acceder a esta información.")
 
         return user
@@ -522,7 +522,7 @@ class UserService:
             raise UserNotFoundError(requesting_user_id)
         if not user:
             raise UserNotFoundError(username)
-        if (requesting_user_id != user.id) and requesting_user.role != UserRole.ADMIN:
+        if (requesting_user_id != user.id) and requesting_user.role.value != UserRole.ADMIN.value:
             raise ResourceOwnershipError("No puedes acceder a esta información.")
 
         return user
@@ -538,7 +538,7 @@ class UserService:
         requesting_user = self.storage.get_user_by_id(requesting_user_id)
         if not requesting_user:
             raise UserNotFoundError(requesting_user_id)
-        if requesting_user.role != UserRole.ADMIN:
+        if requesting_user.role.value != UserRole.ADMIN.value:
             raise ResourceOwnershipError("No puedes acceder a esta información.")
 
         return self.storage.get_users()
@@ -629,7 +629,7 @@ class UserService:
             raise UserNotFoundError(user_id)
         if not requesting_user:
             raise UserNotFoundError(requesting_user_id)
-        if (user_id != requesting_user_id) and (requesting_user.role != UserRole.ADMIN):
+        if (user_id != requesting_user_id) and (requesting_user.role.value != UserRole.ADMIN.value):
             raise ResourceOwnershipError("No puedes acceder a esta información.")
         self.storage.delete_user(user)
 
@@ -650,7 +650,7 @@ class UserService:
             raise UserNotFoundError(user_id)
         if not requesting_user:
             raise UserNotFoundError(requesting_user_id)
-        if (user_id != requesting_user_id) and (requesting_user.role != UserRole.ADMIN):
+        if (user_id != requesting_user_id) and (requesting_user.role.value != UserRole.ADMIN.value):
             raise ResourceOwnershipError("No puedes acceder a esta información.")
 
         return self.storage.get_crops_by_user(user_id)
@@ -704,7 +704,7 @@ class CropTypeService:
         admin_user = self.storage.get_user_by_id(admin_id)
         if not admin_user:
             raise UserNotFoundError(admin_id)
-        if admin_user.role != UserRole.ADMIN:
+        if admin_user.role.value != UserRole.ADMIN.value:
             raise ResourceOwnershipError("No puedes acceder a esta información.")
 
         name = name.strip().capitalize()
@@ -780,7 +780,7 @@ class CropTypeService:
 
         if not searched_user:
             raise UserNotFoundError(admin_id)
-        elif searched_user.role != UserRole.ADMIN:
+        elif searched_user.role.value != UserRole.ADMIN.value:
             raise ResourceOwnershipError(
                 "No tienes permisos para realizar esta acción."
             )
@@ -843,7 +843,7 @@ class CropTypeService:
 
         if not searched_user:
             raise UserNotFoundError(admin_id)
-        if searched_user.role != UserRole.ADMIN:
+        if searched_user.role.value != UserRole.ADMIN.value:
             raise ResourceOwnershipError("No puedes acceder a esta información")
         if not crop_type:
             raise CropTypeNotFoundError(crop_type_to_eliminate_id)
@@ -868,7 +868,7 @@ class CropTypeService:
         admin_user = self.storage.get_user_by_id(admin_id)
         if not admin_user:
             raise UserNotFoundError(admin_id)
-        if admin_user.role != UserRole.ADMIN:
+        if admin_user.role.value != UserRole.ADMIN.value:
             raise ResourceOwnershipError(
                 "No estas autorizado para acceder a esta información."
             )

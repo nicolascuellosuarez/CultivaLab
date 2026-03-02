@@ -15,6 +15,7 @@ from src.cultiva_lab.exceptions import (
     DuplicateDataError,
 )
 from datetime import datetime, timedelta
+import bcrypt
 
 
 """
@@ -558,3 +559,447 @@ def test_delete_crop_other_forbidden():
 
     with pytest.raises(ResourceOwnershipError):
         service.delete_crop("456", "999")
+
+
+"""
+Register a new user successfully with role USER.
+"""
+
+def test_register_user_success():
+    storage = Mock()
+    storage.get_user_by_username.return_value = None
+    
+    service = UserService(storage)
+    user = service.register_user("nikoloko", "password123")
+    
+    assert user is not None
+    assert user.username == "nikoloko"
+    assert user.role == UserRole.USER
+    assert len(user.password_hash) > 0
+    storage.save_user.assert_called_once()
+
+
+"""
+Try to register a user with a username that already exists.
+"""
+
+def test_register_user_duplicate_username_fails():
+    storage = Mock()
+    existing_user = User("123", "nikoloko", "hashed_pwd", UserRole.USER, [])
+    storage.get_user_by_username.return_value = existing_user
+    
+    service = UserService(storage)
+    
+    with pytest.raises(UserAlreadyExistsError):
+        service.register_user("nikoloko", "password123")
+
+
+"""
+Try to register a user with a password shorter than 8 characters.
+"""
+
+def test_register_user_password_too_short_fails():
+    storage = Mock()
+    storage.get_user_by_username.return_value = None
+    
+    service = UserService(storage)
+    
+    with pytest.raises(InvalidInputError):
+        service.register_user("nikoloko", "short")
+
+
+"""
+Login successfully with correct credentials.
+"""
+
+def test_login_success():
+    storage = Mock()
+    
+    # Create a real password hash
+    password = "password123"
+    hashed = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+    
+    user = User("123", "nikoloko", hashed, UserRole.USER, [])
+    storage.get_user_by_username.return_value = user
+    
+    service = UserService(storage)
+    logged_user = service.login("nikoloko", password)
+    
+    assert logged_user is not None
+    assert logged_user.username == "nikoloko"
+
+
+"""
+Try to login with wrong password.
+"""
+
+def test_login_wrong_password_fails():
+    storage = Mock()
+    
+    # Create a real password hash for "correctpass"
+    correct_password = "correctpass"
+    hashed = bcrypt.hashpw(correct_password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+    
+    user = User("123", "nikoloko", hashed, UserRole.USER, [])
+    storage.get_user_by_username.return_value = user
+    
+    service = UserService(storage)
+    
+    with pytest.raises(AuthorizationError):
+        service.login("nikoloko", "wrongpass")
+
+
+"""
+Try to login with non-existent username.
+"""
+
+def test_login_nonexistent_user_fails():
+    storage = Mock()
+    storage.get_user_by_username.return_value = None
+    
+    service = UserService(storage)
+    
+    with pytest.raises(UserNotFoundError):
+        service.login("nikoloko", "password123")
+
+
+"""
+User can view their own profile by ID.
+"""
+
+def test_get_user_by_id_own_user_allowed():
+    storage = Mock()
+    
+    owner = User("123", "nikoloko", "hashed_pwd", UserRole.USER, [])
+    
+    storage.get_user_by_id.side_effect = lambda uid: {
+        "123": owner
+    }.get(uid)
+    
+    service = UserService(storage)
+    result = service.get_user_by_id("123", "123")
+    
+    assert result is not None
+    assert result.id == "123"
+    assert result.username == "nikoloko"
+
+
+"""
+User cannot view another user's profile (non-admin).
+"""
+
+def test_get_user_by_id_other_user_forbidden():
+    storage = Mock()
+    
+    owner = User("123", "nikoloko", "hashed_pwd", UserRole.USER, [])
+    other = User("999", "otro", "hashed_pwd", UserRole.USER, [])
+    
+    storage.get_user_by_id.side_effect = lambda uid: {
+        "123": owner,
+        "999": other
+    }.get(uid)
+    
+    service = UserService(storage)
+    
+    with pytest.raises(ResourceOwnershipError):
+        service.get_user_by_id("123", "999")
+
+
+"""
+Admin can view any user's profile.
+"""
+
+def test_get_user_by_id_admin_can_see_any():
+    storage = Mock()
+    
+    target = User("123", "nikoloko", "hashed_pwd", UserRole.USER, [])
+    admin = User("999", "admin", "hashed_pwd", UserRole.ADMIN, [])
+    
+    storage.get_user_by_id.side_effect = lambda uid: {
+        "123": target,
+        "999": admin
+    }.get(uid)
+    
+    service = UserService(storage)
+    result = service.get_user_by_id("123", "999")
+    
+    assert result is not None
+    assert result.id == "123"
+
+
+"""
+Update password successfully with correct old password.
+"""
+
+def test_update_password_success():
+    storage = Mock()
+    
+    # Create a real password hash for "oldpass123"
+    old_password = "oldpass123"
+    new_password = "newpass123"
+    hashed = bcrypt.hashpw(old_password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+    
+    user = User("123", "nikoloko", hashed, UserRole.USER, [])
+    storage.get_user_by_id.return_value = user
+    
+    service = UserService(storage)
+    service.update_password("123", old_password, new_password)
+    
+    # Verify the password hash changed
+    assert user.password_hash != hashed
+    storage.save_user.assert_called_once_with(user)
+
+
+"""
+Try to update password with wrong old password.
+"""
+
+def test_update_password_wrong_old_password_fails():
+    storage = Mock()
+    
+    # Create a real password hash for "oldpass123"
+    old_password = "oldpass123"
+    hashed = bcrypt.hashpw(old_password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+    
+    user = User("123", "nikoloko", hashed, UserRole.USER, [])
+    storage.get_user_by_id.return_value = user
+    
+    service = UserService(storage)
+    
+    with pytest.raises(AuthorizationError):
+        service.update_password("123", "wrongold", "newpass123")
+
+
+"""
+Update username successfully (own account).
+"""
+
+def test_update_username_success():
+    storage = Mock()
+    
+    user = User("123", "nikoloko", "hashed_pwd", UserRole.USER, [])
+    requesting_user = User("123", "nikoloko", "hashed_pwd", UserRole.USER, [])
+    
+    storage.get_user_by_id.side_effect = lambda uid: {
+        "123": user
+    }.get(uid)
+    storage.get_user_by_username.return_value = None
+    
+    service = UserService(storage)
+    service.update_username("123", "nuevo_nombre", "123")
+    
+    assert user.username == "nuevo_nombre"
+    storage.save_user.assert_called_once_with(user)
+
+
+"""
+Try to update username to one that already exists.
+"""
+
+def test_update_username_duplicate_fails():
+    storage = Mock()
+    
+    user = User("123", "nikoloko", "hashed_pwd", UserRole.USER, [])
+    existing_user = User("999", "existente", "hashed_pwd", UserRole.USER, [])
+    
+    storage.get_user_by_id.side_effect = lambda uid: {
+        "123": user
+    }.get(uid)
+    storage.get_user_by_username.return_value = existing_user
+    
+    service = UserService(storage)
+    
+    with pytest.raises(UserAlreadyExistsError):
+        service.update_username("123", "existente", "123")
+
+
+"""
+User can delete their own account.
+"""
+
+def test_delete_user_own_account_allowed():
+    storage = Mock()
+    
+    user = User("123", "nikoloko", "hashed_pwd", UserRole.USER, [])
+    requesting_user = User("123", "nikoloko", "hashed_pwd", UserRole.USER, [])
+    
+    storage.get_user_by_id.side_effect = lambda uid: {
+        "123": user
+    }.get(uid)
+    
+    service = UserService(storage)
+    service.delete_user("123", "123")
+    
+    storage.delete_user.assert_called_once_with(user)
+
+
+"""
+User cannot delete another user's account.
+"""
+
+def test_delete_user_other_account_forbidden():
+    storage = Mock()
+    
+    target = User("123", "nikoloko", "hashed_pwd", UserRole.USER, [])
+    other = User("999", "otro", "hashed_pwd", UserRole.USER, [])
+    
+    storage.get_user_by_id.side_effect = lambda uid: {
+        "123": target,
+        "999": other
+    }.get(uid)
+    
+    service = UserService(storage)
+    
+    with pytest.raises(ResourceOwnershipError):
+        service.delete_user("123", "999")
+
+
+"""
+Admin can delete any user account.
+"""
+
+def test_delete_user_admin_can_delete_any():
+    storage = Mock()
+    
+    target = User("123", "nikoloko", "hashed_pwd", UserRole.USER, [])
+    admin = User("999", "admin", "hashed_pwd", UserRole.ADMIN, [])
+    
+    storage.get_user_by_id.side_effect = lambda uid: {
+        "123": target,
+        "999": admin
+    }.get(uid)
+    
+    service = UserService(storage)
+    service.delete_user("123", "999")
+    
+    storage.delete_user.assert_called_once_with(target)
+
+
+"""
+Only one admin can exist in the system - second attempt fails.
+"""
+
+def test_register_admin_only_once():
+    storage = Mock()
+    
+    # First admin exists
+    existing_admin = User("123", "admin", "hashed_pwd", UserRole.ADMIN, [])
+    storage.get_users.return_value = [existing_admin]
+    
+    service = UserService(storage)
+    
+    with pytest.raises(AdminAlreadyExistsError):
+        service.register_admin("admin12345", "otroadmin", "password123")
+
+
+"""
+Register admin fails with wrong master key.
+"""
+
+def test_register_admin_wrong_key_fails():
+    storage = Mock()
+    storage.get_users.return_value = []  # No admin exists
+    
+    service = UserService(storage)
+    
+    with pytest.raises(InvalidInputError):
+        service.register_admin("wrongkey", "admin", "password123")
+
+
+"""
+Register admin successfully with correct master key.
+"""
+
+def test_register_admin_success():
+    storage = Mock()
+    storage.get_users.return_value = []  # No admin exists
+    storage.get_user_by_username.return_value = None
+    
+    service = UserService(storage)
+    admin = service.register_admin("admin12345", "admin", "password123")
+    
+    assert admin is not None
+    assert admin.username == "admin"
+    assert admin.role == UserRole.ADMIN
+    storage.save_user.assert_called_once()
+
+
+"""
+Get all users (admin only).
+"""
+
+def test_get_all_users_admin_allowed():
+    storage = Mock()
+    
+    admin = User("999", "admin", "hashed_pwd", UserRole.ADMIN, [])
+    user1 = User("123", "nikoloko", "hashed_pwd", UserRole.USER, [])
+    user2 = User("456", "otro", "hashed_pwd", UserRole.USER, [])
+    
+    storage.get_user_by_id.return_value = admin
+    storage.get_users.return_value = [user1, user2]
+    
+    service = UserService(storage)
+    users = service.get_all_users("999")
+    
+    assert len(users) == 2
+    assert users[0].id == "123"
+    assert users[1].id == "456"
+
+
+"""
+Get all users fails for non-admin.
+"""
+
+def test_get_all_users_non_admin_fails():
+    storage = Mock()
+    
+    normal_user = User("123", "nikoloko", "hashed_pwd", UserRole.USER, [])
+    storage.get_user_by_id.return_value = normal_user
+    
+    service = UserService(storage)
+    
+    with pytest.raises(ResourceOwnershipError):
+        service.get_all_users("123")
+
+
+"""
+Get user crops (own account allowed).
+"""
+
+def test_get_user_crops_own_allowed():
+    storage = Mock()
+    
+    user = User("123", "nikoloko", "hashed_pwd", UserRole.USER, ["456"])
+    crops = ["crop1", "crop2"]  # Simplified for test
+    
+    storage.get_user_by_id.side_effect = lambda uid: {
+        "123": user
+    }.get(uid)
+    storage.get_crops_by_user.return_value = crops
+    
+    service = UserService(storage)
+    result = service.get_user_crops("123", "123")
+    
+    assert result == crops
+    storage.get_crops_by_user.assert_called_with("123")
+
+
+"""
+Get user crops (other user forbidden).
+"""
+
+def test_get_user_crops_other_forbidden():
+    storage = Mock()
+    
+    owner = User("123", "nikoloko", "hashed_pwd", UserRole.USER, ["456"])
+    other = User("999", "otro", "hashed_pwd", UserRole.USER, [])
+    
+    storage.get_user_by_id.side_effect = lambda uid: {
+        "123": owner,
+        "999": other
+    }.get(uid)
+    
+    service = UserService(storage)
+    
+    with pytest.raises(ResourceOwnershipError):
+        service.get_user_crops("123", "999")
