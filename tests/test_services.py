@@ -837,7 +837,7 @@ def test_delete_user_own_account_allowed():
     service = UserService(storage)
     service.delete_user("123", "123")
 
-    storage.delete_user.assert_called_once_with(user)
+    storage.delete_user.assert_called_once_with(user.id)
 
 
 """
@@ -879,7 +879,7 @@ def test_delete_user_admin_can_delete_any():
     service = UserService(storage)
     service.delete_user("123", "999")
 
-    storage.delete_user.assert_called_once_with(target)
+    storage.delete_user.assert_called_once_with(target.id)
 
 
 """

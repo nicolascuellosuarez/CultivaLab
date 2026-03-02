@@ -642,7 +642,7 @@ class UserService:
             requesting_user.role.value != UserRole.ADMIN.value
         ):
             raise ResourceOwnershipError("No puedes acceder a esta información.")
-        self.storage.delete_user(user)
+        self.storage.delete_user(user.id)
 
     """
     Method created for the users to get all their crops.
