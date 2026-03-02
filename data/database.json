@@ -1,0 +1,169 @@
+{
+    "users": [
+        {
+            "id": "91efad12-9c26-4ea0-b562-8fe1db21cd88",
+            "username": "catimitita",
+            "password_hash": "$2b$12$jBGXpG9e7tCyWOMTJ8rjv.Nt34HDySrXyyC3oo7OZuzuxR.YCqYha",
+            "role": "user",
+            "crop_ids": []
+        },
+        {
+            "id": "f9978875-29f7-455c-98e2-55963ced93f5",
+            "username": "danielfernandez",
+            "password_hash": "$2b$12$g0vuJiaHGQlZ99cqMprnCeD26i5tuVpkUJdnbsg77ErEqJQzanZpG",
+            "role": "admin",
+            "crop_ids": []
+        }
+    ],
+    "crops": [
+        {
+            "id": "27147e3b-3cd1-4dea-8dd1-82ce4b05705c",
+            "name": "Cultivo de bananas crecido",
+            "user_id": "91efad12-9c26-4ea0-b562-8fe1db21cd88",
+            "crop_type_id": "173148d1-c431-40d7-b6d1-cbd1754d390d",
+            "start_date": "2026-03-02T00:24:40.933443",
+            "last_sim_date": "2026-03-20T00:24:40.933443",
+            "conditions": [
+                {
+                    "day": 1,
+                    "temperature": 25.0,
+                    "rain": 0.0,
+                    "sun_hours": 8.0,
+                    "estimated_biomass": 3.4
+                },
+                {
+                    "day": 2,
+                    "temperature": 23.0,
+                    "rain": 0.0,
+                    "sun_hours": 9.0,
+                    "estimated_biomass": 3.4
+                },
+                {
+                    "day": 3,
+                    "temperature": 17.0,
+                    "rain": 4.5,
+                    "sun_hours": 10.0,
+                    "estimated_biomass": 5.931877057532148
+                },
+                {
+                    "day": 4,
+                    "temperature": 19.0,
+                    "rain": 2.0,
+                    "sun_hours": 9.0,
+                    "estimated_biomass": 6.526765894909607
+                },
+                {
+                    "day": 5,
+                    "temperature": 27.0,
+                    "rain": 0.0,
+                    "sun_hours": 10.0,
+                    "estimated_biomass": 6.526765894909607
+                },
+                {
+                    "day": 6,
+                    "temperature": 23.0,
+                    "rain": 0.0,
+                    "sun_hours": 9.0,
+                    "estimated_biomass": 6.526765894909607
+                },
+                {
+                    "day": 7,
+                    "temperature": 26.0,
+                    "rain": 0.0,
+                    "sun_hours": 11.0,
+                    "estimated_biomass": 6.526765894909607
+                },
+                {
+                    "day": 8,
+                    "temperature": 20.0,
+                    "rain": 0.0,
+                    "sun_hours": 9.0,
+                    "estimated_biomass": 6.526765894909607
+                },
+                {
+                    "day": 9,
+                    "temperature": 22.0,
+                    "rain": 4.0,
+                    "sun_hours": 10.0,
+                    "estimated_biomass": 8.562167134735873
+                },
+                {
+                    "day": 10,
+                    "temperature": 17.0,
+                    "rain": 0.0,
+                    "sun_hours": 9.0,
+                    "estimated_biomass": 8.562167134735873
+                },
+                {
+                    "day": 11,
+                    "temperature": 20.0,
+                    "rain": 5.4,
+                    "sun_hours": 8.0,
+                    "estimated_biomass": 11.200126305287847
+                },
+                {
+                    "day": 12,
+                    "temperature": 19.0,
+                    "rain": 0.0,
+                    "sun_hours": 11.0,
+                    "estimated_biomass": 11.200126305287847
+                },
+                {
+                    "day": 13,
+                    "temperature": 16.0,
+                    "rain": 0.0,
+                    "sun_hours": 10.0,
+                    "estimated_biomass": 11.200126305287847
+                },
+                {
+                    "day": 14,
+                    "temperature": 31.0,
+                    "rain": 0.0,
+                    "sun_hours": 12.0,
+                    "estimated_biomass": 11.200126305287847
+                },
+                {
+                    "day": 15,
+                    "temperature": 27.0,
+                    "rain": 0.4,
+                    "sun_hours": 9.0,
+                    "estimated_biomass": 11.248313356239276
+                },
+                {
+                    "day": 16,
+                    "temperature": 23.0,
+                    "rain": 0.2,
+                    "sun_hours": 9.0,
+                    "estimated_biomass": 11.270432520759053
+                },
+                {
+                    "day": 17,
+                    "temperature": 17.0,
+                    "rain": 0.2,
+                    "sun_hours": 8.0,
+                    "estimated_biomass": 11.295978981964753
+                },
+                {
+                    "day": 18,
+                    "temperature": 29.0,
+                    "rain": 0.1,
+                    "sun_hours": 12.0,
+                    "estimated_biomass": 11.302741544868864
+                }
+            ],
+            "active": true
+        }
+    ],
+    "crop_types": [
+        {
+            "id": "173148d1-c431-40d7-b6d1-cbd1754d390d",
+            "name": "Cultivo de bananas",
+            "optimal_temp": 17.0,
+            "needed_water": 5.38,
+            "needed_light": 10.0,
+            "days_cycle": 170,
+            "initial_biomass": 3.4,
+            "potential_performance": 170.0
+        }
+    ]
+}

@@ -18,30 +18,7 @@ El propósito fundamental de CultivaLab es proporcionar una herramienta accesibl
 
 ## Estructura del Proyecto
 
-El proyecto está organizado siguiendo una arquitectura limpia con separación de responsabilidades. En el directorio src/cultiva_lab se encuentran los módulos principales: cli.py que contiene la interfaz de usuario, models.py donde se definen las dataclasses del dominio, storage.py que maneja la persistencia en archivos JSON, services.py que implementa toda la lógica de negocio, y exceptions.py que define la jerarquía de excepciones personalizadas. El directorio tests alberga las pruebas unitarias que garantizan el correcto funcionamiento del sistema. Los datos persistentes se almacenan en data/database.json, mientras que la configuración del proyecto y sus dependencias se especifican en pyproject.toml. Adicionalmente, el directorio .github/workflows contiene la configuración para integración continua mediante GitHub Actions. Vea pues, la estructura del proyecto:
-
-cultivalab/
-├── src/
-│   └── cultiva_lab/
-│       ├── cli.py                 # Interfaz de usuario
-│       ├── models.py               # Dataclasses del dominio
-│       ├── storage.py               # Persistencia JSON
-│       ├── services.py               # Lógica de negocio
-│       ├── __init__.py               # Inicializador
-│       └── exceptions.py             # Excepciones personalizadas
-├── tests/                           # Pruebas unitarias
-│    ├── __init__.py                     # Inicializador de tests
-│    ├── test_services.py               # Tests a Servicios
-│    └── test_storage.py                 # Tests al Storage
-├── data/                             # Base de datos local
-├── assets/                             # Elementos gráficos para la CLI 
-│    ├── CultivaLab.png
-│    └── Logo.png 
-├── .github/workflows/                 # CI/CD con GitHub Actions
-│    └── tests.yml
-├── pyproject.toml                     # Configuración del proyecto
-├── gitignore                     
-└── README.md
+El proyecto está organizado siguiendo una arquitectura limpia con separación de responsabilidades. En el directorio src/cultiva_lab se encuentran los módulos principales: cli.py que contiene la interfaz de usuario, models.py donde se definen las dataclasses del dominio, storage.py que maneja la persistencia en archivos JSON, services.py que implementa toda la lógica de negocio, y exceptions.py que define la jerarquía de excepciones personalizadas. El directorio tests alberga las pruebas unitarias que garantizan el correcto funcionamiento del sistema. Los datos persistentes se almacenan en data/database.json, mientras que la configuración del proyecto y sus dependencias se especifican en pyproject.toml. Adicionalmente, el directorio .github/workflows contiene la configuración para integración continua mediante GitHub Actions.
 
 ---
 
