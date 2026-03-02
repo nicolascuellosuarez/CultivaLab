@@ -6,7 +6,6 @@ from src.cultiva_lab.exceptions import (
     CropNotFoundError,
     CropTypeNotFoundError,
     AuthorizationError,
-    UnauthorizedAccessError,
     AdminAlreadyExistsError,
     InvalidInputError,
     ResourceOwnershipError,
@@ -122,6 +121,12 @@ class CropService:
         rain: float,
         sun_hours: float,
     ) -> Crop:
+        if not isinstance(temperature, (int, float)):
+            raise InvalidInputError("La temperatura debe ser numérica.")
+        if not isinstance(rain, (int, float)):
+            raise InvalidInputError("La lluvia debe ser numérica.")
+        if not isinstance(sun_hours, (int, float)):
+            raise InvalidInputError("Las horas de sol deben ser numéricas.")
         if (temperature >= 56.7) or temperature < -10:
             raise InvalidInputError("La temperatura ingresada no es real.")
         if rain < 0:
@@ -500,7 +505,9 @@ class UserService:
             raise UserNotFoundError(requesting_user_id)
         if not user:
             raise UserNotFoundError(user_id)
-        if (requesting_user_id != user.id) and requesting_user.role.value != UserRole.ADMIN.value:
+        if (
+            requesting_user_id != user.id
+        ) and requesting_user.role.value != UserRole.ADMIN.value:
             raise ResourceOwnershipError("No puedes acceder a esta información.")
 
         return user
@@ -522,7 +529,9 @@ class UserService:
             raise UserNotFoundError(requesting_user_id)
         if not user:
             raise UserNotFoundError(username)
-        if (requesting_user_id != user.id) and requesting_user.role.value != UserRole.ADMIN.value:
+        if (
+            requesting_user_id != user.id
+        ) and requesting_user.role.value != UserRole.ADMIN.value:
             raise ResourceOwnershipError("No puedes acceder a esta información.")
 
         return user
@@ -629,7 +638,9 @@ class UserService:
             raise UserNotFoundError(user_id)
         if not requesting_user:
             raise UserNotFoundError(requesting_user_id)
-        if (user_id != requesting_user_id) and (requesting_user.role.value != UserRole.ADMIN.value):
+        if (user_id != requesting_user_id) and (
+            requesting_user.role.value != UserRole.ADMIN.value
+        ):
             raise ResourceOwnershipError("No puedes acceder a esta información.")
         self.storage.delete_user(user)
 
@@ -650,7 +661,9 @@ class UserService:
             raise UserNotFoundError(user_id)
         if not requesting_user:
             raise UserNotFoundError(requesting_user_id)
-        if (user_id != requesting_user_id) and (requesting_user.role.value != UserRole.ADMIN.value):
+        if (user_id != requesting_user_id) and (
+            requesting_user.role.value != UserRole.ADMIN.value
+        ):
             raise ResourceOwnershipError("No puedes acceder a esta información.")
 
         return self.storage.get_crops_by_user(user_id)
@@ -684,6 +697,18 @@ class CropTypeService:
         potential_performance: float,
     ) -> CropType:
         # Initial validations, values can not be 0 or lesser.
+        if not isinstance(optimal_temp, (int, float)):
+            raise InvalidInputError("La temperatura debe ser numérica.")
+        if not isinstance(needed_water, (int, float)):
+            raise InvalidInputError("La lluvia debe ser numérica.")
+        if not isinstance(needed_light, (int, float)):
+            raise InvalidInputError("Las horas de sol deben ser numéricas.")
+        if not isinstance(days_cycle, int):
+            raise InvalidInputError("Los días de ciclo deben ser numéricos y enteros.")
+        if not isinstance(initial_biomass, (int, float)):
+            raise InvalidInputError("La biomasa inicial debe ser numérica.")
+        if not isinstance(initial_biomass, (int, float)):
+            raise InvalidInputError("El potencial de desempeño debe ser numérico.")
         if (not admin_id) or (not admin_id.strip()):
             raise InvalidInputError("El ID no puede estar vacío.")
         if (not name) or not (name.strip()):
@@ -850,7 +875,7 @@ class CropTypeService:
 
         crops = self.storage.get_crops()
         for crop in crops:
-            if crop.crop_type_id == crop_type.id:
+            if crop.crop_type_id == crop_type.id and (crop.active):
                 raise BusinessRuleViolationError(
                     "Este tipo de cultivo está en uso; no puede ser eliminado."
                 )
@@ -881,22 +906,14 @@ class CropTypeService:
             related_crops = [
                 crop for crop in crops if crop.crop_type_id == crop_type.id
             ]
-            active_crops = [c for c in related_crops if c.is_active]
+            active_crops = [c for c in related_crops if c.active]
             active_count = len(active_crops)
-
-            if related_crops:
-                avg_performance = sum(c.performance for c in related_crops) / len(
-                    related_crops
-                )
-            else:
-                avg_performance = 0.0
 
             result.append(
                 {
                     "crop_type_id": crop_type.id,
                     "name": crop_type.name,
                     "active_crops": active_count,
-                    "average_performance": avg_performance,
                 }
             )
 

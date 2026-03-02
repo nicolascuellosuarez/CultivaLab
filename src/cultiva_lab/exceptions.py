@@ -57,7 +57,7 @@ class DuplicateDataError(UserError):
     """
 
     def __init__(self, message: str):
-        super.__init__(message)
+        super().__init__(message)
 
 
 class CropError(CultivaLabError):
