@@ -1,6 +1,6 @@
-from .models import User, Crop, CropType, DailyCondition, UserRole
+from src.cultiva_lab.models import User, Crop, CropType, DailyCondition, UserRole
 from .storage import Database
-from .exceptions import (
+from src.cultiva_lab.exceptions import (
     UserNotFoundError,
     UserAlreadyExistsError,
     CropNotFoundError,
@@ -170,6 +170,8 @@ class CropService:
 
         crop.conditions.append(new_condition)
         crop.last_sim_date += timedelta(days=1)
+        if len(crop.conditions) >= crop_type.days_cycle:
+            crop.active = False
 
         self.storage.save_crop(crop)
         return crop
@@ -236,7 +238,10 @@ class CropService:
             raise UserNotFoundError(user_id)
         if not requesting_user:
             raise UserNotFoundError(requesting_user_id)
-        if requesting_user_id != user_id and requesting_user.role != UserRole.ADMIN:
+        if (
+            requesting_user_id != user_id
+            and requesting_user.role.value != UserRole.ADMIN.value
+        ):
             raise ResourceOwnershipError("No puedes acceder a estos cultivos.")
         return crops
 
@@ -308,7 +313,7 @@ class CropService:
             raise UserNotFoundError(crop.user_id)
         if (
             requesting_user_id != crop.user_id
-            and requesting_user.role != UserRole.ADMIN
+            and requesting_user.role.value != UserRole.ADMIN.value
         ):
             raise ResourceOwnershipError("No puedes acceder a estos cultivos.")
 
