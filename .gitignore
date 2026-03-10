@@ -41,7 +41,7 @@
 *.hex
 
 # Project Data
-data/
+data/database.json
 
 # Debug files
 *.dSYM/
