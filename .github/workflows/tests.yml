@@ -5,7 +5,12 @@ jobs:
   quality:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
+
+      - name: Set up python
+        uses: actions/setup-python@v4
+        with:
+          python-version-file: "pyproject.toml"
 
       - name: Install uv
         uses: astral-sh/setup-uv@v5
@@ -15,11 +20,6 @@ jobs:
       - name: Install project dependencies
         run: uv sync
 
-      - name: Set up python
-        uses: actions/setup-python@v4
-        with:
-          python-version-file: "pyproject.toml"
-
       - name: Run Ruff (linter)
         run: uv run ruff check .
 
@@ -28,3 +28,6 @@ jobs:
       
       - name: Run tests
         run: uv run pytest -v
+
+      - name: Check code quality with radon
+        run: uv run radon cc src -a

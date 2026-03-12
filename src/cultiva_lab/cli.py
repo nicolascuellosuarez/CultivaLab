@@ -203,6 +203,7 @@ def menu_user():
             f"Menú de Usuario: {current_user.username}",
             choices=[
                 "Mis cultivos",
+                "Crear nuevo cultivo",
                 "Buscar cultivos",
                 "Ver detalles de un cultivo",
                 "Simular día en un cultivo",
