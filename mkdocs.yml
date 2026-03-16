@@ -2,19 +2,22 @@
 site_name: CultivaLab Documentation
 theme:
   name: material
+  logo: assets/CultivaLabLogo3.png
   palette:
-    - scheme: default
-      primary: indigo
-      accent: indigo
-      toggle:
-        icon: material/brightness-7
-        name: Switch to dark mode
     - scheme: slate
-      primary: indigo
-      accent: indigo
-      toggle:
-        icon: material/brightness-4
-        name: Switch to light mode
+      primary: black
+      accent: green
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - content.code.copy
+    - content.code.annotate
+    - content.tabs.link
+    - navigation.instant
+
+extra_css:
+  - stylesheets/extra.css
 
 plugins:
   - search
@@ -22,11 +25,23 @@ plugins:
       handlers:
         python:
           paths: ["src"]
+          options:
+            show_source: true
+            show_root_heading: true
+            show_category_heading: true
+  - mermaid2
 
 nav:
-  - Inicio: index.md
+  - Home: index.md
+  - Getting Star
 
 markdown_extensions:
   - admonition
+  - pymdownx.highlight
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
   - pymdownx.details
-  - pymdownx.superfences
+  - pymdownx.tabbed
+  - tables
