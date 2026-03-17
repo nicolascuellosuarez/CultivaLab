@@ -19,9 +19,9 @@ jobs:
         uses: astral-sh/setup-uv@v5
         with:
           enable-cache: true
-
+    
       - name: Install docs dependencies
-        run: uv pip install mkdocs-material mkdocstrings[python]
+        run: uv pip install --system mkdocs-material mkdocstrings[python]
 
       - name: Deploy documentation
         run: uv run mkdocs gh-deploy --force
