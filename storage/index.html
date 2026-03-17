@@ -1,0 +1,1839 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../services-overview/">
+      
+      
+        <link rel="next" href="../exceptions/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.5">
+    
+    
+      
+        <title>Capa de Persistencia - CultivaLab Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="black" data-md-color-accent="green">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#capa-de-persistencia-storage" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="CultivaLab Documentation" class="md-header__button md-logo" aria-label="CultivaLab Documentation" data-md-component="logo">
+      
+  <img src="../assets/CultivaLabLogo3.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            CultivaLab Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Capa de Persistencia
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="black" data-md-color-accent="green"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Origen
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../getting-started/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Introduzcámonos
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../architecture/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Arquitectura del Sistema
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../models-overview/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Modelos de Datos
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../services-overview/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Capa de Servicios
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Capa de Persistencia
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../exceptions/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Excepciones
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../tests/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Pruebas
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="CultivaLab Documentation" class="md-nav__button md-logo" aria-label="CultivaLab Documentation" data-md-component="logo">
+      
+  <img src="../assets/CultivaLabLogo3.png" alt="logo">
+
+    </a>
+    CultivaLab Documentation
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Origen
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Introduzcámonos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Arquitectura del Sistema
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../models-overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Modelos de Datos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../services-overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Capa de Servicios
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Capa de Persistencia
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Capa de Persistencia
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#vision-general-de-la-persistencia" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Visión General de la Persistencia
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#el-protocolo-database" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        El Protocolo Database
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="El Protocolo Database">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#metodos-del-protocolo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Métodos del Protocolo
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Métodos del Protocolo">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#operaciones-generales" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Operaciones Generales
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#operaciones-con-usuarios" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Operaciones con Usuarios
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#operaciones-con-cultivos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Operaciones con Cultivos
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#operaciones-con-tipos-de-cultivo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Operaciones con Tipos de Cultivo
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#jsonstorage-implementacion-concreta" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        JSONStorage: Implementación Concreta
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="JSONStorage: Implementación Concreta">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#estructura-del-archivo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Estructura del Archivo
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#metodos-fundamentales" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Métodos Fundamentales
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Métodos Fundamentales">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#read" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        read()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#savedata" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        save(data)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#patron-de-reconstruccion-de-objetos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Patrón de Reconstrucción de Objetos
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Patrón de Reconstrucción de Objetos">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#reconstruccion-de-usuarios" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reconstrucción de Usuarios
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reconstruccion-de-cultivos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reconstrucción de Cultivos
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reconstruccion-de-tipos-de-cultivo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reconstrucción de Tipos de Cultivo
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#patron-de-guardado-upsert" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Patrón de Guardado (Upsert)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ventajas-del-diseno" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ventajas del Diseño
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Ventajas del Diseño">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-abstraccion-y-flexibilidad" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Abstracción y Flexibilidad
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-persistencia-sencilla" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Persistencia Sencilla
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-consistencia-de-datos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Consistencia de Datos
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-facilidad-de-testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Facilidad de Testing
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ejemplo-de-uso-en-servicios" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ejemplo de Uso en Servicios
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#limitaciones-y-consideraciones" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Limitaciones y Consideraciones
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Conclusión
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../exceptions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Excepciones
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tests/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pruebas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#vision-general-de-la-persistencia" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Visión General de la Persistencia
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#el-protocolo-database" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        El Protocolo Database
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="El Protocolo Database">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#metodos-del-protocolo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Métodos del Protocolo
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Métodos del Protocolo">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#operaciones-generales" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Operaciones Generales
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#operaciones-con-usuarios" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Operaciones con Usuarios
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#operaciones-con-cultivos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Operaciones con Cultivos
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#operaciones-con-tipos-de-cultivo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Operaciones con Tipos de Cultivo
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#jsonstorage-implementacion-concreta" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        JSONStorage: Implementación Concreta
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="JSONStorage: Implementación Concreta">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#estructura-del-archivo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Estructura del Archivo
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#metodos-fundamentales" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Métodos Fundamentales
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Métodos Fundamentales">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#read" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        read()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#savedata" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        save(data)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#patron-de-reconstruccion-de-objetos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Patrón de Reconstrucción de Objetos
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Patrón de Reconstrucción de Objetos">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#reconstruccion-de-usuarios" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reconstrucción de Usuarios
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reconstruccion-de-cultivos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reconstrucción de Cultivos
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reconstruccion-de-tipos-de-cultivo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reconstrucción de Tipos de Cultivo
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#patron-de-guardado-upsert" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Patrón de Guardado (Upsert)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ventajas-del-diseno" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ventajas del Diseño
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Ventajas del Diseño">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-abstraccion-y-flexibilidad" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Abstracción y Flexibilidad
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-persistencia-sencilla" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Persistencia Sencilla
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-consistencia-de-datos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Consistencia de Datos
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-facilidad-de-testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Facilidad de Testing
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ejemplo-de-uso-en-servicios" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ejemplo de Uso en Servicios
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#limitaciones-y-consideraciones" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Limitaciones y Consideraciones
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Conclusión
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="capa-de-persistencia-storage"><strong>Capa de Persistencia (Storage)</strong></h1>
+<p align="center">
+  <img src="../assets/CultivaLab.png" alt="CultivaLab Logo" width="650"/>
+</p>
+
+<div align="center">
+  <img src="https://img.shields.io/badge/Python-3.10+-blue" alt="Python">
+  <img src="https://img.shields.io/badge/Tests-73%20passing-brightgreen" alt="Tests">
+  <img src="https://img.shields.io/badge/Coverage-92%25-green" alt="Coverage">
+</div>
+
+<hr />
+<h2 id="vision-general-de-la-persistencia"><strong>Visión General de la Persistencia</strong></h2>
+<p>La capa de persistencia en CultivaLab sigue el <span style="color: #6dbc19;"><strong>patrón Repository</strong></span> y está diseñada aplicando el <span style="color: #6dbc19;"><strong>Principio de Inversión de Dependencias (DIP)</strong></span>. Esto significa que las capas superiores (servicios) dependen de una abstracción, no de una implementación concreta, lo que permite cambiar el mecanismo de almacenamiento sin modificar la lógica de negocio.</p>
+<pre class="mermaid"><code>classDiagram
+    class Database {
+        &lt;&lt;interface&gt;&gt;
+        +read() dict
+        +save(data) None
+        +get_users() list[User]
+        +get_user_by_id(user_id) User or None
+        +get_user_by_username(username) User or None
+        +save_user(user) None
+        +delete_user(user_id) None
+        +get_crops() list[Crop]
+        +get_crop_by_id(crop_id) Crop or None
+        +get_crops_by_user(user_id) list[Crop]
+        +get_crops_by_type(crop_type_id) list[Crop]
+        +get_active_crops() list[Crop]
+        +save_crop(crop) None
+        +delete_crop(crop_id) None
+        +get_crop_types() list[CropType]
+        +get_crop_type_by_id(crop_type_id) CropType or None
+        +get_crop_type_by_name(name) CropType or None
+        +save_crop_type(crop_type) None
+        +delete_crop_type(crop_type_id) None
+        +clear_all_data() None
+    }
+
+    class JSONStorage {
+        -filepath: Path
+        +read() dict
+        +save(data) None
+        +get_users() list[User]
+        +get_user_by_id(user_id) User or None
+        +get_user_by_username(username) User or None
+        +save_user(user) None
+        +delete_user(user_id) None
+        +get_crops() list[Crop]
+        +get_crop_by_id(crop_id) Crop or None
+        +get_crops_by_user(user_id) list[Crop]
+        +get_crops_by_type(crop_type_id) list[Crop]
+        +get_active_crops() list[Crop]
+        +save_crop(crop) None
+        +delete_crop(crop_id) None
+        +get_crop_types() list[CropType]
+        +get_crop_type_by_id(crop_type_id) CropType or None
+        +get_crop_type_by_name(name) CropType or None
+        +save_crop_type(crop_type) None
+        +delete_crop_type(crop_type_id) None
+        +clear_all_data() None
+    }
+
+    class UserService
+    class CropService
+    class CropTypeService
+
+    Database &lt;|.. JSONStorage : implements
+    UserService --&gt; Database : depends
+    CropService --&gt; Database : depends
+    CropTypeService --&gt; Database : depends</code></pre>
+<hr />
+<h2 id="el-protocolo-database"><strong>El Protocolo Database</strong></h2>
+<p>El protocolo <span style="color: #6dbc19;"><code>Database</code></span> define el contrato que cualquier implementación de almacenamiento debe cumplir. Esto permite que en el futuro se puedan crear nuevas implementaciones (por ejemplo, con <span style="color: #6dbc19;"><strong>SQLite</strong></span>, <span style="color: #6dbc19;"><strong>PostgreSQL</strong></span> o <span style="color: #6dbc19;"><strong>Supabase</strong></span>) sin necesidad de modificar los servicios.</p>
+<h3 id="metodos-del-protocolo"><strong>Métodos del Protocolo</strong></h3>
+<h4 id="operaciones-generales"><strong>Operaciones Generales</strong></h4>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Descripción</th>
+<th>Parámetros</th>
+<th>Retorno</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>read()</code></td>
+<td>Lee el archivo completo y retorna su contenido como diccionario</td>
+<td>-</td>
+<td><code>dict[str, list]</code></td>
+</tr>
+<tr>
+<td><code>save(data)</code></td>
+<td>Guarda el diccionario completo en el almacenamiento</td>
+<td><code>data: dict[str, list]</code></td>
+<td><code>None</code></td>
+</tr>
+<tr>
+<td><code>clear_all_data()</code></td>
+<td>Elimina todos los datos (útil para testing)</td>
+<td>-</td>
+<td><code>None</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="operaciones-con-usuarios"><strong>Operaciones con Usuarios</strong></h4>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Descripción</th>
+<th>Parámetros</th>
+<th>Retorno</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>get_users()</code></td>
+<td>Retorna todos los usuarios</td>
+<td>-</td>
+<td><code>list[User]</code></td>
+</tr>
+<tr>
+<td><code>get_user_by_id(user_id)</code></td>
+<td>Busca un usuario por su ID</td>
+<td><code>user_id: str</code></td>
+<td><code>User \| None</code></td>
+</tr>
+<tr>
+<td><code>get_user_by_username(username)</code></td>
+<td>Busca un usuario por su nombre</td>
+<td><code>username: str</code></td>
+<td><code>User \| None</code></td>
+</tr>
+<tr>
+<td><code>save_user(user)</code></td>
+<td>Guarda un usuario (crea o actualiza)</td>
+<td><code>user: User</code></td>
+<td><code>None</code></td>
+</tr>
+<tr>
+<td><code>delete_user(user_id)</code></td>
+<td>Elimina un usuario por su ID</td>
+<td><code>user_id: str</code></td>
+<td><code>None</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="operaciones-con-cultivos"><strong>Operaciones con Cultivos</strong></h4>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Descripción</th>
+<th>Parámetros</th>
+<th>Retorno</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>get_crops()</code></td>
+<td>Retorna todos los cultivos</td>
+<td>-</td>
+<td><code>list[Crop]</code></td>
+</tr>
+<tr>
+<td><code>get_crop_by_id(crop_id)</code></td>
+<td>Busca un cultivo por su ID</td>
+<td><code>crop_id: str</code></td>
+<td><code>Crop \| None</code></td>
+</tr>
+<tr>
+<td><code>get_crops_by_user(user_id)</code></td>
+<td>Retorna cultivos de un usuario específico</td>
+<td><code>user_id: str</code></td>
+<td><code>list[Crop]</code></td>
+</tr>
+<tr>
+<td><code>get_crops_by_type(crop_type_id)</code></td>
+<td>Retorna cultivos de un tipo específico</td>
+<td><code>crop_type_id: str</code></td>
+<td><code>list[Crop]</code></td>
+</tr>
+<tr>
+<td><code>get_active_crops()</code></td>
+<td>Retorna solo cultivos activos</td>
+<td>-</td>
+<td><code>list[Crop]</code></td>
+</tr>
+<tr>
+<td><code>save_crop(crop)</code></td>
+<td>Guarda un cultivo (crea o actualiza)</td>
+<td><code>crop: Crop</code></td>
+<td><code>None</code></td>
+</tr>
+<tr>
+<td><code>delete_crop(crop_id)</code></td>
+<td>Elimina un cultivo por su ID</td>
+<td><code>crop_id: str</code></td>
+<td><code>None</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="operaciones-con-tipos-de-cultivo"><strong>Operaciones con Tipos de Cultivo</strong></h4>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Descripción</th>
+<th>Parámetros</th>
+<th>Retorno</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>get_crop_types()</code></td>
+<td>Retorna todos los tipos de cultivo</td>
+<td>-</td>
+<td><code>list[CropType]</code></td>
+</tr>
+<tr>
+<td><code>get_crop_type_by_id(crop_type_id)</code></td>
+<td>Busca un tipo por su ID</td>
+<td><code>crop_type_id: str</code></td>
+<td><code>CropType \| None</code></td>
+</tr>
+<tr>
+<td><code>get_crop_type_by_name(name)</code></td>
+<td>Busca un tipo por su nombre</td>
+<td><code>name: str</code></td>
+<td><code>CropType \| None</code></td>
+</tr>
+<tr>
+<td><code>save_crop_type(crop_type)</code></td>
+<td>Guarda un tipo de cultivo (crea o actualiza)</td>
+<td><code>crop_type: CropType</code></td>
+<td><code>None</code></td>
+</tr>
+<tr>
+<td><code>delete_crop_type(crop_type_id)</code></td>
+<td>Elimina un tipo por su ID</td>
+<td><code>crop_type_id: str</code></td>
+<td><code>None</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="jsonstorage-implementacion-concreta"><strong>JSONStorage: Implementación Concreta</strong></h2>
+<p>La implementación actual utiliza un archivo <span style="color: #6dbc19;"><strong>JSON</strong></span> como almacenamiento persistente. La clase <code>JSONStorage</code> implementa el protocolo <code>Database</code> y maneja toda la lógica de serialización, deserialización y reconstrucción de objetos.</p>
+<h3 id="estructura-del-archivo"><strong>Estructura del Archivo</strong></h3>
+<p>El archivo <span style="color: #6dbc19;"><code>data/database.json</code></span> tiene la siguiente estructura:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;users&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;uuid&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;username&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ejemplo&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;password_hash&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;$2b$12$...&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;role&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;user&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;crop_ids&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;crop-123&quot;</span><span class="p">]</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">],</span>
+<span class="w">  </span><span class="nt">&quot;crops&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;crop-123&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Mi cultivo&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;user_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;uuid&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;crop_type_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;type-456&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;start_date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2024-03-01T00:00:00&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;last_sim_date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2024-03-15T00:00:00&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;conditions&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">          </span><span class="nt">&quot;day&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">&quot;temperature&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">25.0</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">&quot;rain&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">5.0</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">&quot;sun_hours&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">8.0</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">&quot;estimated_biomass&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">12.5</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">      </span><span class="p">],</span>
+<span class="w">      </span><span class="nt">&quot;active&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">],</span>
+<span class="w">  </span><span class="nt">&quot;crop_types&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;type-456&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Maíz&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;optimal_temp&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">25.0</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;needed_water&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">5.0</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;needed_light&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">8.0</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;days_cycle&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">120</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;initial_biomass&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">10.0</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;potential_performance&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1000.0</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="metodos-fundamentales"><strong>Métodos Fundamentales</strong></h3>
+<h4 id="read"><strong><code>read()</code></strong></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">]:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;users&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;crops&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;crop_types&quot;</span><span class="p">:</span> <span class="p">[]}</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">db</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;users&quot;</span><span class="p">:</span> <span class="n">db</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;users&quot;</span><span class="p">,</span> <span class="p">[]),</span>
+        <span class="s2">&quot;crops&quot;</span><span class="p">:</span> <span class="n">db</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;crops&quot;</span><span class="p">,</span> <span class="p">[]),</span>
+        <span class="s2">&quot;crop_types&quot;</span><span class="p">:</span> <span class="n">db</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;crop_types&quot;</span><span class="p">,</span> <span class="p">[]),</span>
+    <span class="p">}</span>
+</code></pre></div>
+<p><strong>Comportamiento:</strong>
+- Si el archivo no existe, retorna una estructura vacía.</p>
+<ul>
+<li>
+<p>Si existe, lee el contenido y retorna un diccionario con las tres secciones.</p>
+</li>
+<li>
+<p>Maneja archivos corruptos lanzando excepciones que deben ser capturadas por el llamante.</p>
+</li>
+</ul>
+<h4 id="savedata"><strong><code>save(data)</code></strong></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</code></pre></div>
+<ul>
+<li>
+<p>Guarda el diccionario completo con formato legible (indentación de 4 espacios).</p>
+</li>
+<li>
+<p>Sobrescribe completamente el archivo anterior.</p>
+</li>
+</ul>
+<hr />
+<h2 id="patron-de-reconstruccion-de-objetos"><strong>Patrón de Reconstrucción de Objetos</strong></h2>
+<p>Uno de los aspectos más importantes de <code>JSONStorage</code> es cómo reconstruye los objetos de dominio a partir de los diccionarios almacenados.</p>
+<h3 id="reconstruccion-de-usuarios"><strong>Reconstrucción de Usuarios</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_users</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">User</span><span class="p">]:</span>
+    <span class="n">users</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;users&quot;</span><span class="p">,</span> <span class="p">[])</span>
+    <span class="n">users_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">user</span> <span class="ow">in</span> <span class="n">users</span><span class="p">:</span>
+        <span class="n">user_data</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">user_data</span><span class="p">[</span><span class="s2">&quot;role&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">UserRole</span><span class="p">(</span><span class="n">user</span><span class="p">[</span><span class="s2">&quot;role&quot;</span><span class="p">])</span>
+        <span class="n">users_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">User</span><span class="p">(</span><span class="o">**</span><span class="n">user_data</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">users_list</span>
+</code></pre></div>
+<ul>
+<li>
+<p>El campo <code>role</code> (string) se convierte al Enum <span style="color: #6dbc19;"><code>UserRole</code></span>.</p>
+</li>
+<li>
+<p>El resto de atributos se pasan directamente al constructor de <code>User</code>.</p>
+</li>
+</ul>
+<h3 id="reconstruccion-de-cultivos"><strong>Reconstrucción de Cultivos</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_crops</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Crop</span><span class="p">]:</span>
+    <span class="n">crops</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;crops&quot;</span><span class="p">,</span> <span class="p">[])</span>
+    <span class="n">crops_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">crop</span> <span class="ow">in</span> <span class="n">crops</span><span class="p">:</span>
+        <span class="n">crop_data</span> <span class="o">=</span> <span class="n">crop</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="c1"># Reconstruir condiciones diarias</span>
+        <span class="n">conditions_raw</span> <span class="o">=</span> <span class="n">crop_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;conditions&quot;</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="n">conditions_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">cond</span> <span class="ow">in</span> <span class="n">conditions_raw</span><span class="p">:</span>
+            <span class="n">conditions_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">DailyCondition</span><span class="p">(</span><span class="o">**</span><span class="n">cond</span><span class="p">))</span>
+        <span class="n">crop_data</span><span class="p">[</span><span class="s2">&quot;conditions&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">conditions_list</span>
+
+        <span class="c1"># Reconstruir fechas</span>
+        <span class="n">crop_data</span><span class="p">[</span><span class="s2">&quot;start_date&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">fromisoformat</span><span class="p">(</span><span class="n">crop_data</span><span class="p">[</span><span class="s2">&quot;start_date&quot;</span><span class="p">])</span>
+        <span class="n">crop_data</span><span class="p">[</span><span class="s2">&quot;last_sim_date&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">fromisoformat</span><span class="p">(</span><span class="n">crop_data</span><span class="p">[</span><span class="s2">&quot;last_sim_date&quot;</span><span class="p">])</span>
+
+        <span class="n">crops_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Crop</span><span class="p">(</span><span class="o">**</span><span class="n">crop_data</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">crops_list</span>
+</code></pre></div>
+<ul>
+<li>
+<p>Las condiciones diarias se reconstruyen recursivamente.</p>
+</li>
+<li>
+<p>Las fechas en formato ISO string se convierten a objetos <span style="color: #6dbc19;"><code>datetime</code></span>.</p>
+</li>
+</ul>
+<h3 id="reconstruccion-de-tipos-de-cultivo"><strong>Reconstrucción de Tipos de Cultivo</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_crop_types</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">CropType</span><span class="p">]:</span>
+    <span class="n">crop_types</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;crop_types&quot;</span><span class="p">,</span> <span class="p">[])</span>
+    <span class="n">crop_types_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">crop_type</span> <span class="ow">in</span> <span class="n">crop_types</span><span class="p">:</span>
+        <span class="n">crop_type_data</span> <span class="o">=</span> <span class="n">crop_type</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">crop_types_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">CropType</span><span class="p">(</span><span class="o">**</span><span class="n">crop_type_data</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">crop_types_list</span>
+</code></pre></div>
+<ul>
+<li>Los tipos de cultivo no requieren transformaciones complejas, ya que todos sus campos son tipos básicos.</li>
+</ul>
+<hr />
+<h2 id="patron-de-guardado-upsert"><strong>Patrón de Guardado (Upsert)</strong></h2>
+<p>Todos los métodos <code>save_*</code> siguen el mismo patrón:</p>
+<ol>
+<li>Leer el archivo completo.</li>
+<li>Buscar si el elemento ya existe por su ID.</li>
+<li>Si existe, reemplazarlo en la lista.</li>
+<li>Si no existe, agregarlo al final.</li>
+<li>Guardar el archivo completo.</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">save_user</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">:</span> <span class="n">User</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">users</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;users&quot;</span><span class="p">]</span>
+    <span class="n">user_dict</span> <span class="o">=</span> <span class="n">asdict</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+    <span class="n">user_dict</span><span class="p">[</span><span class="s2">&quot;role&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">role</span><span class="o">.</span><span class="n">value</span>  <span class="c1"># Convertir Enum a string</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">u</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">users</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">user_dict</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">u</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]:</span>
+            <span class="n">users</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">user_dict</span>  <span class="c1"># Reemplazar (update)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+            <span class="k">return</span>
+
+    <span class="n">users</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">user_dict</span><span class="p">)</span>  <span class="c1"># Agregar (create)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</code></pre></div>
+<p>Este enfoque garantiza que las operaciones sean atómicas a nivel de archivo y mantengan la consistencia de los datos.</p>
+<hr />
+<h2 id="ventajas-del-diseno"><strong>Ventajas del Diseño</strong></h2>
+<h3 id="1-abstraccion-y-flexibilidad"><strong>1. Abstracción y Flexibilidad</strong></h3>
+<p>El uso del protocolo <code>Database</code> permite cambiar la implementación sin afectar las capas superiores. Por ejemplo, para migrar a <span style="color: #6dbc19;"><strong>SQLite</strong></span>:</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">SQLiteDatabase</span><span class="p">(</span><span class="n">Database</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_users</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">User</span><span class="p">]:</span>
+        <span class="n">cursor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT * FROM users&quot;</span><span class="p">)</span>
+        <span class="c1"># ... transformar filas a objetos User</span>
+</code></pre></div>
+<h3 id="2-persistencia-sencilla"><strong>2. Persistencia Sencilla</strong></h3>
+<p>JSON es legible por humanos, no requiere configuración de bases de datos y es ideal para aplicaciones de escritorio y prototipos.</p>
+<h3 id="3-consistencia-de-datos"><strong>3. Consistencia de Datos</strong></h3>
+<p>Al guardar todo el archivo en cada operación, se evitan problemas de concurrencia y se garantiza que el archivo siempre esté en un estado válido (aunque no es eficiente para grandes volúmenes de datos).</p>
+<h3 id="4-facilidad-de-testing"><strong>4. Facilidad de Testing</strong></h3>
+<p>Se puede crear una implementación en memoria del protocolo <code>Database</code> para pruebas unitarias, o usar el <code>JSONStorage</code> con archivos temporales.</p>
+<hr />
+<h2 id="ejemplo-de-uso-en-servicios"><strong>Ejemplo de Uso en Servicios</strong></h2>
+<div class="highlight"><pre><span></span><code><span class="c1"># Inicialización</span>
+<span class="n">storage</span> <span class="o">=</span> <span class="n">JSONStorage</span><span class="p">()</span>
+<span class="n">user_service</span> <span class="o">=</span> <span class="n">UserService</span><span class="p">(</span><span class="n">storage</span><span class="p">)</span>
+<span class="n">crop_service</span> <span class="o">=</span> <span class="n">CropService</span><span class="p">(</span><span class="n">storage</span><span class="p">)</span>
+
+<span class="c1"># Uso desde servicios</span>
+<span class="n">usuarios</span> <span class="o">=</span> <span class="n">user_service</span><span class="o">.</span><span class="n">get_all_users</span><span class="p">(</span><span class="n">admin_id</span><span class="p">)</span>
+<span class="n">cultivos</span> <span class="o">=</span> <span class="n">crop_service</span><span class="o">.</span><span class="n">get_crops_by_user</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="n">requesting_user_id</span><span class="p">)</span>
+</code></pre></div>
+<p>Los servicios nunca interactúan directamente con el archivo JSON; siempre lo hacen a través de la abstracción.</p>
+<hr />
+<h2 id="limitaciones-y-consideraciones"><strong>Limitaciones y Consideraciones</strong></h2>
+<ul>
+<li>
+<p><strong>Escalabilidad</strong>: JSON no es adecuado para aplicaciones con muchos usuarios o cultivos debido a que debe leer y escribir el archivo completo en cada operación.</p>
+</li>
+<li>
+<p><strong>Concurrencia</strong>: No maneja accesos simultáneos; en entornos multi-usuario podría haber conflictos.</p>
+</li>
+<li>
+<p><strong>Búsquedas</strong>: Las búsquedas por atributos no indexados requieren iterar sobre todas las entidades.</p>
+</li>
+</ul>
+<p>Estas limitaciones son aceptables para el ámbito académico y para aplicaciones de escritorio con pocos usuarios. Para una futura versión web, se recomienda migrar a una base de datos SQL.</p>
+<hr />
+<h2 id="conclusion"><strong>Conclusión</strong></h2>
+<p>La capa de persistencia de CultivaLab demuestra una aplicación sólida de principios de diseño como la inversión de dependencias y el patrón repositorio. La implementación actual con JSONStorage es suficiente para los requisitos del proyecto y proporciona una base clara para futuras mejoras, como la migración a bases de datos más robustas o servicios en la nube.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "content.code.copy", "content.code.annotate", "content.tabs.link", "navigation.instant"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,1498 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../models-overview/">
+      
+      
+        <link rel="next" href="../storage/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.5">
+    
+    
+      
+        <title>Capa de Servicios - CultivaLab Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="black" data-md-color-accent="green">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#capa-de-servicios" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="CultivaLab Documentation" class="md-header__button md-logo" aria-label="CultivaLab Documentation" data-md-component="logo">
+      
+  <img src="../assets/CultivaLabLogo3.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            CultivaLab Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Capa de Servicios
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="black" data-md-color-accent="green"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Origen
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../getting-started/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Introduzcámonos
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../architecture/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Arquitectura del Sistema
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../models-overview/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Modelos de Datos
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Capa de Servicios
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../storage/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Capa de Persistencia
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../exceptions/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Excepciones
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../tests/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Pruebas
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="CultivaLab Documentation" class="md-nav__button md-logo" aria-label="CultivaLab Documentation" data-md-component="logo">
+      
+  <img src="../assets/CultivaLabLogo3.png" alt="logo">
+
+    </a>
+    CultivaLab Documentation
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Origen
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Introduzcámonos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Arquitectura del Sistema
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../models-overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Modelos de Datos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Capa de Servicios
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Capa de Servicios
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#vision-general-de-los-servicios" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Visión General de los Servicios
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#principios-de-diseno-comunes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Principios de Diseño Comunes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#userservice" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        UserService
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="UserService">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#metodos-principales" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Métodos Principales
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#detalles-de-implementacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Detalles de Implementación
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cropservice" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CropService
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="CropService">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#metodos-principales_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Métodos Principales
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#modelo-de-crecimiento-metodos-privados" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Modelo de Crecimiento (Métodos Privados)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#flujo-de-simulacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Flujo de Simulación
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#croptypeservice" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CropTypeService
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="CropTypeService">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#metodos-principales_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Métodos Principales
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reglas-de-negocio-especificas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reglas de Negocio Específicas
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#interaccion-entre-servicios" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Interacción entre Servicios
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#validaciones-y-excepciones" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validaciones y Excepciones
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Conclusión
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../storage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Capa de Persistencia
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../exceptions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Excepciones
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tests/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pruebas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#vision-general-de-los-servicios" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Visión General de los Servicios
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#principios-de-diseno-comunes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Principios de Diseño Comunes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#userservice" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        UserService
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="UserService">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#metodos-principales" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Métodos Principales
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#detalles-de-implementacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Detalles de Implementación
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cropservice" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CropService
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="CropService">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#metodos-principales_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Métodos Principales
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#modelo-de-crecimiento-metodos-privados" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Modelo de Crecimiento (Métodos Privados)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#flujo-de-simulacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Flujo de Simulación
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#croptypeservice" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CropTypeService
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="CropTypeService">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#metodos-principales_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Métodos Principales
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reglas-de-negocio-especificas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reglas de Negocio Específicas
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#interaccion-entre-servicios" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Interacción entre Servicios
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#validaciones-y-excepciones" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validaciones y Excepciones
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Conclusión
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="capa-de-servicios"><strong>Capa de Servicios</strong></h1>
+<p align="center">
+  <img src="../assets/CultivaLab.png" alt="CultivaLab Logo" width="650"/>
+</p>
+
+<div align="center">
+  <img src="https://img.shields.io/badge/Python-3.10+-blue" alt="Python">
+  <img src="https://img.shields.io/badge/Tests-73%20passing-brightgreen" alt="Tests">
+  <img src="https://img.shields.io/badge/Coverage-92%25-green" alt="Coverage">
+</div>
+
+<hr />
+<h2 id="vision-general-de-los-servicios"><strong>Visión General de los Servicios</strong></h2>
+<p>La capa de servicios constituye el <span style="color: #6dbc19;"><strong>corazón de la lógica de negocio</strong></span> de CultivaLab. Aquí se implementan todas las reglas y validaciones que garantizan el correcto funcionamiento de la aplicación, actuando como intermediario entre la interfaz de usuario (CLI) y la capa de persistencia (storage).</p>
+<p>Los servicios están organizados en tres clases principales, cada una responsable de un área de dominio específica:</p>
+<ul>
+<li><strong><code>UserService</code></strong>: Gestiona todo lo relacionado con usuarios: registro, autenticación, actualización de perfiles y eliminación de cuentas.</li>
+<li><strong><code>CropService</code></strong>: Maneja la creación, simulación, consulta y eliminación de cultivos, así como el modelo matemático de crecimiento.</li>
+<li><strong><code>CropTypeService</code></strong>: Administra el catálogo de tipos de cultivo, exclusivo para administradores.</li>
+</ul>
+<pre class="mermaid"><code>classDiagram
+    class UserService {
+        +register_user()
+        +register_admin()
+        +login()
+        +get_user_by_id()
+        +get_user_by_username()
+        +get_all_users()
+        +update_password()
+        +update_username()
+        +delete_user()
+        +get_user_crops()
+    }
+
+    class CropService {
+        +simulate_day()
+        +create_crop()
+        +get_crop_by_id()
+        +get_crops_by_user()
+        +get_crop_history()
+        +update_crops()
+        +delete_crop()
+        +get_crop_statistics()
+        -_calculate_environment_factor()
+        -_calculate_phase_factor()
+        -_calculate_capacity_factor()
+        -_calculate_growth()
+    }
+
+    class CropTypeService {
+        +create_crop_type()
+        +get_crop_type_by_id()
+        +get_crop_type_by_name()
+        +get_crop_types()
+        +update_crop_type()
+        +delete_crop_type()
+        +get_crop_types_with_stats()
+    }
+
+    class Database {
+        &lt;&lt;interface&gt;&gt;
+    }
+
+    UserService --&gt; Database
+    CropService --&gt; Database
+    CropTypeService --&gt; Database
+    CropTypeService --&gt; UserService</code></pre>
+<hr />
+<h2 id="principios-de-diseno-comunes"><strong>Principios de Diseño Comunes</strong></h2>
+<p>Todos los servicios comparten las siguientes características:</p>
+<ul>
+<li><strong>Validación exhaustiva</strong>: Cada método público valida los parámetros de entrada y lanza excepciones personalizadas cuando se violan reglas de negocio.</li>
+<li><strong>Control de acceso</strong>: Se verifica que el usuario que realiza la operación tenga los permisos necesarios (por ejemplo, solo el propietario de un cultivo puede modificarlo).</li>
+<li><strong>Separación de responsabilidades</strong>: Los servicios no conocen los detalles de persistencia; dependen de la abstracción <code>Database</code> definida en <code>storage.py</code>.</li>
+<li><strong>Manejo de errores</strong>: Las excepciones se capturan en la capa superior (CLI) para mostrar mensajes amigables al usuario.</li>
+</ul>
+<hr />
+<h2 id="userservice"><strong>UserService</strong></h2>
+<p>Responsable de la gestión de usuarios, incluyendo autenticación y perfiles.</p>
+<h3 id="metodos-principales"><strong>Métodos Principales</strong></h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Descripción</th>
+<th>Parámetros</th>
+<th>Retorno</th>
+<th>Excepciones</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>register_user</code></td>
+<td>Registra un nuevo usuario con rol <code>USER</code></td>
+<td><code>username: str</code>, <code>password: str</code></td>
+<td><code>User</code></td>
+<td><code>InvalidInputError</code>, <code>UserAlreadyExistsError</code></td>
+</tr>
+<tr>
+<td><code>register_admin</code></td>
+<td>Registra el único administrador del sistema (requiere clave maestra)</td>
+<td><code>admin_key: str</code>, <code>username: str</code>, <code>password: str</code></td>
+<td><code>User</code></td>
+<td><code>InvalidInputError</code>, <code>AdminAlreadyExistsError</code>, <code>UserAlreadyExistsError</code></td>
+</tr>
+<tr>
+<td><code>login</code></td>
+<td>Autentica un usuario por nombre y contraseña</td>
+<td><code>username: str</code>, <code>password: str</code></td>
+<td><code>User</code></td>
+<td><code>InvalidInputError</code>, <code>UserNotFoundError</code>, <code>AuthorizationError</code></td>
+</tr>
+<tr>
+<td><code>get_user_by_id</code></td>
+<td>Obtiene un usuario por su ID (solo el propio usuario o admin)</td>
+<td><code>user_id: str</code>, <code>requesting_user_id: str</code></td>
+<td><code>User</code> o <code>None</code></td>
+<td><code>InvalidInputError</code>, <code>UserNotFoundError</code>, <code>ResourceOwnershipError</code></td>
+</tr>
+<tr>
+<td><code>get_user_by_username</code></td>
+<td>Obtiene un usuario por su nombre (solo propio o admin)</td>
+<td><code>username: str</code>, <code>requesting_user_id: str</code></td>
+<td><code>User</code></td>
+<td><code>InvalidInputError</code>, <code>UserNotFoundError</code>, <code>ResourceOwnershipError</code></td>
+</tr>
+<tr>
+<td><code>get_all_users</code></td>
+<td>Lista todos los usuarios (solo admin)</td>
+<td><code>requesting_user_id: str</code></td>
+<td><code>list[User]</code></td>
+<td><code>InvalidInputError</code>, <code>UserNotFoundError</code>, <code>ResourceOwnershipError</code></td>
+</tr>
+<tr>
+<td><code>update_password</code></td>
+<td>Cambia la contraseña de un usuario (solo propio)</td>
+<td><code>user_id: str</code>, <code>old_password: str</code>, <code>new_password: str</code></td>
+<td><code>None</code></td>
+<td><code>InvalidInputError</code>, <code>UserNotFoundError</code>, <code>AuthorizationError</code></td>
+</tr>
+<tr>
+<td><code>update_username</code></td>
+<td>Cambia el nombre de usuario (solo propio)</td>
+<td><code>user_id: str</code>, <code>new_username: str</code>, <code>requesting_user_id: str</code></td>
+<td><code>None</code></td>
+<td><code>InvalidInputError</code>, <code>UserNotFoundError</code>, <code>ResourceOwnershipError</code>, <code>UserAlreadyExistsError</code></td>
+</tr>
+<tr>
+<td><code>delete_user</code></td>
+<td>Elimina una cuenta de usuario (solo propio o admin)</td>
+<td><code>user_id: str</code>, <code>requesting_user_id: str</code></td>
+<td><code>None</code></td>
+<td><code>InvalidInputError</code>, <code>UserNotFoundError</code>, <code>ResourceOwnershipError</code></td>
+</tr>
+<tr>
+<td><code>get_user_crops</code></td>
+<td>Obtiene los cultivos de un usuario (solo propio o admin)</td>
+<td><code>user_id: str</code>, <code>requesting_user_id: str</code></td>
+<td><code>list[Crop]</code></td>
+<td><code>InvalidInputError</code>, <code>UserNotFoundError</code>, <code>ResourceOwnershipError</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="detalles-de-implementacion"><strong>Detalles de Implementación</strong></h3>
+<ul>
+<li>Las contraseñas se almacenan utilizando <span style="color: #6dbc19;"><strong>bcrypt</strong></span>, garantizando que nunca se guardan en texto plano.</li>
+<li>El administrador es único: el método <code>register_admin</code> verifica que no exista ya un usuario con rol <code>ADMIN</code> antes de crear uno nuevo.</li>
+<li>La clave maestra para registrar admin está hardcodeada como <span style="color: #6dbc19;"><code>MASTER_KEY = "admin12345"</code></span> (modificable en el código).</li>
+</ul>
+<hr />
+<h2 id="cropservice"><strong>CropService</strong></h2>
+<p>Gestiona la creación, simulación y consulta de cultivos. Contiene el modelo matemático de crecimiento.</p>
+<h3 id="metodos-principales_1"><strong>Métodos Principales</strong></h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Descripción</th>
+<th>Parámetros</th>
+<th>Retorno</th>
+<th>Excepciones</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>simulate_day</code></td>
+<td>Simula un día de crecimiento para un cultivo</td>
+<td><code>crop_id: str</code>, <code>user_id: str</code>, <code>temperature: float</code>, <code>rain: float</code>, <code>sun_hours: float</code></td>
+<td><code>Crop</code></td>
+<td><code>InvalidInputError</code>, <code>CropNotFoundError</code>, <code>CropTypeNotFoundError</code>, <code>ResourceOwnershipError</code></td>
+</tr>
+<tr>
+<td><code>create_crop</code></td>
+<td>Crea un nuevo cultivo para un usuario</td>
+<td><code>name: str</code>, <code>crop_type_id: str</code>, <code>user_id: str</code>, <code>start_date: datetime</code></td>
+<td><code>Crop</code></td>
+<td><code>UserNotFoundError</code>, <code>CropTypeNotFoundError</code>, <code>InvalidInputError</code></td>
+</tr>
+<tr>
+<td><code>get_crop_by_id</code></td>
+<td>Obtiene un cultivo por su ID (solo propio o admin)</td>
+<td><code>crop_id: str</code>, <code>requesting_user_id: str</code></td>
+<td><code>Crop</code></td>
+<td><code>UserNotFoundError</code>, <code>CropNotFoundError</code>, <code>ResourceOwnershipError</code></td>
+</tr>
+<tr>
+<td><code>get_crops_by_user</code></td>
+<td>Lista cultivos de un usuario (solo propio o admin)</td>
+<td><code>user_id: str</code>, <code>requesting_user_id: str</code></td>
+<td><code>list[Crop]</code></td>
+<td><code>UserNotFoundError</code>, <code>ResourceOwnershipError</code></td>
+</tr>
+<tr>
+<td><code>get_crop_history</code></td>
+<td>Retorna el historial de condiciones de un cultivo</td>
+<td><code>crop_id: str</code>, <code>requesting_user_id: str</code></td>
+<td><code>list[DailyCondition]</code></td>
+<td><code>UserNotFoundError</code>, <code>CropNotFoundError</code>, <code>ResourceOwnershipError</code></td>
+</tr>
+<tr>
+<td><code>update_crops</code></td>
+<td>Actualiza campos permitidos de un cultivo (nombre, activo)</td>
+<td><code>crop_id: str</code>, <code>requesting_user_id: str</code>, <code>**kwargs</code></td>
+<td><code>Crop</code></td>
+<td><code>UserNotFoundError</code>, <code>CropNotFoundError</code>, <code>ResourceOwnershipError</code>, <code>InvalidInputError</code></td>
+</tr>
+<tr>
+<td><code>delete_crop</code></td>
+<td>Elimina un cultivo (solo propio o admin)</td>
+<td><code>crop_id: str</code>, <code>requesting_user_id: str</code></td>
+<td><code>None</code></td>
+<td><code>UserNotFoundError</code>, <code>CropNotFoundError</code>, <code>ResourceOwnershipError</code></td>
+</tr>
+<tr>
+<td><code>get_crop_statistics</code></td>
+<td>Calcula estadísticas de un cultivo</td>
+<td><code>crop_id: str</code>, <code>requesting_user_id: str</code></td>
+<td><code>dict</code></td>
+<td><code>UserNotFoundError</code>, <code>CropNotFoundError</code>, <code>ResourceOwnershipError</code>, <code>CropTypeNotFoundError</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="modelo-de-crecimiento-metodos-privados"><strong>Modelo de Crecimiento (Métodos Privados)</strong></h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>_calculate_environment_factor</code></td>
+<td>Calcula un factor combinado a partir de temperatura, agua y luz, comparándolos con los valores óptimos del tipo de cultivo.</td>
+</tr>
+<tr>
+<td><code>_calculate_phase_factor</code></td>
+<td>Determina un factor basado en la etapa fenológica del cultivo (inicio, crecimiento, maduración).</td>
+</tr>
+<tr>
+<td><code>_calculate_capacity_factor</code></td>
+<td>Evalúa la capacidad remanente de crecimiento en función de la biomasa actual y el rendimiento potencial.</td>
+</tr>
+<tr>
+<td><code>_calculate_growth</code></td>
+<td>Combina los tres factores anteriores con una tasa base para obtener el incremento de biomasa del día.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="flujo-de-simulacion"><strong>Flujo de Simulación</strong></h3>
+<ol>
+<li>Validaciones de entrada (rangos de temperatura, lluvia, horas de sol).</li>
+<li>Verificación de que el cultivo existe, está activo y pertenece al usuario.</li>
+<li>Obtención del tipo de cultivo asociado.</li>
+<li>Cálculo de los factores ambientales, fenológicos y de capacidad.</li>
+<li>Cálculo del crecimiento y la nueva biomasa.</li>
+<li>Creación de una nueva <code>DailyCondition</code> y actualización del cultivo.</li>
+<li>Persistencia del cultivo actualizado.</li>
+</ol>
+<pre class="mermaid"><code>flowchart TD
+    A[Inicio] --&gt; B[Validar datos de entrada]
+    B --&gt; C{Obtener crop por ID}
+    C -- No existe --&gt; D[Lanzar CropNotFoundError]
+    C -- Existe --&gt; E[Obtener crop_type]
+    E -- No existe --&gt; F[Lanzar CropTypeNotFoundError]
+    E -- Existe --&gt; G{¿Cultivo activo?}
+    G -- No --&gt; H[Lanzar InvalidInputError]
+    G -- Sí --&gt; I{¿Usuario dueño?}
+    I -- No --&gt; J[Lanzar ResourceOwnershipError]
+    I -- Sí --&gt; K[Calcular factores]
+    K --&gt; L[Calcular crecimiento]
+    L --&gt; M[Crear DailyCondition]
+    M --&gt; N[Actualizar crop]
+    N --&gt; O[Guardar en storage]
+    O --&gt; P[Retornar crop actualizado]</code></pre>
+<hr />
+<h2 id="croptypeservice"><strong>CropTypeService</strong></h2>
+<p>Administra el catálogo de tipos de cultivo, accesible únicamente por administradores.</p>
+<h3 id="metodos-principales_2"><strong>Métodos Principales</strong></h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Descripción</th>
+<th>Parámetros</th>
+<th>Retorno</th>
+<th>Excepciones</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>create_crop_type</code></td>
+<td>Crea un nuevo tipo de cultivo</td>
+<td><code>admin_id: str</code>, <code>name: str</code>, <code>optimal_temp: float</code>, <code>needed_water: float</code>, <code>needed_light: float</code>, <code>days_cycle: int</code>, <code>initial_biomass: float</code>, <code>potential_performance: float</code></td>
+<td><code>CropType</code></td>
+<td><code>InvalidInputError</code>, <code>UserNotFoundError</code>, <code>ResourceOwnershipError</code>, <code>DuplicateDataError</code></td>
+</tr>
+<tr>
+<td><code>get_crop_type_by_id</code></td>
+<td>Obtiene un tipo por su ID</td>
+<td><code>crop_type_id: str</code></td>
+<td><code>CropType</code></td>
+<td><code>InvalidInputError</code>, <code>CropTypeNotFoundError</code></td>
+</tr>
+<tr>
+<td><code>get_crop_type_by_name</code></td>
+<td>Obtiene un tipo por su nombre</td>
+<td><code>crop_type_name: str</code></td>
+<td><code>CropType</code></td>
+<td><code>InvalidInputError</code>, <code>CropTypeNotFoundError</code></td>
+</tr>
+<tr>
+<td><code>get_crop_types</code></td>
+<td>Lista todos los tipos disponibles</td>
+<td>-</td>
+<td><code>list[CropType]</code></td>
+<td>-</td>
+</tr>
+<tr>
+<td><code>update_crop_type</code></td>
+<td>Actualiza atributos de un tipo (solo admin, sin cultivos activos)</td>
+<td><code>admin_id: str</code>, <code>crop_type_id: str</code>, <code>**kwargs</code></td>
+<td><code>CropType</code></td>
+<td><code>InvalidInputError</code>, <code>UserNotFoundError</code>, <code>ResourceOwnershipError</code>, <code>CropTypeNotFoundError</code>, <code>BusinessRuleViolationError</code></td>
+</tr>
+<tr>
+<td><code>delete_crop_type</code></td>
+<td>Elimina un tipo (solo si no tiene cultivos activos)</td>
+<td><code>admin_id: str</code>, <code>crop_type_to_eliminate_id: str</code></td>
+<td><code>None</code></td>
+<td><code>InvalidInputError</code>, <code>UserNotFoundError</code>, <code>ResourceOwnershipError</code>, <code>CropTypeNotFoundError</code>, <code>BusinessRuleViolationError</code></td>
+</tr>
+<tr>
+<td><code>get_crop_types_with_stats</code></td>
+<td>Retorna estadísticas de uso por tipo (solo admin)</td>
+<td><code>admin_id: str</code></td>
+<td><code>list[dict]</code></td>
+<td><code>InvalidInputError</code>, <code>UserNotFoundError</code>, <code>ResourceOwnershipError</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="reglas-de-negocio-especificas"><strong>Reglas de Negocio Específicas</strong></h3>
+<ul>
+<li>No se puede eliminar un tipo de cultivo si existen cultivos <span style="color: #6dbc19;"><strong>activos</strong></span> que lo utilicen (los cultivos inactivos o cosechados sí permiten la eliminación).</li>
+<li>No se puede modificar un tipo si hay cultivos activos asociados.</li>
+<li>El nombre del tipo debe ser único y se normaliza (capitalización).</li>
+<li>Todos los valores numéricos (excepto temperatura) deben ser positivos.</li>
+</ul>
+<hr />
+<h2 id="interaccion-entre-servicios"><strong>Interacción entre Servicios</strong></h2>
+<p>Los servicios no operan de forma aislada; existen dependencias claras:</p>
+<ul>
+<li><code>CropTypeService</code> requiere una instancia de <code>UserService</code> para verificar que quien realiza operaciones es realmente administrador (aunque también consulta el storage directamente).</li>
+<li><code>CropService</code> utiliza <code>UserService</code> implícitamente a través del storage para validar propiedades de usuarios.</li>
+<li>Todos los servicios dependen de la abstracción <code>Database</code>, que inyectamos en el constructor.</li>
+</ul>
+<p>Esta arquitectura permite un acoplamiento débil y facilita las pruebas unitarias mediante mocking.</p>
+<hr />
+<h2 id="validaciones-y-excepciones"><strong>Validaciones y Excepciones</strong></h2>
+<p>Cada método de servicio puede lanzar excepciones personalizadas que reflejan errores específicos del dominio. La jerarquía completa se describe en la sección de <a href="../exceptions/">excepciones</a>. Algunas de las más utilizadas son:</p>
+<ul>
+<li><strong><code>InvalidInputError</code></strong>: Datos de entrada incorrectos (valores fuera de rango, tipos erróneos).</li>
+<li><strong><code>ResourceOwnershipError</code></strong>: Intento de acceder o modificar un recurso que no pertenece al usuario.</li>
+<li><strong><code>BusinessRuleViolationError</code></strong>: Violación de una regla de negocio (ej. editar un tipo con cultivos activos).</li>
+<li><strong><code>CropNotFoundError</code></strong>, <strong><code>UserNotFoundError</code></strong>, <strong><code>CropTypeNotFoundError</code></strong>: Entidades no encontradas.</li>
+</ul>
+<hr />
+<h2 id="conclusion"><strong>Conclusión</strong></h2>
+<p>La capa de servicios de CultivaLab encapsula toda la complejidad de la lógica de negocio, ofreciendo una interfaz clara y coherente a la CLI. Su diseño modular y basado en principios SOLID garantiza que el sistema sea mantenible, testeable y extensible. La separación entre servicios, modelos y persistencia permite que futuras mejoras (como un nuevo modelo de crecimiento o una API web) se implementen con el mínimo impacto en el código existente.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "content.code.copy", "content.code.annotate", "content.tabs.link", "navigation.instant"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

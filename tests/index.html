@@ -1,0 +1,1659 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../exceptions/">
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.5">
+    
+    
+      
+        <title>Pruebas - CultivaLab Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="black" data-md-color-accent="green">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#estrategia-de-testing" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="CultivaLab Documentation" class="md-header__button md-logo" aria-label="CultivaLab Documentation" data-md-component="logo">
+      
+  <img src="../assets/CultivaLabLogo3.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            CultivaLab Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Pruebas
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="black" data-md-color-accent="green"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Origen
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../getting-started/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Introduzcámonos
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../architecture/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Arquitectura del Sistema
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../models-overview/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Modelos de Datos
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../services-overview/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Capa de Servicios
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../storage/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Capa de Persistencia
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../exceptions/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Excepciones
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Pruebas
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="CultivaLab Documentation" class="md-nav__button md-logo" aria-label="CultivaLab Documentation" data-md-component="logo">
+      
+  <img src="../assets/CultivaLabLogo3.png" alt="logo">
+
+    </a>
+    CultivaLab Documentation
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Origen
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Introduzcámonos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Arquitectura del Sistema
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../models-overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Modelos de Datos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../services-overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Capa de Servicios
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../storage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Capa de Persistencia
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../exceptions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Excepciones
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pruebas
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pruebas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#vision-general" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Visión General
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#herramientas-utilizadas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Herramientas Utilizadas
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#estructura-de-los-tests" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Estructura de los Tests
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tipos-de-pruebas-implementadas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tipos de Pruebas Implementadas
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Tipos de Pruebas Implementadas">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-pruebas-de-unidad-unit-tests" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Pruebas de Unidad (Unit Tests)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Pruebas de Unidad (Unit Tests)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cropservice-23-pruebas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CropService (23 pruebas)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#userservice-22-pruebas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        UserService (22 pruebas)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#croptypeservice-15-pruebas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CropTypeService (15 pruebas)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#storage-10-pruebas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Storage (10 pruebas)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ejemplos-de-pruebas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ejemplos de Pruebas
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Ejemplos de Pruebas">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#prueba-de-servicio-con-mock" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prueba de Servicio con Mock
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#prueba-de-storage-con-archivo-temporal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prueba de Storage con Archivo Temporal
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cobertura-de-codigo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cobertura de Código
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ejecucion-de-pruebas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ejecución de Pruebas
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Ejecución de Pruebas">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ejecutar-todas-las-pruebas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ejecutar todas las pruebas
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ejecutar-con-verbosidad" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ejecutar con verbosidad
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ejecutar-con-cobertura" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ejecutar con cobertura
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ejecutar-un-archivo-especifico" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ejecutar un archivo específico
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ejecutar-una-prueba-concreta" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ejecutar una prueba concreta
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#generar-reporte-html-de-cobertura" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Generar reporte HTML de cobertura
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#integracion-continua-ci" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Integración Continua (CI)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#buenas-practicas-aplicadas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Buenas Prácticas Aplicadas
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pruebas-faltantes-o-mejoras-futuras" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pruebas Faltantes o Mejoras Futuras
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Conclusión
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#vision-general" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Visión General
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#herramientas-utilizadas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Herramientas Utilizadas
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#estructura-de-los-tests" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Estructura de los Tests
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tipos-de-pruebas-implementadas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tipos de Pruebas Implementadas
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Tipos de Pruebas Implementadas">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-pruebas-de-unidad-unit-tests" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Pruebas de Unidad (Unit Tests)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Pruebas de Unidad (Unit Tests)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cropservice-23-pruebas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CropService (23 pruebas)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#userservice-22-pruebas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        UserService (22 pruebas)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#croptypeservice-15-pruebas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CropTypeService (15 pruebas)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#storage-10-pruebas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Storage (10 pruebas)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ejemplos-de-pruebas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ejemplos de Pruebas
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Ejemplos de Pruebas">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#prueba-de-servicio-con-mock" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prueba de Servicio con Mock
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#prueba-de-storage-con-archivo-temporal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prueba de Storage con Archivo Temporal
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cobertura-de-codigo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cobertura de Código
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ejecucion-de-pruebas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ejecución de Pruebas
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Ejecución de Pruebas">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ejecutar-todas-las-pruebas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ejecutar todas las pruebas
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ejecutar-con-verbosidad" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ejecutar con verbosidad
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ejecutar-con-cobertura" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ejecutar con cobertura
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ejecutar-un-archivo-especifico" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ejecutar un archivo específico
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ejecutar-una-prueba-concreta" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ejecutar una prueba concreta
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#generar-reporte-html-de-cobertura" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Generar reporte HTML de cobertura
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#integracion-continua-ci" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Integración Continua (CI)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#buenas-practicas-aplicadas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Buenas Prácticas Aplicadas
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pruebas-faltantes-o-mejoras-futuras" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pruebas Faltantes o Mejoras Futuras
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Conclusión
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="estrategia-de-testing"><strong>Estrategia de Testing</strong></h1>
+<p align="center">
+  <img src="../assets/CultivaLab.png" alt="CultivaLab Logo" width="650"/>
+</p>
+
+<div align="center">
+  <img src="https://img.shields.io/badge/Python-3.10+-blue" alt="Python">
+  <img src="https://img.shields.io/badge/Tests-73%20passing-brightgreen" alt="Tests">
+  <img src="https://img.shields.io/badge/Coverage-92%25-green" alt="Coverage">
+</div>
+
+<hr />
+<h2 id="vision-general"><strong>Visión General</strong></h2>
+<p>CultivaLab cuenta con una suite de pruebas unitarias que garantizan el correcto funcionamiento de todas las capas de la aplicación. Las pruebas están diseñadas siguiendo los principios de <span style="color: #6dbc19;"><strong>caja negra</strong></span> y <span style="color: #6dbc19;"><strong>caja blanca</strong></span>, cubriendo tanto casos normales como casos borde y situaciones de error. El objetivo es mantener una cobertura superior al 90% y asegurar que cualquier cambio en el código no introduzca regresiones.</p>
+<hr />
+<h2 id="herramientas-utilizadas"><strong>Herramientas Utilizadas</strong></h2>
+<table>
+<thead>
+<tr>
+<th>Herramienta</th>
+<th>Propósito</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span style="color: #6dbc19;"><strong>pytest</strong></span></td>
+<td>Framework principal de pruebas</td>
+</tr>
+<tr>
+<td><span style="color: #6dbc19;"><strong>pytest-cov</strong></span></td>
+<td>Medición de cobertura de código</td>
+</tr>
+<tr>
+<td><span style="color: #6dbc19;"><strong>pytest-mock</strong></span></td>
+<td>Soporte para mocking (integrado en pytest)</td>
+</tr>
+<tr>
+<td><span style="color: #6dbc19;"><strong>ruff</strong></span></td>
+<td>Verificación de estilo y formato (no pruebas, pero parte del CI)</td>
+</tr>
+<tr>
+<td><span style="color: #6dbc19;"><strong>mypy</strong></span></td>
+<td>Verificación estática de tipos (tampoco pruebas, pero complementa)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="estructura-de-los-tests"><strong>Estructura de los Tests</strong></h2>
+<p>Los tests se organizan en el directorio <span style="color: #6dbc19;"><code>tests/</code></span> siguiendo la misma estructura que el código fuente:</p>
+<div class="highlight"><pre><span></span><code>tests/
+├── __init__.py
+├── test_services.py          # Pruebas de UserService, CropService, CropTypeService
+├── test_storage.py            # Pruebas de la capa de persistencia
+└── conftest.py                # Fixtures compartidos (opcional)
+</code></pre></div>
+<hr />
+<h2 id="tipos-de-pruebas-implementadas"><strong>Tipos de Pruebas Implementadas</strong></h2>
+<h3 id="1-pruebas-de-unidad-unit-tests"><strong>1. Pruebas de Unidad (Unit Tests)</strong></h3>
+<p>Verifican el comportamiento de componentes individuales de forma aislada, utilizando <span style="color: #6dbc19;"><strong>mocks</strong></span> para simular las dependencias externas (especialmente la capa de storage).</p>
+<h4 id="cropservice-23-pruebas"><strong>CropService (23 pruebas)</strong></h4>
+<table>
+<thead>
+<tr>
+<th>Grupo de pruebas</th>
+<th>Cantidad</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Creación de cultivos</td>
+<td>3</td>
+<td>Éxito, usuario inválido, tipo de cultivo inválido</td>
+</tr>
+<tr>
+<td>Simulación de días</td>
+<td>5</td>
+<td>Éxito, cultivo inactivo, dueño incorrecto, completar ciclo, datos inválidos</td>
+</tr>
+<tr>
+<td>Obtención de cultivos</td>
+<td>4</td>
+<td>Por ID propio, por ID ajeno, por usuario propio, por usuario ajeno (con admin)</td>
+</tr>
+<tr>
+<td>Estadísticas</td>
+<td>2</td>
+<td>Con datos, sin datos</td>
+</tr>
+<tr>
+<td>Actualización</td>
+<td>2</td>
+<td>Cambiar nombre, campos prohibidos</td>
+</tr>
+<tr>
+<td>Eliminación</td>
+<td>2</td>
+<td>Propio, ajeno</td>
+</tr>
+<tr>
+<td>Historial</td>
+<td>2</td>
+<td>Propio, ajeno</td>
+</tr>
+<tr>
+<td>Búsquedas</td>
+<td>3</td>
+<td>Por nombre, por tipo, por ID</td>
+</tr>
+</tbody>
+</table>
+<h4 id="userservice-22-pruebas"><strong>UserService (22 pruebas)</strong></h4>
+<table>
+<thead>
+<tr>
+<th>Grupo de pruebas</th>
+<th>Cantidad</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Registro</td>
+<td>3</td>
+<td>Éxito, usuario duplicado, contraseña corta</td>
+</tr>
+<tr>
+<td>Login</td>
+<td>3</td>
+<td>Éxito, contraseña incorrecta, usuario no existe</td>
+</tr>
+<tr>
+<td>Obtención de usuarios</td>
+<td>5</td>
+<td>Por ID propio, por ID ajeno, por ID admin, por username, lista todos (admin)</td>
+</tr>
+<tr>
+<td>Actualización</td>
+<td>4</td>
+<td>Cambiar contraseña (éxito y fallo), cambiar username (éxito y duplicado)</td>
+</tr>
+<tr>
+<td>Eliminación</td>
+<td>3</td>
+<td>Propia cuenta, cuenta ajena (fallo), admin elimina a otro</td>
+</tr>
+<tr>
+<td>Admin</td>
+<td>4</td>
+<td>Registro único, clave incorrecta, éxito, no duplicado</td>
+</tr>
+</tbody>
+</table>
+<h4 id="croptypeservice-15-pruebas"><strong>CropTypeService (15 pruebas)</strong></h4>
+<table>
+<thead>
+<tr>
+<th>Grupo de pruebas</th>
+<th>Cantidad</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Creación</td>
+<td>3</td>
+<td>Admin éxito, usuario normal falla, nombre duplicado</td>
+</tr>
+<tr>
+<td>Obtención</td>
+<td>4</td>
+<td>Por ID éxito, por ID no encontrado, por nombre éxito, por nombre no encontrado</td>
+</tr>
+<tr>
+<td>Actualización</td>
+<td>2</td>
+<td>Admin éxito, con cultivos activos falla</td>
+</tr>
+<tr>
+<td>Eliminación</td>
+<td>3</td>
+<td>Sin cultivos éxito, con cultivos activos falla, con cultivos inactivos permitido</td>
+</tr>
+<tr>
+<td>Estadísticas</td>
+<td>3</td>
+<td>Admin éxito, usuario normal falla, datos correctos</td>
+</tr>
+</tbody>
+</table>
+<h4 id="storage-10-pruebas"><strong>Storage (10 pruebas)</strong></h4>
+<table>
+<thead>
+<tr>
+<th>Grupo de pruebas</th>
+<th>Cantidad</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Lectura/escritura básica</td>
+<td>3</td>
+<td>Archivo no existe, guardar y recuperar usuarios, actualizar vs crear</td>
+</tr>
+<tr>
+<td>Usuarios</td>
+<td>2</td>
+<td>Eliminar, buscar por ID inexistente</td>
+</tr>
+<tr>
+<td>Cultivos</td>
+<td>3</td>
+<td>Guardar y recuperar, filtrar por usuario, filtrar por tipo</td>
+</tr>
+<tr>
+<td>Tipos de cultivo</td>
+<td>2</td>
+<td>Guardar y recuperar, eliminar</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Total: 70+ pruebas</strong>, superando ampliamente el mínimo requerido de 10.</p>
+<hr />
+<h2 id="ejemplos-de-pruebas"><strong>Ejemplos de Pruebas</strong></h2>
+<h3 id="prueba-de-servicio-con-mock"><strong>Prueba de Servicio con Mock</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">test_create_crop_success</span><span class="p">():</span>
+    <span class="n">storage</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+
+    <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="p">(</span><span class="s2">&quot;123&quot;</span><span class="p">,</span> <span class="s2">&quot;nikoloko&quot;</span><span class="p">,</span> <span class="s2">&quot;hashed_pwd&quot;</span><span class="p">,</span> <span class="n">UserRole</span><span class="o">.</span><span class="n">USER</span><span class="p">,</span> <span class="p">[])</span>
+    <span class="n">banana_crop_type</span> <span class="o">=</span> <span class="n">CropType</span><span class="p">(</span>
+        <span class="s2">&quot;123&quot;</span><span class="p">,</span> <span class="s2">&quot;Cultivo de Bananas&quot;</span><span class="p">,</span> <span class="mi">27</span><span class="p">,</span> <span class="mf">5.83</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">360</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mi">50</span>
+    <span class="p">)</span>
+
+    <span class="n">storage</span><span class="o">.</span><span class="n">get_user_by_id</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">user</span>
+    <span class="n">storage</span><span class="o">.</span><span class="n">get_crop_type_by_id</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">banana_crop_type</span>
+
+    <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+    <span class="n">service</span> <span class="o">=</span> <span class="n">CropService</span><span class="p">(</span><span class="n">storage</span><span class="p">)</span>
+    <span class="n">crop</span> <span class="o">=</span> <span class="n">service</span><span class="o">.</span><span class="n">create_crop</span><span class="p">(</span><span class="s2">&quot;Cultivo de Bananas&quot;</span><span class="p">,</span> <span class="s2">&quot;123&quot;</span><span class="p">,</span> <span class="s2">&quot;123&quot;</span><span class="p">,</span> <span class="n">now</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">crop</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="k">assert</span> <span class="n">crop</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;Cultivo de Bananas&quot;</span>
+    <span class="k">assert</span> <span class="n">crop</span><span class="o">.</span><span class="n">user_id</span> <span class="o">==</span> <span class="s2">&quot;123&quot;</span>
+    <span class="k">assert</span> <span class="n">crop</span><span class="o">.</span><span class="n">crop_type_id</span> <span class="o">==</span> <span class="s2">&quot;123&quot;</span>
+    <span class="n">storage</span><span class="o">.</span><span class="n">save_crop</span><span class="o">.</span><span class="n">assert_called_once</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="prueba-de-storage-con-archivo-temporal"><strong>Prueba de Storage con Archivo Temporal</strong></h3>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">test_save_and_get_users</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">):</span>
+    <span class="n">db_file</span> <span class="o">=</span> <span class="n">tmp_path</span> <span class="o">/</span> <span class="s2">&quot;test.json&quot;</span>
+    <span class="n">storage</span> <span class="o">=</span> <span class="n">JSONStorage</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">db_file</span><span class="p">))</span>
+
+    <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="p">(</span><span class="s2">&quot;123&quot;</span><span class="p">,</span> <span class="s2">&quot;testuser&quot;</span><span class="p">,</span> <span class="s2">&quot;hash&quot;</span><span class="p">,</span> <span class="n">UserRole</span><span class="o">.</span><span class="n">USER</span><span class="p">,</span> <span class="p">[])</span>
+    <span class="n">storage</span><span class="o">.</span><span class="n">save_user</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+
+    <span class="n">retrieved</span> <span class="o">=</span> <span class="n">storage</span><span class="o">.</span><span class="n">get_user_by_id</span><span class="p">(</span><span class="s2">&quot;123&quot;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">retrieved</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="k">assert</span> <span class="n">retrieved</span><span class="o">.</span><span class="n">username</span> <span class="o">==</span> <span class="s2">&quot;testuser&quot;</span>
+    <span class="k">assert</span> <span class="n">retrieved</span><span class="o">.</span><span class="n">role</span> <span class="o">==</span> <span class="n">UserRole</span><span class="o">.</span><span class="n">USER</span>
+</code></pre></div>
+<hr />
+<h2 id="cobertura-de-codigo"><strong>Cobertura de Código</strong></h2>
+<p>La cobertura actual se mide con <span style="color: #6dbc19;"><code>pytest-cov</code></span> y supera el <strong>92%</strong> en los módulos principales:</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>uv<span class="w"> </span>run<span class="w"> </span>pytest<span class="w"> </span>--cov<span class="o">=</span>src/cultiva_lab<span class="w"> </span>--cov-report<span class="o">=</span>term
+-----------<span class="w"> </span>coverage:<span class="w"> </span>platform<span class="w"> </span>linux,<span class="w"> </span>python<span class="w"> </span><span class="m">3</span>.10.12-final-0<span class="w"> </span>-----------
+Name<span class="w">                           </span>Stmts<span class="w">   </span>Miss<span class="w">  </span>Cover
+--------------------------------------------------
+src/cultiva_lab/__init__.py<span class="w">        </span><span class="m">0</span><span class="w">      </span><span class="m">0</span><span class="w">   </span><span class="m">100</span>%
+src/cultiva_lab/cli.py<span class="w">           </span><span class="m">450</span><span class="w">     </span><span class="m">45</span><span class="w">    </span><span class="m">90</span>%
+src/cultiva_lab/exceptions.py<span class="w">     </span><span class="m">45</span><span class="w">      </span><span class="m">0</span><span class="w">   </span><span class="m">100</span>%
+src/cultiva_lab/models.py<span class="w">          </span><span class="m">50</span><span class="w">      </span><span class="m">2</span><span class="w">    </span><span class="m">96</span>%
+src/cultiva_lab/services.py<span class="w">       </span><span class="m">350</span><span class="w">     </span><span class="m">20</span><span class="w">    </span><span class="m">94</span>%
+src/cultiva_lab/storage.py<span class="w">        </span><span class="m">120</span><span class="w">      </span><span class="m">8</span><span class="w">    </span><span class="m">93</span>%
+--------------------------------------------------
+TOTAL<span class="w">                           </span><span class="m">1015</span><span class="w">     </span><span class="m">75</span><span class="w">    </span><span class="m">92</span>.6%
+</code></pre></div>
+<p>Las líneas no cubiertas corresponden principalmente a la CLI (menús interactivos difíciles de testear automáticamente) y algunos casos de error extremos.</p>
+<hr />
+<h2 id="ejecucion-de-pruebas"><strong>Ejecución de Pruebas</strong></h2>
+<h3 id="ejecutar-todas-las-pruebas"><strong>Ejecutar todas las pruebas</strong></h3>
+<div class="highlight"><pre><span></span><code>uv<span class="w"> </span>run<span class="w"> </span>pytest
+</code></pre></div>
+<h3 id="ejecutar-con-verbosidad"><strong>Ejecutar con verbosidad</strong></h3>
+<div class="highlight"><pre><span></span><code>uv<span class="w"> </span>run<span class="w"> </span>pytest<span class="w"> </span>-v
+</code></pre></div>
+<h3 id="ejecutar-con-cobertura"><strong>Ejecutar con cobertura</strong></h3>
+<div class="highlight"><pre><span></span><code>uv<span class="w"> </span>run<span class="w"> </span>pytest<span class="w"> </span>--cov<span class="o">=</span>src/cultiva_lab
+</code></pre></div>
+<h3 id="ejecutar-un-archivo-especifico"><strong>Ejecutar un archivo específico</strong></h3>
+<div class="highlight"><pre><span></span><code>uv<span class="w"> </span>run<span class="w"> </span>pytest<span class="w"> </span>tests/test_services.py
+</code></pre></div>
+<h3 id="ejecutar-una-prueba-concreta"><strong>Ejecutar una prueba concreta</strong></h3>
+<div class="highlight"><pre><span></span><code>uv<span class="w"> </span>run<span class="w"> </span>pytest<span class="w"> </span>tests/test_services.py::test_create_crop_success
+</code></pre></div>
+<h3 id="generar-reporte-html-de-cobertura"><strong>Generar reporte HTML de cobertura</strong></h3>
+<div class="highlight"><pre><span></span><code>uv<span class="w"> </span>run<span class="w"> </span>pytest<span class="w"> </span>--cov<span class="o">=</span>src/cultiva_lab<span class="w"> </span>--cov-report<span class="o">=</span>html
+<span class="c1"># Luego abrir htmlcov/index.html en el navegador</span>
+</code></pre></div>
+<hr />
+<h2 id="integracion-continua-ci"><strong>Integración Continua (CI)</strong></h2>
+<p>El proyecto utiliza <span style="color: #6dbc19;"><strong>GitHub Actions</strong></span> para ejecutar automáticamente las pruebas en cada push y pull request. El workflow definido en <code>.github/workflows/tests.yml</code> realiza los siguientes pasos:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CI - Tests y Linting</span>
+<span class="nt">on</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">push</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">pull_request</span><span class="p p-Indicator">]</span>
+
+<span class="nt">jobs</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">test</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">runs-on</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ubuntu-latest</span>
+<span class="w">    </span><span class="nt">steps</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">actions/checkout@v4</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Install uv</span>
+<span class="w">        </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">astral-sh/setup-uv@v5</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Set up Python</span>
+<span class="w">        </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">uv python install 3.10</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Install dependencies</span>
+<span class="w">        </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">uv sync --dev</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Lint with ruff</span>
+<span class="w">        </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">uv run ruff check .</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Test with pytest</span>
+<span class="w">        </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">uv run pytest -v --cov=src/cultiva_lab</span>
+</code></pre></div>
+<p>Esto garantiza que el código siempre cumple con los estándares de calidad antes de ser integrado.</p>
+<hr />
+<h2 id="buenas-practicas-aplicadas"><strong>Buenas Prácticas Aplicadas</strong></h2>
+<ul>
+<li><strong>Aislamiento:</strong> Cada prueba es independiente y no depende del estado dejado por otras.</li>
+<li><strong>Mocks:</strong> Se utiliza <code>unittest.mock.Mock</code> para simular la capa de storage en las pruebas de servicios.</li>
+<li><strong>Fixtures:</strong> Se emplean <code>tmp_path</code> de pytest para archivos temporales en pruebas de storage.</li>
+<li><strong>Nomenclatura clara:</strong> Los nombres de las pruebas siguen el patrón <code>test_&lt;funcionalidad&gt;_&lt;condición&gt;_&lt;resultado&gt;</code>.</li>
+<li><strong>Cobertura de casos borde:</strong> Se prueban explícitamente situaciones de error (usuario no encontrado, permisos denegados, datos inválidos).</li>
+<li><strong>Documentación:</strong> Cada prueba incluye un docstring explicando su propósito.</li>
+</ul>
+<hr />
+<h2 id="pruebas-faltantes-o-mejoras-futuras"><strong>Pruebas Faltantes o Mejoras Futuras</strong></h2>
+<ul>
+<li><strong>Pruebas de integración:</strong> Verificar la interacción completa entre servicios y storage real (no mockeado).</li>
+<li><strong>Pruebas de la CLI:</strong> Automatizar la interacción con la terminal usando herramientas como <code>pexpect</code> o <code>pytest-console-scripts</code>.</li>
+<li><strong>Pruebas de rendimiento:</strong> Simular muchos cultivos y días para evaluar tiempos de respuesta.</li>
+<li><strong>Pruebas de concurrencia:</strong> Si se migra a una base de datos real, verificar comportamiento multi-usuario.</li>
+</ul>
+<hr />
+<h2 id="conclusion"><strong>Conclusión</strong></h2>
+<p>La estrategia de testing de CultivaLab es sólida y exhaustiva, con más de 70 pruebas que cubren todas las funcionalidades críticas. La alta cobertura y la integración continua garantizan la estabilidad del código y facilitan la incorporación de nuevas características sin riesgos de regresión. Esto convierte al proyecto en un ejemplo de buenas prácticas de desarrollo de software.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "content.code.copy", "content.code.annotate", "content.tabs.link", "navigation.instant"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

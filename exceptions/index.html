@@ -1,0 +1,1761 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../storage/">
+      
+      
+        <link rel="next" href="../tests/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.5">
+    
+    
+      
+        <title>Excepciones - CultivaLab Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="black" data-md-color-accent="green">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#jerarquia-de-excepciones" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="CultivaLab Documentation" class="md-header__button md-logo" aria-label="CultivaLab Documentation" data-md-component="logo">
+      
+  <img src="../assets/CultivaLabLogo3.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            CultivaLab Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Excepciones
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="black" data-md-color-accent="green"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Origen
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../getting-started/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Introduzcámonos
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../architecture/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Arquitectura del Sistema
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../models-overview/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Modelos de Datos
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../services-overview/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Capa de Servicios
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../storage/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Capa de Persistencia
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Excepciones
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../tests/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Pruebas
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="CultivaLab Documentation" class="md-nav__button md-logo" aria-label="CultivaLab Documentation" data-md-component="logo">
+      
+  <img src="../assets/CultivaLabLogo3.png" alt="logo">
+
+    </a>
+    CultivaLab Documentation
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Origen
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Introduzcámonos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Arquitectura del Sistema
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../models-overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Modelos de Datos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../services-overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Capa de Servicios
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../storage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Capa de Persistencia
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Excepciones
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Excepciones
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#vision-general" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Visión General
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#excepciones-base" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Excepciones Base
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Excepciones Base">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cultivalaberror" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CultivaLabError
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#excepciones-de-usuario-usererror" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Excepciones de Usuario (UserError)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Excepciones de Usuario (UserError)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#usernotfounderror" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        UserNotFoundError
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#useralreadyexistserror" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        UserAlreadyExistsError
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#invalidcredentialserror" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        InvalidCredentialsError
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#duplicatedataerror" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DuplicateDataError
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#excepciones-de-cultivos-croperror" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Excepciones de Cultivos (CropError)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Excepciones de Cultivos (CropError)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cropnotfounderror" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CropNotFoundError
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#croptypenotfounderror" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CropTypeNotFoundError
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#excepciones-de-autorizacion-authorizationerror" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Excepciones de Autorización (AuthorizationError)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Excepciones de Autorización (AuthorizationError)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#unauthorizedaccesserror" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        UnauthorizedAccessError
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resourceownershiperror" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ResourceOwnershipError
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#adminalreadyexistserror" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AdminAlreadyExistsError
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#excepciones-de-validacion-de-entrada" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Excepciones de Validación de Entrada
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Excepciones de Validación de Entrada">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#invalidinputerror" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        InvalidInputError
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#excepciones-de-reglas-de-negocio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Excepciones de Reglas de Negocio
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Excepciones de Reglas de Negocio">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#businessruleviolationerror" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BusinessRuleViolationError
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tabla-resumen-de-excepciones" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tabla Resumen de Excepciones
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#buenas-practicas-en-el-manejo-de-excepciones" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Buenas Prácticas en el Manejo de Excepciones
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ejemplo-de-uso-en-la-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ejemplo de Uso en la CLI
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Conclusión
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tests/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pruebas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#vision-general" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Visión General
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#excepciones-base" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Excepciones Base
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Excepciones Base">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cultivalaberror" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CultivaLabError
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#excepciones-de-usuario-usererror" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Excepciones de Usuario (UserError)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Excepciones de Usuario (UserError)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#usernotfounderror" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        UserNotFoundError
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#useralreadyexistserror" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        UserAlreadyExistsError
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#invalidcredentialserror" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        InvalidCredentialsError
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#duplicatedataerror" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DuplicateDataError
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#excepciones-de-cultivos-croperror" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Excepciones de Cultivos (CropError)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Excepciones de Cultivos (CropError)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cropnotfounderror" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CropNotFoundError
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#croptypenotfounderror" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CropTypeNotFoundError
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#excepciones-de-autorizacion-authorizationerror" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Excepciones de Autorización (AuthorizationError)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Excepciones de Autorización (AuthorizationError)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#unauthorizedaccesserror" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        UnauthorizedAccessError
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resourceownershiperror" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ResourceOwnershipError
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#adminalreadyexistserror" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AdminAlreadyExistsError
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#excepciones-de-validacion-de-entrada" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Excepciones de Validación de Entrada
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Excepciones de Validación de Entrada">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#invalidinputerror" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        InvalidInputError
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#excepciones-de-reglas-de-negocio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Excepciones de Reglas de Negocio
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Excepciones de Reglas de Negocio">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#businessruleviolationerror" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BusinessRuleViolationError
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tabla-resumen-de-excepciones" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tabla Resumen de Excepciones
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#buenas-practicas-en-el-manejo-de-excepciones" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Buenas Prácticas en el Manejo de Excepciones
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ejemplo-de-uso-en-la-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ejemplo de Uso en la CLI
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Conclusión
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="jerarquia-de-excepciones"><strong>Jerarquía de Excepciones</strong></h1>
+<p align="center">
+  <img src="../assets/CultivaLab.png" alt="CultivaLab Logo" width="650"/>
+</p>
+
+<div align="center">
+  <img src="https://img.shields.io/badge/Python-3.10+-blue" alt="Python">
+  <img src="https://img.shields.io/badge/Tests-73%20passing-brightgreen" alt="Tests">
+  <img src="https://img.shields.io/badge/Coverage-92%25-green" alt="Coverage">
+</div>
+
+<hr />
+<h2 id="vision-general"><strong>Visión General</strong></h2>
+<p>El manejo de errores en CultivaLab se basa en una jerarquía de excepciones personalizadas que permite capturar y tratar de forma específica cada tipo de situación anómala. Esta jerarquía facilita la depuración, el testing y la presentación de mensajes claros al usuario final.</p>
+<p>Todas las excepciones heredan de la clase base <span style="color: #6dbc19;"><code>CultivaLabError</code></span>, que a su vez hereda de la <code>Exception</code> estándar de Python. De esta forma, podemos capturar cualquier error propio de la aplicación de manera uniforme o bien tratar casos concretos según la necesidad.</p>
+<pre class="mermaid"><code>classDiagram
+    class CultivaLabError {
+        +__init__(mensaje)
+    }
+
+    class UserError {
+        +__init__(mensaje)
+    }
+    class UserNotFoundError {
+        +user_id: str
+        +__init__(user_id)
+    }
+    class UserAlreadyExistsError {
+        +user_id: str
+        +__init__(user_id)
+    }
+    class InvalidCredentialsError {
+        +username: str
+        +password_hash: str
+        +__init__(username, password_hash)
+    }
+    class DuplicateDataError {
+        +__init__(mensaje)
+    }
+
+    class CropError {
+        +__init__(mensaje)
+    }
+    class CropNotFoundError {
+        +crop_id: str
+        +__init__(crop_id)
+    }
+    class CropTypeNotFoundError {
+        +crop_type_id: str
+        +__init__(crop_type_id)
+    }
+
+    class AuthorizationError {
+        +__init__(mensaje)
+    }
+    class UnauthorizedAccessError {
+        +username: str
+        +password_hash: str
+        +__init__(username, password_hash)
+    }
+    class ResourceOwnershipError {
+        +__init__(mensaje)
+    }
+    class AdminAlreadyExistsError {
+        +__init__()
+    }
+
+    class InvalidInputError {
+        +field: str or None
+        +__init__(mensaje, field)
+    }
+
+    class BusinessRuleViolationError {
+        +__init__(mensaje)
+    }
+
+    CultivaLabError &lt;|-- UserError
+    CultivaLabError &lt;|-- CropError
+    CultivaLabError &lt;|-- AuthorizationError
+    CultivaLabError &lt;|-- InvalidInputError
+    CultivaLabError &lt;|-- BusinessRuleViolationError
+
+    UserError &lt;|-- UserNotFoundError
+    UserError &lt;|-- UserAlreadyExistsError
+    UserError &lt;|-- InvalidCredentialsError
+    UserError &lt;|-- DuplicateDataError
+
+    CropError &lt;|-- CropNotFoundError
+    CropError &lt;|-- CropTypeNotFoundError
+
+    AuthorizationError &lt;|-- UnauthorizedAccessError
+    AuthorizationError &lt;|-- ResourceOwnershipError
+    AuthorizationError &lt;|-- AdminAlreadyExistsError</code></pre>
+<hr />
+<h2 id="excepciones-base"><strong>Excepciones Base</strong></h2>
+<h3 id="cultivalaberror"><strong><code>CultivaLabError</code></strong></h3>
+<p>Es la clase raíz de todas las excepciones del dominio. No se instancia directamente, sino que sirve como tipo genérico para capturar cualquier error conocido de la aplicación.</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">CultivaLabError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Clase base para todas las excepciones de CultivaLab.&quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+</code></pre></div>
+<hr />
+<h2 id="excepciones-de-usuario-usererror"><strong>Excepciones de Usuario (UserError)</strong></h2>
+<p>Agrupa todos los errores relacionados con la gestión de usuarios.</p>
+<h3 id="usernotfounderror"><strong><code>UserNotFoundError</code></strong></h3>
+<p>Se lanza cuando se intenta acceder a un usuario que no existe en el sistema (por ID o por nombre de usuario).</p>
+<table>
+<thead>
+<tr>
+<th>Atributo</th>
+<th>Tipo</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>user_id</code></td>
+<td><code>str</code></td>
+<td>Identificador del usuario que no se encontró</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Ejemplo de uso:</strong>
+<div class="highlight"><pre><span></span><code><span class="k">if</span> <span class="ow">not</span> <span class="n">user</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="n">UserNotFoundError</span><span class="p">(</span><span class="n">user_id</span><span class="p">)</span>
+</code></pre></div></p>
+<h3 id="useralreadyexistserror"><strong><code>UserAlreadyExistsError</code></strong></h3>
+<p>Se lanza al intentar registrar un usuario con un nombre de usuario que ya está ocupado.</p>
+<table>
+<thead>
+<tr>
+<th>Atributo</th>
+<th>Tipo</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>user_id</code></td>
+<td><code>str</code></td>
+<td>ID del usuario existente (para referencia)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Ejemplo de uso:</strong>
+<div class="highlight"><pre><span></span><code><span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">get_user_by_username</span><span class="p">(</span><span class="n">username</span><span class="p">):</span>
+    <span class="k">raise</span> <span class="n">UserAlreadyExistsError</span><span class="p">(</span><span class="n">username</span><span class="p">)</span>
+</code></pre></div></p>
+<h3 id="invalidcredentialserror"><strong><code>InvalidCredentialsError</code></strong></h3>
+<p>Se lanza cuando las credenciales proporcionadas en el inicio de sesión no son correctas (usuario no existe o contraseña incorrecta).</p>
+<table>
+<thead>
+<tr>
+<th>Atributo</th>
+<th>Tipo</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>username</code></td>
+<td><code>str</code></td>
+<td>Nombre de usuario intentado</td>
+</tr>
+<tr>
+<td><code>password_hash</code></td>
+<td><code>str</code></td>
+<td>Hash de la contraseña (para depuración, no se muestra)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Nota:</strong> Aunque se incluye el hash, este nunca se expone al usuario final.</p>
+<h3 id="duplicatedataerror"><strong><code>DuplicateDataError</code></strong></h3>
+<p>Se lanza cuando se intenta crear un elemento duplicado en situaciones donde no está permitido (por ejemplo, un tipo de cultivo con nombre ya existente).</p>
+<table>
+<thead>
+<tr>
+<th>Atributo</th>
+<th>Tipo</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>message</code></td>
+<td><code>str</code></td>
+<td>Mensaje descriptivo del error</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="excepciones-de-cultivos-croperror"><strong>Excepciones de Cultivos (CropError)</strong></h2>
+<p>Agrupa errores relacionados con la gestión de cultivos.</p>
+<h3 id="cropnotfounderror"><strong><code>CropNotFoundError</code></strong></h3>
+<p>Se lanza cuando se busca un cultivo por ID y este no existe.</p>
+<table>
+<thead>
+<tr>
+<th>Atributo</th>
+<th>Tipo</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>crop_id</code></td>
+<td><code>str</code></td>
+<td>Identificador del cultivo no encontrado</td>
+</tr>
+</tbody>
+</table>
+<h3 id="croptypenotfounderror"><strong><code>CropTypeNotFoundError</code></strong></h3>
+<p>Se lanza cuando se hace referencia a un tipo de cultivo que no existe (por ejemplo, al crear un cultivo o al buscar estadísticas).</p>
+<table>
+<thead>
+<tr>
+<th>Atributo</th>
+<th>Tipo</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>crop_type_id</code></td>
+<td><code>str</code></td>
+<td>Identificador del tipo de cultivo no encontrado</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="excepciones-de-autorizacion-authorizationerror"><strong>Excepciones de Autorización (AuthorizationError)</strong></h2>
+<p>Agrupa errores relacionados con permisos y acceso a recursos.</p>
+<h3 id="unauthorizedaccesserror"><strong><code>UnauthorizedAccessError</code></strong></h3>
+<p>Se lanza cuando un usuario intenta realizar una acción para la que no tiene privilegios (por ejemplo, un usuario normal intentando acceder a funciones de administrador).</p>
+<table>
+<thead>
+<tr>
+<th>Atributo</th>
+<th>Tipo</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>username</code></td>
+<td><code>str</code></td>
+<td>Nombre del usuario que intentó la acción</td>
+</tr>
+<tr>
+<td><code>password_hash</code></td>
+<td><code>str</code></td>
+<td>Hash de la contraseña (no se muestra)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="resourceownershiperror"><strong><code>ResourceOwnershipError</code></strong></h3>
+<p>Se lanza cuando un usuario intenta acceder o modificar un recurso (cultivo, perfil de otro usuario) que no le pertenece y no es administrador.</p>
+<table>
+<thead>
+<tr>
+<th>Atributo</th>
+<th>Tipo</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>message</code></td>
+<td><code>str</code></td>
+<td>Mensaje descriptivo del error</td>
+</tr>
+</tbody>
+</table>
+<h3 id="adminalreadyexistserror"><strong><code>AdminAlreadyExistsError</code></strong></h3>
+<p>Se lanza cuando se intenta registrar un segundo administrador, lo cual no está permitido por diseño (solo puede haber un administrador en el sistema).</p>
+<table>
+<thead>
+<tr>
+<th>Atributo</th>
+<th>Tipo</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>(ninguno)</td>
+<td></td>
+<td>El mensaje es fijo: "El usuario administrador ya existe."</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="excepciones-de-validacion-de-entrada"><strong>Excepciones de Validación de Entrada</strong></h2>
+<h3 id="invalidinputerror"><strong><code>InvalidInputError</code></strong></h3>
+<p>Se lanza cuando los datos proporcionados por el usuario no son válidos: valores fuera de rango, tipos incorrectos, campos vacíos, etc. Es una de las excepciones más utilizadas.</p>
+<table>
+<thead>
+<tr>
+<th>Atributo</th>
+<th>Tipo</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>message</code></td>
+<td><code>str</code></td>
+<td>Descripción del error</td>
+</tr>
+<tr>
+<td><code>field</code></td>
+<td><code>str</code> o <code>None</code></td>
+<td>Nombre del campo que causó el error (opcional)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Ejemplos de uso:</strong>
+<div class="highlight"><pre><span></span><code><span class="k">if</span> <span class="n">temperature</span> <span class="o">&gt;</span> <span class="mf">56.7</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="n">InvalidInputError</span><span class="p">(</span><span class="s2">&quot;La temperatura ingresada no es real.&quot;</span><span class="p">,</span> <span class="n">field</span><span class="o">=</span><span class="s2">&quot;temperature&quot;</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="ow">not</span> <span class="n">name</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">name</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+    <span class="k">raise</span> <span class="n">InvalidInputError</span><span class="p">(</span><span class="s2">&quot;El nombre no puede estar vacío.&quot;</span><span class="p">)</span>
+</code></pre></div></p>
+<hr />
+<h2 id="excepciones-de-reglas-de-negocio"><strong>Excepciones de Reglas de Negocio</strong></h2>
+<h3 id="businessruleviolationerror"><strong><code>BusinessRuleViolationError</code></strong></h3>
+<p>Se lanza cuando se intenta realizar una operación que viola una regla de negocio fundamental. Por ejemplo, editar un tipo de cultivo que tiene cultivos activos, o eliminar un tipo que está siendo utilizado.</p>
+<table>
+<thead>
+<tr>
+<th>Atributo</th>
+<th>Tipo</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>message</code></td>
+<td><code>str</code></td>
+<td>Descripción de la regla violada</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Ejemplo de uso:</strong>
+<div class="highlight"><pre><span></span><code><span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">crops_using_crop_type</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="n">BusinessRuleViolationError</span><span class="p">(</span>
+        <span class="s2">&quot;No se puede editar este tipo porque hay cultivos activos que lo utilizan.&quot;</span>
+    <span class="p">)</span>
+</code></pre></div></p>
+<hr />
+<h2 id="tabla-resumen-de-excepciones"><strong>Tabla Resumen de Excepciones</strong></h2>
+<table>
+<thead>
+<tr>
+<th>Excepción</th>
+<th>Categoría</th>
+<th>Cuándo se lanza</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>UserNotFoundError</code></td>
+<td>Usuario</td>
+<td>Usuario no encontrado por ID o username</td>
+</tr>
+<tr>
+<td><code>UserAlreadyExistsError</code></td>
+<td>Usuario</td>
+<td>Registro con username duplicado</td>
+</tr>
+<tr>
+<td><code>InvalidCredentialsError</code></td>
+<td>Usuario</td>
+<td>Credenciales incorrectas en login</td>
+</tr>
+<tr>
+<td><code>DuplicateDataError</code></td>
+<td>Usuario</td>
+<td>Dato duplicado (ej. nombre de tipo de cultivo)</td>
+</tr>
+<tr>
+<td><code>CropNotFoundError</code></td>
+<td>Cultivo</td>
+<td>Cultivo no encontrado por ID</td>
+</tr>
+<tr>
+<td><code>CropTypeNotFoundError</code></td>
+<td>Cultivo</td>
+<td>Tipo de cultivo no encontrado</td>
+</tr>
+<tr>
+<td><code>UnauthorizedAccessError</code></td>
+<td>Autorización</td>
+<td>Acción no permitida por rol</td>
+</tr>
+<tr>
+<td><code>ResourceOwnershipError</code></td>
+<td>Autorización</td>
+<td>Acceso a recurso ajeno sin ser admin</td>
+</tr>
+<tr>
+<td><code>AdminAlreadyExistsError</code></td>
+<td>Autorización</td>
+<td>Intento de crear segundo administrador</td>
+</tr>
+<tr>
+<td><code>InvalidInputError</code></td>
+<td>Validación</td>
+<td>Datos de entrada inválidos</td>
+</tr>
+<tr>
+<td><code>BusinessRuleViolationError</code></td>
+<td>Negocio</td>
+<td>Violación de regla de negocio</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="buenas-practicas-en-el-manejo-de-excepciones"><strong>Buenas Prácticas en el Manejo de Excepciones</strong></h2>
+<ul>
+<li><strong>Captura específica:</strong> Siempre que sea posible, captura la excepción más concreta en lugar de la genérica <code>CultivaLabError</code>.</li>
+<li><strong>Mensajes claros:</strong> Las excepciones incluyen mensajes en español pensados para ser mostrados al usuario final.</li>
+<li><strong>Información contextual:</strong> Las excepciones llevan atributos adicionales (IDs, nombres de campo) que ayudan en la depuración.</li>
+<li><strong>No exponer datos sensibles:</strong> Aunque algunas excepciones contienen el hash de contraseña, nunca se muestra en la interfaz de usuario.</li>
+</ul>
+<hr />
+<h2 id="ejemplo-de-uso-en-la-cli"><strong>Ejemplo de Uso en la CLI</strong></h2>
+<div class="highlight"><pre><span></span><code><span class="k">try</span><span class="p">:</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="n">user_service</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">)</span>
+<span class="k">except</span> <span class="n">UserNotFoundError</span><span class="p">:</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;El usuario no existe.&quot;</span><span class="p">)</span>
+<span class="k">except</span> <span class="n">InvalidCredentialsError</span><span class="p">:</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;Contraseña incorrecta.&quot;</span><span class="p">)</span>
+<span class="k">except</span> <span class="n">AuthorizationError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error de autorización: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p>Esta estructura permite un control fino del flujo de errores y una experiencia de usuario mucho más amigable.</p>
+<hr />
+<h2 id="conclusion"><strong>Conclusión</strong></h2>
+<p>La jerarquía de excepciones de CultivaLab es un pilar fundamental del diseño robusto de la aplicación. Permite separar claramente los distintos tipos de errores, facilita el testing y garantiza que el usuario reciba mensajes adecuados ante cualquier situación inesperada. Además, su diseño extensible permite añadir nuevas excepciones en el futuro sin afectar el código existente.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "content.code.copy", "content.code.annotate", "content.tabs.link", "navigation.instant"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

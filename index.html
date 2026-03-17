@@ -1,0 +1,973 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      
+        <link rel="next" href="getting-started/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.5">
+    
+    
+      
+        <title>CultivaLab Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="stylesheets/extra.css">
+    
+    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="black" data-md-color-accent="green">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#cultivalab" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="." title="CultivaLab Documentation" class="md-header__button md-logo" aria-label="CultivaLab Documentation" data-md-component="logo">
+      
+  <img src="assets/CultivaLabLogo3.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            CultivaLab Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Origen
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="black" data-md-color-accent="green"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Origen
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="getting-started/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Introduzcámonos
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="architecture/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Arquitectura del Sistema
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="models-overview/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Modelos de Datos
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="services-overview/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Capa de Servicios
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="storage/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Capa de Persistencia
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="exceptions/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Excepciones
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="tests/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Pruebas
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="." title="CultivaLab Documentation" class="md-nav__button md-logo" aria-label="CultivaLab Documentation" data-md-component="logo">
+      
+  <img src="assets/CultivaLabLogo3.png" alt="logo">
+
+    </a>
+    CultivaLab Documentation
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Origen
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="." class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Origen
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#que-es-cultivalab" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ¿Qué es CultivaLab?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#objetivo-de-la-app" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Objetivo de la App.
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#caracteristicas-principales" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Características Principales.
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tecnologias-utilizadas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tecnologías Utilizadas.
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#estructura-del-proyecto" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Estructura del proyecto.
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#estado-actual-del-proyecto" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Estado Actual del Proyecto.
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Introduzcámonos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Arquitectura del Sistema
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="models-overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Modelos de Datos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="services-overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Capa de Servicios
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="storage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Capa de Persistencia
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="exceptions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Excepciones
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="tests/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pruebas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#que-es-cultivalab" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ¿Qué es CultivaLab?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#objetivo-de-la-app" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Objetivo de la App.
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#caracteristicas-principales" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Características Principales.
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tecnologias-utilizadas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tecnologías Utilizadas.
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#estructura-del-proyecto" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Estructura del proyecto.
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#estado-actual-del-proyecto" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Estado Actual del Proyecto.
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="cultivalab"><strong>CultivaLab</strong></h1>
+<p align="center">
+  <img src="assets/CultivaLab.png" alt="CultivaLab Logo" width="650"/>
+</p>
+
+<div align="center">
+  <img src="https://img.shields.io/badge/Python-3.10+-blue" alt="Python">
+  <img src="https://img.shields.io/badge/Tests-73%20passing-brightgreen" alt="Tests">
+  <img src="https://img.shields.io/badge/Coverage-92%25-green" alt="Coverage">
+</div>
+
+<hr />
+<h2 id="que-es-cultivalab"><strong>¿Qué es CultivaLab?</strong></h2>
+<p><strong>CultivaLab</strong> es una aplicación de <span style="color: #6dbc19;"><em>línea de comandos</em></span> diseñada para agricultura de precisión. Permite a investigadores y agricultores modelar el crecimiento de cultivos bajo diferentes condiciones ambientales, simulando el desarrollo día a día y generando estadísticas sobre el rendimiento. </p>
+<p>El sistema implementa un <span style="color: #6dbc19;"><em>modelo mecanicista</em></span> basado en factores ambientales como <span style="color: #6dbc19;"><strong>temperatura</strong></span>, <span style="color: #6dbc19;"><strong>agua</strong></span> y <span style="color: #6dbc19;"><strong>luz</strong></span>, los cuales afectan directamente el desarrollo de la planta. La arquitectura del software es modular y escalable, permitiendo futuras expansiones como la integración con bases de datos externas o interfaces web.</p>
+<hr />
+<h2 id="objetivo-de-la-app"><strong>Objetivo de la App.</strong></h2>
+<p>El propósito fundamental de CultivaLab es proporcionar una herramienta accesible desde la terminal para simular el crecimiento de cultivos en base a condiciones climáticas ingresadas por el usuario. 
+Los usuarios pueden registrarse y autenticarse en el sistema, existiendo dos roles claramente diferenciados: <span style="color: #6dbc19;"><strong>usuario normal</strong></span> y <span style="color: #6dbc19;"><strong>administrador</strong></span>. </p>
+<p>Los usuarios normales pueden crear y gestionar sus propios cultivos, mientras que el administrador tiene la capacidad de <span style="color: #6dbc19;"><strong>gestionar los tipos de cultivo disponibles</strong></span> y visualizar información global de todos los usuarios. Adicionalmente, el sistema permite generar estadísticas detalladas sobre el crecimiento y rendimiento de cada cultivo, <strong>facilitando así la toma de decisiones agrícolas informadas</strong>.</p>
+<hr />
+<h2 id="caracteristicas-principales"><strong>Características Principales.</strong></h2>
+<p>El sistema implementa una arquitectura de usuarios con <strong>roles diferenciados</strong>, permitiendo separar claramente las responsabilidades entre <span style="color: #6dbc19;"><strong>usuarios estándar</strong></span> y <span style="color: #6dbc19;"><strong>administradores</strong></span>. Los usuarios normales pueden crear y gestionar sus propios cultivos dentro de la plataforma, mientras que el administrador mantiene el control del catálogo global de <span style="color: #6dbc19;"><em>tipos de cultivo</em></span>, garantizando la consistencia de la información base del sistema.</p>
+<div style="display:flex; gap:20px;">
+<div style="flex:1;">
+<h3>Menú de Administrador</h3>
+<script 
+src="https://asciinema.org/a/ttnizKgi8QRBjeod.js"
+id="asciicast-ttnizKgi8QRBjeod"
+data-rows="25"
+data-cols="90"
+data-font-size="16"
+async>
+</script>
+</div>
+<div style="flex:1;">
+<h3>Menú de Usuario</h3>
+<script 
+src="https://asciinema.org/a/z2rxAUVoVt88H1tN.js"
+id="asciicast-z2rxAUVoVt88H1tN"
+data-rows="25"
+data-cols="90"
+data-font-size="16"
+async>
+</script>
+</div>
+</div>
+
+<p>La plataforma también incorpora un <span style="color: #6dbc19;"><strong>sistema de simulación diaria</strong></span> que permite registrar condiciones ambientales relevantes para el crecimiento de los cultivos. Entre estas variables se encuentran:</p>
+<ul>
+<li><span style="color: #6dbc19;"><strong>Temperatura</strong></span></li>
+<li><span style="color: #6dbc19;"><strong>Precipitación (lluvia)</strong></span></li>
+<li><span style="color: #6dbc19;"><strong>Horas de exposición solar</strong></span></li>
+</ul>
+<p>A partir de estos datos, el sistema calcula automáticamente la nueva <span style="color: #6dbc19;"><em>biomasa</em></span> del cultivo utilizando un modelo matemático que tiene en cuenta múltiples factores agronómicos y ambientales, en específico, la <span style="color: #6dbc19;"><em>fase fenológica</em></span> actual del cultivo, su <span style="color: #6dbc19;"><em>capacidad máxima de carga</em></span>, la <span style="color: #6dbc19;"><em>desviación</em></span> frente a las <span style="color: #6dbc19;"><em>condiciones ambientales óptimas</em></span> y los factores de <span style="color: #6dbc19;"><em>estrés ambiental</em></span> que afectan el desarrollo.</p>
+<p>Como resultado de estas simulaciones, el sistema genera <span style="color: #6dbc19;"><strong>estadísticas detalladas</strong></span> que permiten evaluar el comportamiento del cultivo a lo largo del tiempo. Por ejemplo, los respectivos promedios de las <span style="color: #6dbc19;"><strong>condiciones ambientales</strong></span> registradas, el <span style="color: #6dbc19;"><strong>crecimiento total</strong></span> acumulado de una planta, el número de días con <span style="color: #6dbc19;"><strong>estrés térmico</strong></span> y la comparación del rendimiento real frente al potencial teórico esperado.</p>
+<p>Adicionalmente a aplicación ofrece capacidades completas de <span style="color: #6dbc19;"><strong>búsqueda y filtrado</strong></span>, permitiendo localizar cultivos por <span style="color: #704A1E;"><em>ID</em></span>, <span style="color: #704A1E;"><em>nombre</em></span> o <span style="color: #704A1E;"><em>tipo</em></span>. Los usuarios pueden gestionar su perfil cambiando su nombre de usuario o contraseña, e incluso eliminar su cuenta si así lo desean. El administrador dispone de herramientas adicionales como <em>la gestión completa</em> de tipos de cultivo, visualización de todos los usuarios con sus respectivos cultivos, y estadísticas globales del sistema.</p>
+<p>La persistencia de datos se realiza mediante archivos <span style="color: #6dbc19;"><strong>JSON</strong></span>, lo que garantiza que toda la información se mantenga entre sesiones sin necesidad de configurar bases de datos externas. El código está respaldado por más de <span style="color: #6dbc19;"><em>setenta pruebas unitarias</em></span> que garantizan su correcto funcionamiento, y se incluye un flujo de <span style="color: #6dbc19;"><em>integración continua</em></span> mediante GitHub Actions que ejecuta automáticamente las pruebas y verifica el estilo del código en cada cambio.</p>
+<hr />
+<h2 id="tecnologias-utilizadas"><strong>Tecnologías Utilizadas.</strong></h2>
+<p>El proyecto está desarrollado en Python utilizando <code>uv</code> como gestor de dependencias. La interfaz de línea de comandos se construyó con la librería <code>typer</code>, mientras que la presentación visual mejorada se logra mediante <code>rich</code> para tablas, paneles y colores. La navegación interactiva por menús se implementó con la librería <code>questionary</code>, permitiendo selección mediante teclas de dirección. Para el <strong>hashing</strong> de contraseñas se emplea <code>bcrypt</code>, garantizando la seguridad de las credenciales almacenadas.</p>
+<p>En el aspecto de calidad de código, se utiliza <code>ruff</code> como linter y formateador, y <code>myp</code> para verificación estática de tipos. Las pruebas unitarias se ejecutan con <code>pytest</code> y finalmente, la integración continua está configurada con GitHub Actions, que ejecuta automáticamente las verificaciones en cada <span style="color: #6dbc19;"><strong>push</strong></span> o <span style="color: #6dbc19;"><strong>pull request</strong></span>.</p>
+<hr />
+<h2 id="estructura-del-proyecto"><strong>Estructura del proyecto.</strong></h2>
+<p>El código fuente se organiza en el directorio <code>src/cultiva_lab</code>, donde se encuentran los módulos principales. El archivo <code>cli.py</code> contiene la <span style="color: #6dbc19;"><em>interfaz de usuario</em></span> con todos los menús interactivos. En <code>models.py</code> se definen las <span style="color: #6dbc19;"><em>dataclasses</em></span> que representan las entidades del dominio como <code>Usuario</code>, <code>Cultivo</code>, <code>Tipo de Cultivo</code> y <code>Condición Diaria</code>. La <span style="color: #6dbc19;"><em>lógica de negocio</em></span> reside en <code>services.py</code>, que implementa las operaciones y validaciones para cada entidad. El módulo <code>storage.py</code> maneja la <strong>persistencia</strong> mediante un patrón de repositorio con una implementación concreta en <span style="color: #6dbc19;"><em>JSON</em></span>, mientras que <code>exceptions.py</code> define la jerarquía completa de <span style="color: #6dbc19;"><em>excepciones personalizadas</em></span> utilizadas en toda la aplicación.</p>
+<p>El directorio <code>tests</code> contiene las <span style="color: #6dbc19;"><em>pruebas unitarias</em></span> organizadas por módulo, y la carpeta <code>data</code> almacena el archivo <code>database.json</code> que funciona como <span style="color: #6dbc19;"><em>base de datos local</em></span>. La documentación se encuentra en el directorio <code>docs</code>, construida con MkDocs y el tema Material para una presentación profesional.</p>
+<div class="highlight"><pre><span></span><code>´´
+cultivalab/
+├── src/
+│   └── cultiva_lab/
+│       ├── cli.py
+│       ├── models.py
+│       ├── services.py
+│       ├── storage.py
+│       └── exceptions.py
+├── tests/
+│   ├── __init__.py 
+│   ├── test_services.py
+│   └── test_storage.py
+├── data/
+├── docs/
+│   └── assets/
+│       ├── CultivaLab.png
+│       ├── CultivaLabLogo.png
+│       ├── CultivaLabLogo2.png
+│       ├── CultivaLabLogo3.png
+│       └── Logo.png
+│   └── stylesheets/
+│       └── extra.css
+│   └── index.md
+├── .github/workflows/
+│   └── tests.yml
+├── pyproject.toml
+├── mkdocs.yml
+└── README.md
+´´
+</code></pre></div>
+<hr />
+<h2 id="estado-actual-del-proyecto"><strong>Estado Actual del Proyecto.</strong></h2>
+<p>El proyecto se encuentra en su <em>versión inicial</em> con todas las funcionalidades principales implementadas y probadas. Los <strong>modelos de dominio</strong> están completos y correctamente definidos como dataclasses. La capa de persistencia funciona con archivos <strong>JSON</strong> y sigue el patrón de repositorio mediante un <em>protocolo abstracto</em>. Los servicios implementan toda la lógica de negocio con validaciones exhaustivas y manejo adecuado de excepciones. La interfaz de usuario es completamente funcional y permite realizar todas las <em>operaciones disponibles</em>. Se han ejecutado más de setenta pruebas unitarias con una cobertura superior al noventa por ciento, y el flujo de integración continua verifica automáticamente la calidad del código en cada cambio.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": ".", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "content.code.copy", "content.code.annotate", "content.tabs.link", "navigation.instant"], "search": "assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

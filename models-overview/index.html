@@ -1,0 +1,1592 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../architecture/">
+      
+      
+        <link rel="next" href="../services-overview/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.5">
+    
+    
+      
+        <title>Modelos de Datos - CultivaLab Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="black" data-md-color-accent="green">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#modelos-de-dominio" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="CultivaLab Documentation" class="md-header__button md-logo" aria-label="CultivaLab Documentation" data-md-component="logo">
+      
+  <img src="../assets/CultivaLabLogo3.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            CultivaLab Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Modelos de Datos
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="black" data-md-color-accent="green"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Origen
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../getting-started/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Introduzcámonos
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../architecture/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Arquitectura del Sistema
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Modelos de Datos
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../services-overview/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Capa de Servicios
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../storage/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Capa de Persistencia
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../exceptions/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Excepciones
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../tests/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Pruebas
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="CultivaLab Documentation" class="md-nav__button md-logo" aria-label="CultivaLab Documentation" data-md-component="logo">
+      
+  <img src="../assets/CultivaLabLogo3.png" alt="logo">
+
+    </a>
+    CultivaLab Documentation
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Origen
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Introduzcámonos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Arquitectura del Sistema
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Modelos de Datos
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Modelos de Datos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#vision-general-de-los-modelos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Visión General de los Modelos
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#entidades-del-dominio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Entidades del Dominio
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Entidades del Dominio">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#user-usuario" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        User (Usuario)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#croptype-tipo-de-cultivo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CropType (Tipo de Cultivo)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dailycondition-condicion-diaria" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DailyCondition (Condición Diaria)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#crop-cultivo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Crop (Cultivo)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#relaciones-entre-entidades" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Relaciones entre Entidades
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ciclo-de-vida-de-los-modelos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ciclo de Vida de los Modelos
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#consideraciones-de-diseno" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Consideraciones de Diseño
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Consideraciones de Diseño">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#inmutabilidad" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Inmutabilidad
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#identificadores-unicos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Identificadores Únicos
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#separacion-de-responsabilidades" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Separación de Responsabilidades
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tipado-fuerte" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tipado Fuerte
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ejemplos-de-uso-en-la-aplicacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ejemplos de Uso en la Aplicación
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Ejemplos de Uso en la Aplicación">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#creacion-de-un-nuevo-cultivo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Creación de un nuevo cultivo
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#registro-de-una-condicion-diaria" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Registro de una condición diaria
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Conclusión
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../services-overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Capa de Servicios
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../storage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Capa de Persistencia
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../exceptions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Excepciones
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tests/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pruebas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#vision-general-de-los-modelos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Visión General de los Modelos
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#entidades-del-dominio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Entidades del Dominio
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Entidades del Dominio">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#user-usuario" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        User (Usuario)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#croptype-tipo-de-cultivo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CropType (Tipo de Cultivo)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dailycondition-condicion-diaria" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DailyCondition (Condición Diaria)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#crop-cultivo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Crop (Cultivo)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#relaciones-entre-entidades" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Relaciones entre Entidades
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ciclo-de-vida-de-los-modelos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ciclo de Vida de los Modelos
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#consideraciones-de-diseno" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Consideraciones de Diseño
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Consideraciones de Diseño">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#inmutabilidad" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Inmutabilidad
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#identificadores-unicos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Identificadores Únicos
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#separacion-de-responsabilidades" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Separación de Responsabilidades
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tipado-fuerte" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tipado Fuerte
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ejemplos-de-uso-en-la-aplicacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ejemplos de Uso en la Aplicación
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Ejemplos de Uso en la Aplicación">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#creacion-de-un-nuevo-cultivo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Creación de un nuevo cultivo
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#registro-de-una-condicion-diaria" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Registro de una condición diaria
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Conclusión
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="modelos-de-dominio"><strong>Modelos de Dominio</strong></h1>
+<p align="center">
+  <img src="../assets/CultivaLab.png" alt="CultivaLab Logo" width="650"/>
+</p>
+
+<div align="center">
+  <img src="https://img.shields.io/badge/Python-3.10+-blue" alt="Python">
+  <img src="https://img.shields.io/badge/Tests-73%20passing-brightgreen" alt="Tests">
+  <img src="https://img.shields.io/badge/Coverage-92%25-green" alt="Coverage">
+</div>
+
+<hr />
+<h2 id="vision-general-de-los-modelos"><strong>Visión General de los Modelos</strong></h2>
+<p>Los modelos de dominio en CultivaLab representan las entidades fundamentales del sistema. Están implementados como <span style="color: #6dbc19;"><strong>dataclasses</strong></span> inmutables, lo que garantiza que su estado no pueda modificarse accidentalmente y facilita la comprensión del flujo de datos a través de la aplicación.</p>
+<p>Cada modelo encapsula atributos específicos y define las relaciones entre las distintas entidades. La capa de modelos es la única que conoce la estructura de los datos; las capas superiores (servicios y CLI) trabajan con instancias de estas clases sin preocuparse por cómo se almacenan o serializan.</p>
+<pre class="mermaid"><code>classDiagram
+    class User {
+        +str id
+        +str username
+        +str password_hash
+        +UserRole role
+        +list[str] crop_ids
+    }
+
+    class CropType {
+        +str id
+        +str name
+        +float optimal_temp
+        +float needed_water
+        +float needed_light
+        +int days_cycle
+        +float initial_biomass
+        +float potential_performance
+    }
+
+    class DailyCondition {
+        +int day
+        +float temperature
+        +float rain
+        +float sun_hours
+        +float estimated_biomass
+    }
+
+    class Crop {
+        +str id
+        +str name
+        +str user_id
+        +str crop_type_id
+        +datetime start_date
+        +datetime last_sim_date
+        +list[DailyCondition] conditions
+        +bool active
+    }
+
+    class UserRole {
+        &lt;&lt;enumeration&gt;&gt;
+        ADMIN
+        USER
+    }
+
+    User "1" -- "many" Crop : posee
+    CropType "1" -- "many" Crop : clasifica
+    Crop "1" -- "many" DailyCondition : registra
+    UserRole &lt;-- User</code></pre>
+<hr />
+<h2 id="entidades-del-dominio"><strong>Entidades del Dominio</strong></h2>
+<h3 id="user-usuario"><strong>User (Usuario)</strong></h3>
+<p>La clase <span style="color: #6dbc19;"><code>User</code></span> representa a una persona que interactúa con el sistema. Cada usuario tiene un identificador único, credenciales de acceso y un rol que determina sus permisos.</p>
+<table>
+<thead>
+<tr>
+<th>Atributo</th>
+<th>Tipo</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>id</code></td>
+<td><code>str</code></td>
+<td>Identificador único generado con UUID</td>
+</tr>
+<tr>
+<td><code>username</code></td>
+<td><code>str</code></td>
+<td>Nombre de usuario único en el sistema</td>
+</tr>
+<tr>
+<td><code>password_hash</code></td>
+<td><code>str</code></td>
+<td>Contraseña hasheada con bcrypt</td>
+</tr>
+<tr>
+<td><code>role</code></td>
+<td><code>UserRole</code></td>
+<td>Rol del usuario (<code>ADMIN</code> o <code>USER</code>)</td>
+</tr>
+<tr>
+<td><code>crop_ids</code></td>
+<td><code>list[str]</code></td>
+<td>Lista de IDs de los cultivos que posee</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Relaciones:</strong></p>
+<ul>
+<li>
+<p>Un usuario puede tener <span style="color: #6dbc19;"><strong>muchos cultivos</strong></span> (relación 1:N).</p>
+</li>
+<li>
+<p>El rol determina las operaciones permitidas (por ejemplo, solo los administradores pueden gestionar tipos de cultivo).</p>
+</li>
+</ul>
+<p><strong>Validaciones implícitas:</strong></p>
+<ul>
+<li>
+<p>El nombre de usuario debe ser único.</p>
+</li>
+<li>
+<p>Solo puede existir <span style="color: #6dbc19;"><strong>un único administrador</strong></span> en todo el sistema.</p>
+</li>
+<li>
+<p>La contraseña se almacena hasheada, nunca en texto plano.</p>
+</li>
+</ul>
+<hr />
+<h3 id="croptype-tipo-de-cultivo"><strong>CropType (Tipo de Cultivo)</strong></h3>
+<p>La clase <span style="color: #6dbc19;"><code>CropType</code></span> define las características genéticas y fisiológicas de una especie vegetal. Es gestionada exclusivamente por administradores y sirve como plantilla para crear cultivos concretos.</p>
+<table>
+<thead>
+<tr>
+<th>Atributo</th>
+<th>Tipo</th>
+<th>Unidad</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>id</code></td>
+<td><code>str</code></td>
+<td>-</td>
+<td>Identificador único</td>
+</tr>
+<tr>
+<td><code>name</code></td>
+<td><code>str</code></td>
+<td>-</td>
+<td>Nombre del cultivo (ej. "Maíz", "Tomate")</td>
+</tr>
+<tr>
+<td><code>optimal_temp</code></td>
+<td><code>float</code></td>
+<td>°C</td>
+<td>Temperatura óptima para el crecimiento</td>
+</tr>
+<tr>
+<td><code>needed_water</code></td>
+<td><code>float</code></td>
+<td>mm/día</td>
+<td>Requerimiento hídrico diario</td>
+</tr>
+<tr>
+<td><code>needed_light</code></td>
+<td><code>float</code></td>
+<td>horas/día</td>
+<td>Horas de sol óptimas por día</td>
+</tr>
+<tr>
+<td><code>days_cycle</code></td>
+<td><code>int</code></td>
+<td>días</td>
+<td>Duración total del ciclo de cultivo</td>
+</tr>
+<tr>
+<td><code>initial_biomass</code></td>
+<td><code>float</code></td>
+<td>g/m²</td>
+<td>Biomasa al momento de la siembra</td>
+</tr>
+<tr>
+<td><code>potential_performance</code></td>
+<td><code>float</code></td>
+<td>g/m²</td>
+<td>Rendimiento máximo alcanzable</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Relaciones:</strong></p>
+<ul>
+<li>
+<p>Un tipo de cultivo puede tener <span style="color: #6dbc19;"><strong>muchos cultivos</strong></span> asociados (relación 1:N).</p>
+</li>
+<li>
+<p>No se puede eliminar un tipo si existen cultivos (activos o inactivos) que lo referencien.</p>
+</li>
+</ul>
+<p><strong>Ejemplo de instancia:</strong>
+<div class="highlight"><pre><span></span><code><span class="n">maiz</span> <span class="o">=</span> <span class="n">CropType</span><span class="p">(</span>
+    <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;123e4567-e89b-12d3-a456-426614174000&quot;</span><span class="p">,</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Maíz&quot;</span><span class="p">,</span>
+    <span class="n">optimal_temp</span><span class="o">=</span><span class="mf">25.0</span><span class="p">,</span>
+    <span class="n">needed_water</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span>
+    <span class="n">needed_light</span><span class="o">=</span><span class="mf">8.0</span><span class="p">,</span>
+    <span class="n">days_cycle</span><span class="o">=</span><span class="mi">120</span><span class="p">,</span>
+    <span class="n">initial_biomass</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span>
+    <span class="n">potential_performance</span><span class="o">=</span><span class="mf">1000.0</span>
+<span class="p">)</span>
+</code></pre></div></p>
+<hr />
+<h3 id="dailycondition-condicion-diaria"><strong>DailyCondition (Condición Diaria)</strong></h3>
+<p>La clase <span style="color: #6dbc19;"><code>DailyCondition</code></span> representa el registro de un día específico en la vida de un cultivo. Incluye las condiciones ambientales ingresadas por el usuario y la biomasa calculada por el modelo de crecimiento.</p>
+<table>
+<thead>
+<tr>
+<th>Atributo</th>
+<th>Tipo</th>
+<th>Unidad</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>day</code></td>
+<td><code>int</code></td>
+<td>-</td>
+<td>Número de día del cultivo (empieza en 1)</td>
+</tr>
+<tr>
+<td><code>temperature</code></td>
+<td><code>float</code></td>
+<td>°C</td>
+<td>Temperatura registrada</td>
+</tr>
+<tr>
+<td><code>rain</code></td>
+<td><code>float</code></td>
+<td>mm</td>
+<td>Cantidad de lluvia</td>
+</tr>
+<tr>
+<td><code>sun_hours</code></td>
+<td><code>float</code></td>
+<td>horas</td>
+<td>Horas de exposición solar</td>
+</tr>
+<tr>
+<td><code>estimated_biomass</code></td>
+<td><code>float</code></td>
+<td>g/m²</td>
+<td>Biomasa estimada para ese día</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Características:</strong></p>
+<ul>
+<li>
+<p>Es un <span style="color: #6dbc19;"><strong>objeto valor</strong></span> inmutable: no tiene identidad propia y su igualdad se define por el contenido de sus atributos.</p>
+</li>
+<li>
+<p>Pertenece exclusivamente a un cultivo y no tiene sentido fuera de ese contexto.</p>
+</li>
+</ul>
+<p><strong>Ejemplo de instancia:</strong>
+<div class="highlight"><pre><span></span><code><span class="n">dia_15</span> <span class="o">=</span> <span class="n">DailyCondition</span><span class="p">(</span>
+    <span class="n">day</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
+    <span class="n">temperature</span><span class="o">=</span><span class="mf">26.5</span><span class="p">,</span>
+    <span class="n">rain</span><span class="o">=</span><span class="mf">3.2</span><span class="p">,</span>
+    <span class="n">sun_hours</span><span class="o">=</span><span class="mf">7.5</span><span class="p">,</span>
+    <span class="n">estimated_biomass</span><span class="o">=</span><span class="mf">245.7</span>
+<span class="p">)</span>
+</code></pre></div></p>
+<hr />
+<h3 id="crop-cultivo"><strong>Crop (Cultivo)</strong></h3>
+<p>La clase <span style="color: #6dbc19;"><code>Crop</code></span> es la entidad central del dominio. Representa un cultivo concreto que un usuario ha sembrado y está simulando. Contiene toda la información necesaria para seguir su evolución día a día.</p>
+<table>
+<thead>
+<tr>
+<th>Atributo</th>
+<th>Tipo</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>id</code></td>
+<td><code>str</code></td>
+<td>Identificador único</td>
+</tr>
+<tr>
+<td><code>name</code></td>
+<td><code>str</code></td>
+<td>Nombre asignado por el usuario (ej. "Maíz parcela norte")</td>
+</tr>
+<tr>
+<td><code>user_id</code></td>
+<td><code>str</code></td>
+<td>ID del usuario propietario</td>
+</tr>
+<tr>
+<td><code>crop_type_id</code></td>
+<td><code>str</code></td>
+<td>ID del tipo de cultivo asociado</td>
+</tr>
+<tr>
+<td><code>start_date</code></td>
+<td><code>datetime</code></td>
+<td>Fecha de siembra</td>
+</tr>
+<tr>
+<td><code>last_sim_date</code></td>
+<td><code>datetime</code></td>
+<td>Última fecha en que se simuló un día</td>
+</tr>
+<tr>
+<td><code>conditions</code></td>
+<td><code>list[DailyCondition]</code></td>
+<td>Historial completo de condiciones diarias</td>
+</tr>
+<tr>
+<td><code>active</code></td>
+<td><code>bool</code></td>
+<td>Indica si el cultivo sigue en crecimiento</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Relaciones:</strong></p>
+<ul>
+<li>
+<p>Pertenece a un <span style="color: #6dbc19;"><strong>usuario</strong></span> (relación N:1).</p>
+</li>
+<li>
+<p>Tiene un <span style="color: #6dbc19;"><strong>tipo de cultivo</strong></span> asociado (relación N:1).</p>
+</li>
+<li>
+<p>Contiene <span style="color: #6dbc19;"><strong>muchas condiciones diarias</strong></span> (relación 1:N).</p>
+</li>
+</ul>
+<p><strong>Reglas de negocio implícitas:</strong></p>
+<ul>
+<li>
+<p>Un cultivo solo puede ser simulado si está <span style="color: #6dbc19;"><code>active = True</code></span>.</p>
+</li>
+<li>
+<p>Al alcanzar <code>days_cycle</code> días simulados, pasa automáticamente a <code>active = False</code>.</p>
+</li>
+<li>
+<p>La biomasa nunca puede superar <code>potential_performance</code> del tipo asociado.</p>
+</li>
+</ul>
+<p><strong>Ejemplo de instancia:</strong>
+<div class="highlight"><pre><span></span><code><span class="n">mi_maiz</span> <span class="o">=</span> <span class="n">Crop</span><span class="p">(</span>
+    <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;crop-001&quot;</span><span class="p">,</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Maíz experimental&quot;</span><span class="p">,</span>
+    <span class="n">user_id</span><span class="o">=</span><span class="s2">&quot;user-123&quot;</span><span class="p">,</span>
+    <span class="n">crop_type_id</span><span class="o">=</span><span class="s2">&quot;maiz-type&quot;</span><span class="p">,</span>
+    <span class="n">start_date</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2024</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+    <span class="n">last_sim_date</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2024</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">15</span><span class="p">),</span>
+    <span class="n">conditions</span><span class="o">=</span><span class="p">[</span><span class="n">dia_1</span><span class="p">,</span> <span class="n">dia_2</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="n">dia_15</span><span class="p">],</span>
+    <span class="n">active</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+</code></pre></div></p>
+<hr />
+<h2 id="relaciones-entre-entidades"><strong>Relaciones entre Entidades</strong></h2>
+<p>El diagrama de clases presentado anteriormente muestra las relaciones fundamentales:</p>
+<ol>
+<li>
+<p><strong>Usuario ↔ Cultivo</strong>: Relación de uno a muchos. Un usuario puede tener múltiples cultivos, pero cada cultivo pertenece a un único usuario. Esta relación se implementa mediante el campo <span style="color: #6dbc19;"><code>user_id</code></span> en la clase <code>Crop</code> y la lista <span style="color: #6dbc19;"><code>crop_ids</code></span> en <code>User</code> para facilitar búsquedas inversas.</p>
+</li>
+<li>
+<p><strong>Tipo de Cultivo ↔ Cultivo</strong>: Relación de uno a muchos. Un tipo de cultivo puede ser la plantilla para muchos cultivos concretos, pero cada cultivo tiene exactamente un tipo. Se implementa mediante <span style="color: #6dbc19;"><code>crop_type_id</code></span> en <code>Crop</code>.</p>
+</li>
+<li>
+<p><strong>Cultivo ↔ Condición Diaria</strong>: Relación de composición. Un cultivo contiene muchas condiciones diarias, y cada condición pertenece exclusivamente a un cultivo. Las condiciones no tienen sentido fuera del contexto del cultivo.</p>
+</li>
+<li>
+<p><strong>Usuario ↔ Rol</strong>: Relación de asignación. Cada usuario tiene un rol (<code>ADMIN</code> o <code>USER</code>) que determina sus permisos en el sistema.</p>
+</li>
+</ol>
+<hr />
+<h2 id="ciclo-de-vida-de-los-modelos"><strong>Ciclo de Vida de los Modelos</strong></h2>
+<pre class="mermaid"><code>stateDiagram-v2
+    [*] --&gt; Creación: Usuario crea cultivo
+    Creación --&gt; Activo: Día 1
+
+    Activo --&gt; Activo: Simular día
+    Activo --&gt; Completado: Alcanza days_cycle
+    Activo --&gt; Eliminado: Usuario elimina
+
+    Completado --&gt; [*]
+    Eliminado --&gt; [*]
+
+    note right of Activo
+        El cultivo acumula
+        condiciones diarias
+        y biomasa
+    end note</code></pre>
+<p>El ciclo de vida típico de un cultivo comienza con su creación por parte de un usuario. En ese momento, el cultivo está vacío (sin condiciones) y activo. Cada simulación diaria añade una nueva <code>DailyCondition</code> y actualiza la biomasa. Cuando el número de días simulados iguala la duración del ciclo (<code>days_cycle</code>), el cultivo pasa automáticamente a estado <span style="color: #6dbc19;"><code>completado</code></span>. En cualquier momento, el usuario puede eliminar el cultivo, lo que lo remueve permanentemente del sistema.</p>
+<hr />
+<h2 id="consideraciones-de-diseno"><strong>Consideraciones de Diseño</strong></h2>
+<h3 id="inmutabilidad"><strong>Inmutabilidad</strong></h3>
+<p>Las dataclasses se definen con <span style="color: #6dbc19;"><code>frozen=True</code></span> implícitamente (aunque no se use el decorador, en la práctica se tratan como inmutables). Esto significa que una vez creadas, las instancias no pueden modificarse. Cualquier cambio requiere crear una nueva instancia, lo que facilita el razonamiento sobre el flujo de datos y previene efectos secundarios no deseados.</p>
+<h3 id="identificadores-unicos"><strong>Identificadores Únicos</strong></h3>
+<p>Todos los identificadores (<code>id</code> en <code>User</code>, <code>Crop</code>, <code>CropType</code>) se generan como <span style="color: #6dbc19;"><strong>UUID</strong></span> (identificadores únicos universales) para garantizar que no haya colisiones, incluso en sistemas distribuidos.</p>
+<h3 id="separacion-de-responsabilidades"><strong>Separación de Responsabilidades</strong></h3>
+<p>Los modelos no contienen lógica de negocio. No saben cómo se persisten, cómo se validan ni cómo se relacionan con otros objetos en términos de reglas de la aplicación. Su única responsabilidad es representar el estado y las relaciones estructurales.</p>
+<h3 id="tipado-fuerte"><strong>Tipado Fuerte</strong></h3>
+<p>Todos los atributos tienen anotaciones de tipo, lo que permite a <code>mypy</code> verificar estáticamente que se usan correctamente y facilita la documentación automática con <code>mkdocstrings</code>.</p>
+<hr />
+<h2 id="ejemplos-de-uso-en-la-aplicacion"><strong>Ejemplos de Uso en la Aplicación</strong></h2>
+<h3 id="creacion-de-un-nuevo-cultivo"><strong>Creación de un nuevo cultivo</strong></h3>
+<p>Cuando un usuario crea un cultivo, el servicio <code>CropService</code> instancia la clase <code>Crop</code> con los datos proporcionados:</p>
+<div class="highlight"><pre><span></span><code><span class="n">nuevo_cultivo</span> <span class="o">=</span> <span class="n">Crop</span><span class="p">(</span>
+    <span class="nb">id</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()),</span>
+    <span class="n">name</span><span class="o">=</span><span class="n">nombre_usuario</span><span class="p">,</span>
+    <span class="n">user_id</span><span class="o">=</span><span class="n">usuario</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+    <span class="n">crop_type_id</span><span class="o">=</span><span class="n">tipo_cultivo</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+    <span class="n">start_date</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(),</span>
+    <span class="n">last_sim_date</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(),</span>
+    <span class="n">conditions</span><span class="o">=</span><span class="p">[],</span>
+    <span class="n">active</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="registro-de-una-condicion-diaria"><strong>Registro de una condición diaria</strong></h3>
+<p>Al simular un día, se crea una nueva <code>DailyCondition</code> y se añade a la lista del cultivo:</p>
+<div class="highlight"><pre><span></span><code><span class="n">nueva_condicion</span> <span class="o">=</span> <span class="n">DailyCondition</span><span class="p">(</span>
+    <span class="n">day</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">cultivo</span><span class="o">.</span><span class="n">conditions</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">temperature</span><span class="o">=</span><span class="n">temperatura</span><span class="p">,</span>
+    <span class="n">rain</span><span class="o">=</span><span class="n">lluvia</span><span class="p">,</span>
+    <span class="n">sun_hours</span><span class="o">=</span><span class="n">horas_sol</span><span class="p">,</span>
+    <span class="n">estimated_biomass</span><span class="o">=</span><span class="n">nueva_biomasa</span>
+<span class="p">)</span>
+
+<span class="n">cultivo</span><span class="o">.</span><span class="n">conditions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nueva_condicion</span><span class="p">)</span>
+<span class="n">cultivo</span><span class="o">.</span><span class="n">last_sim_date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+</code></pre></div>
+<hr />
+<h2 id="conclusion"><strong>Conclusión</strong></h2>
+<p>Los modelos de dominio de CultivaLab constituyen la base sobre la que se construye toda la aplicación. Su diseño simple pero expresivo, combinado con el uso de dataclasses y tipado fuerte, proporciona una base sólida para la lógica de negocio implementada en los servicios. La separación clara entre estado y comportamiento facilita el mantenimiento, las pruebas y la evolución futura del sistema.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "content.code.copy", "content.code.annotate", "content.tabs.link", "navigation.instant"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,1355 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../getting-started/">
+      
+      
+        <link rel="next" href="../models-overview/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.5">
+    
+    
+      
+        <title>Arquitectura del Sistema - CultivaLab Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="black" data-md-color-accent="green">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#arquitectura-del-sistema" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="CultivaLab Documentation" class="md-header__button md-logo" aria-label="CultivaLab Documentation" data-md-component="logo">
+      
+  <img src="../assets/CultivaLabLogo3.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            CultivaLab Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Arquitectura del Sistema
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="black" data-md-color-accent="green"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Origen
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../getting-started/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Introduzcámonos
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Arquitectura del Sistema
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../models-overview/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Modelos de Datos
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../services-overview/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Capa de Servicios
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../storage/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Capa de Persistencia
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../exceptions/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Excepciones
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../tests/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Pruebas
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="CultivaLab Documentation" class="md-nav__button md-logo" aria-label="CultivaLab Documentation" data-md-component="logo">
+      
+  <img src="../assets/CultivaLabLogo3.png" alt="logo">
+
+    </a>
+    CultivaLab Documentation
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Origen
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Introduzcámonos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Arquitectura del Sistema
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Arquitectura del Sistema
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#vision-general-de-la-arquitectura" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Visión General de la Arquitectura
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#diagrama-de-arquitectura" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Diagrama de Arquitectura
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#descripcion-de-capas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Descripción de Capas
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Descripción de Capas">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-capa-de-presentacion-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Capa de Presentación (CLI)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-capa-de-servicios-services" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Capa de Servicios (Services)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-capa-de-persistencia-storage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Capa de Persistencia (Storage)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-capa-de-modelos-models" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Capa de Modelos (Models)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#flujo-de-datos-simulacion-de-un-dia" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Flujo de Datos: Simulación de un Día
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#patrones-de-diseno-implementados" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Patrones de Diseño Implementados
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Patrones de Diseño Implementados">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#repository-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Repository Pattern
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#service-layer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Service Layer
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dependency-inversion-principle-dip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dependency Inversion Principle (DIP)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#data-mapper" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Data Mapper
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#value-objects" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Value Objects
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#manejo-de-excepciones" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Manejo de Excepciones
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#consideraciones-de-escalabilidad" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Consideraciones de Escalabilidad
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Conclusión
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../models-overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Modelos de Datos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../services-overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Capa de Servicios
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../storage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Capa de Persistencia
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../exceptions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Excepciones
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tests/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pruebas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#vision-general-de-la-arquitectura" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Visión General de la Arquitectura
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#diagrama-de-arquitectura" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Diagrama de Arquitectura
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#descripcion-de-capas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Descripción de Capas
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Descripción de Capas">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-capa-de-presentacion-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Capa de Presentación (CLI)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-capa-de-servicios-services" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Capa de Servicios (Services)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-capa-de-persistencia-storage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Capa de Persistencia (Storage)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-capa-de-modelos-models" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Capa de Modelos (Models)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#flujo-de-datos-simulacion-de-un-dia" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Flujo de Datos: Simulación de un Día
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#patrones-de-diseno-implementados" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Patrones de Diseño Implementados
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Patrones de Diseño Implementados">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#repository-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Repository Pattern
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#service-layer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Service Layer
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dependency-inversion-principle-dip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dependency Inversion Principle (DIP)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#data-mapper" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Data Mapper
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#value-objects" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Value Objects
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#manejo-de-excepciones" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Manejo de Excepciones
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#consideraciones-de-escalabilidad" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Consideraciones de Escalabilidad
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Conclusión
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="arquitectura-del-sistema"><strong>Arquitectura del Sistema</strong></h1>
+<p align="center">
+  <img src="/assets/CultivaLab.png" alt="CultivaLab Logo" width="650"/>
+</p>
+
+<div align="center">
+  <img src="https://img.shields.io/badge/Python-3.10+-blue" alt="Python">
+  <img src="https://img.shields.io/badge/Tests-73%20passing-brightgreen" alt="Tests">
+  <img src="https://img.shields.io/badge/Coverage-92%25-green" alt="Coverage">
+</div>
+
+<hr />
+<h2 id="vision-general-de-la-arquitectura"><strong>Visión General de la Arquitectura</strong></h2>
+<p>CultivaLab está construido siguiendo los principios de la <span style="color: #6dbc19;"><strong>arquitectura limpia</strong></span> y <span style="color: #6dbc19;"><strong>separación de responsabilidades</strong></span>. El código se organiza en capas bien definidas, cada una con una función específica y con dependencias dirigidas hacia adentro. Esto garantiza que el sistema sea mantenible, testeable y escalable.</p>
+<p>La arquitectura se compone de las siguientes capas principales:</p>
+<ul>
+<li><strong>Capa de Presentación (CLI)</strong>: Interactúa con el usuario mediante menús y comandos.</li>
+<li><strong>Capa de Servicios (Services)</strong>: Contiene la lógica de negocio y las reglas de la aplicación.</li>
+<li><strong>Capa de Persistencia (Storage)</strong>: Abstrae el acceso a los datos, actualmente implementada con archivos <span style="color: #6dbc19;"><strong>JSON</strong></span>.</li>
+<li><strong>Capa de Modelos (Models)</strong>: Define las entidades del dominio mediante <span style="color: #6dbc19;"><strong>dataclasses</strong></span> inmutables.</li>
+</ul>
+<p>Todas las capas se comunican a través de interfaces bien definidas, lo que permite cambiar implementaciones concretas (por ejemplo, reemplazar JSON por una base de datos SQL) sin afectar el resto del sistema.</p>
+<hr />
+<h2 id="diagrama-de-arquitectura"><strong>Diagrama de Arquitectura</strong></h2>
+<p>El siguiente diagrama muestra la estructura de capas y las relaciones entre los componentes principales:</p>
+<pre class="mermaid"><code>graph TD
+    subgraph "Capa de Presentación"
+        CLI[cli.py - Typer/Questionary]
+    end
+
+    subgraph "Capa de Servicios"
+        UserService[UserService]
+        CropService[CropService]
+        CropTypeService[CropTypeService]
+    end
+
+    subgraph "Capa de Persistencia"
+        Database[(Database Protocol)]
+        JSON[JSONStorage]
+    end
+
+    subgraph "Capa de Modelos"
+        User[User]
+        Crop[Crop]
+        CropType[CropType]
+        DailyCondition[DailyCondition]
+    end
+
+    CLI --&gt; UserService
+    CLI --&gt; CropService
+    CLI --&gt; CropTypeService
+
+    UserService --&gt; Database
+    CropService --&gt; Database
+    CropTypeService --&gt; Database
+
+    Database --&gt; JSON
+    JSON --&gt; models.py
+
+    UserService --&gt; User
+    CropService --&gt; Crop
+    CropService --&gt; CropType
+    CropService --&gt; DailyCondition
+    CropTypeService --&gt; CropType
+
+    style CLI fill:#6dbc19,stroke:#333,stroke-width:2px
+    style UserService fill:#6dbc19,stroke:#333,stroke-width:2px
+    style CropService fill:#6dbc19,stroke:#333,stroke-width:2px
+    style CropTypeService fill:#6dbc19,stroke:#333,stroke-width:2px
+    style Database fill:#8B4513,stroke:#333,stroke-width:2px
+    style JSON fill:#8B4513,stroke:#333,stroke-width:2px
+    style User fill:#457a0d,stroke:#333,stroke-width:2px
+    style Crop fill:#457a0d,stroke:#333,stroke-width:2px
+    style CropType fill:#457a0d,stroke:#333,stroke-width:2px
+    style DailyCondition fill:#457a0d,stroke:#333,stroke-width:2px</code></pre>
+<hr />
+<h2 id="descripcion-de-capas"><strong>Descripción de Capas</strong></h2>
+<h3 id="1-capa-de-presentacion-cli"><strong>1. Capa de Presentación (CLI)</strong></h3>
+<p>La interfaz de usuario está implementada en el módulo <span style="color: #6dbc19;"><code>cli.py</code></span>. Utiliza la librería <span style="color: #6dbc19;"><strong>Typer</strong></span> para definir comandos y subcomandos, y <span style="color: #6dbc19;"><strong>Questionary</strong></span> para crear menús interactivos navegables con las teclas de dirección. La presentación visual se mejora con <span style="color: #6dbc19;"><strong>Rich</strong></span>, que proporciona tablas, paneles y colores personalizados.</p>
+<p>Esta capa no contiene lógica de negocio; su única responsabilidad es:
+- Recibir entradas del usuario.
+- Mostrar resultados y mensajes.
+- Invocar los métodos apropiados de la capa de servicios.</p>
+<h3 id="2-capa-de-servicios-services"><strong>2. Capa de Servicios (Services)</strong></h3>
+<p>La lógica de negocio reside en el módulo <span style="color: #6dbc19;"><code>services.py</code></span>, que contiene tres clases principales:</p>
+<ul>
+<li><strong><code>UserService</code></strong>: Gestiona el registro, autenticación, actualización y eliminación de usuarios, así como la verificación de roles y permisos.</li>
+<li><strong><code>CropService</code></strong>: Maneja la creación, simulación diaria, cálculo de estadísticas y operaciones CRUD sobre los cultivos de un usuario.</li>
+<li><strong><code>CropTypeService</code></strong>: Administra el catálogo de tipos de cultivo (solo accesible por administradores), incluyendo validaciones de integridad referencial.</li>
+</ul>
+<p>Cada servicio valida las reglas de negocio antes de realizar cualquier operación, lanzando excepciones personalizadas cuando corresponde. Los servicios dependen de la capa de persistencia a través de una abstracción (protocolo <span style="color: #6dbc19;"><code>Database</code></span>), lo que facilita el testing y futuros cambios en el almacenamiento.</p>
+<h3 id="3-capa-de-persistencia-storage"><strong>3. Capa de Persistencia (Storage)</strong></h3>
+<p>El módulo <span style="color: #6dbc19;"><code>storage.py</code></span> define un <span style="color: #6dbc19;"><strong>protocolo</strong></span> (<code>Database</code>) que especifica los métodos necesarios para acceder a los datos. La implementación concreta, <code>JSONStorage</code>, trabaja con un archivo <span style="color: #6dbc19;"><code>database.json</code></span> ubicado en la carpeta <span style="color: #6dbc19;"><code>data/</code></span>.</p>
+<p><strong>Características de <code>JSONStorage</code>:</strong>
+- <strong>Lectura y escritura</strong>: Utiliza el módulo <code>json</code> de Python para serializar y deserializar objetos.</p>
+<ul>
+<li>
+<p><strong>Reconstrucción de objetos</strong>: Convierte los diccionarios en instancias de las dataclasses correspondientes, manejando correctamente los tipos (enums, fechas, listas anidadas).</p>
+</li>
+<li>
+<p><strong>Operaciones atómicas</strong>: Cada método de escritura (<code>save_user</code>, <code>save_crop</code>, etc.) realiza una lectura completa, modifica la estructura en memoria y vuelca todo el archivo, garantizando consistencia.</p>
+</li>
+<li>
+<p><strong>Manejo de errores</strong>: Si el archivo no existe, <span style="color: #6dbc19;"><code>read()</code></span> devuelve una estructura vacía, permitiendo que la aplicación cree el archivo automáticamente al guardar.</p>
+</li>
+</ul>
+<p>El uso de un protocolo permite que en el futuro se pueda reemplazar <code>JSONStorage</code> por una implementación con SQLite o una base de datos en la nube sin modificar los servicios.</p>
+<h3 id="4-capa-de-modelos-models"><strong>4. Capa de Modelos (Models)</strong></h3>
+<p>En <span style="color: #6dbc19;"><code>models.py</code></span> se definen las entidades del dominio utilizando <span style="color: #6dbc19;"><strong>dataclasses</strong></span>. Cada clase representa un concepto del mundo real y contiene únicamente atributos, sin lógica de negocio.</p>
+<ul>
+<li><strong><code>User</code></strong>: Representa un usuario del sistema. Incluye su rol (<span style="color: #6dbc19;"><code>ADMIN</code></span> o <span style="color: #6dbc19;"><code>USER</code></span>) y una lista de IDs de los cultivos que posee.</li>
+<li><strong><code>CropType</code></strong>: Define un tipo de cultivo con parámetros científicos (temperatura óptima, agua necesaria, luz necesaria, ciclo de días, biomasa inicial y rendimiento potencial).</li>
+<li><strong><code>DailyCondition</code></strong>: Almacena las condiciones ambientales de un día específico para un cultivo, junto con la biomasa estimada.</li>
+<li><strong><code>Crop</code></strong>: Representa un cultivo concreto de un usuario. Contiene referencias al tipo de cultivo, fechas de inicio y última simulación, lista de condiciones diarias y un indicador de actividad.</li>
+</ul>
+<p>Todas las dataclasses son inmutables en el sentido de que no contienen métodos que modifiquen su estado; cualquier cambio se realiza creando una nueva instancia o actualizando la instancia en la capa de servicios.</p>
+<hr />
+<h2 id="flujo-de-datos-simulacion-de-un-dia"><strong>Flujo de Datos: Simulación de un Día</strong></h2>
+<p>Para comprender cómo interactúan las capas, veamos el flujo completo cuando un usuario ejecuta la opción de simular un día:</p>
+<pre class="mermaid"><code>sequenceDiagram
+    participant Usuario
+    participant CLI as cli.py
+    participant CropService
+    participant Storage as storage.py
+    participant JSON as database.json
+
+    Usuario-&gt;&gt;CLI: Selecciona "Simular día"
+    CLI-&gt;&gt;CLI: Muestra lista de cultivos
+    Usuario-&gt;&gt;CLI: Elige cultivo e ingresa datos
+    CLI-&gt;&gt;CropService: simulate_day(crop_id, user_id, temp, rain, sun)
+
+    CropService-&gt;&gt;Storage: get_crop_by_id(crop_id)
+    Storage-&gt;&gt;JSON: read()
+    JSON--&gt;&gt;Storage: data
+    Storage--&gt;&gt;CropService: Crop object
+
+    CropService-&gt;&gt;Storage: get_crop_type_by_id(crop_type_id)
+    Storage-&gt;&gt;JSON: read()
+    JSON--&gt;&gt;Storage: data
+    Storage--&gt;&gt;CropService: CropType object
+
+    CropService-&gt;&gt;CropService: Validar permisos (usuario dueño)
+    CropService-&gt;&gt;CropService: Validar cultivo activo y límites
+    CropService-&gt;&gt;CropService: Calcular factores de crecimiento
+    CropService-&gt;&gt;CropService: Calcular nueva biomasa
+    CropService-&gt;&gt;CropService: Crear DailyCondition
+
+    CropService-&gt;&gt;CropService: Actualizar crop (conditions, last_sim_date, active)
+
+    CropService-&gt;&gt;Storage: save_crop(crop)
+    Storage-&gt;&gt;JSON: write()
+    JSON--&gt;&gt;Storage: OK
+    Storage--&gt;&gt;CropService: OK
+
+    CropService--&gt;&gt;CLI: Crop actualizado
+    CLI--&gt;&gt;Usuario: Muestra resultado</code></pre>
+<p>Este flujo evidencia la separación de responsabilidades:</p>
+<ul>
+<li>
+<p>La CLI solo maneja la interacción con el usuario.</p>
+</li>
+<li>
+<p>El servicio orquesta la lógica, obtiene los datos necesarios y aplica las reglas de negocio.</p>
+</li>
+<li>
+<p>El storage abstrae el acceso a los datos, sin conocer la lógica de negocio.</p>
+</li>
+<li>
+<p>Los modelos transportan información entre capas.</p>
+</li>
+</ul>
+<hr />
+<h2 id="patrones-de-diseno-implementados"><strong>Patrones de Diseño Implementados</strong></h2>
+<h3 id="repository-pattern"><strong>Repository Pattern</strong></h3>
+<p>La capa de storage sigue el patrón <span style="color: #6dbc19;"><strong>Repository</strong></span>, proporcionando una colección de objetos en memoria con métodos para recuperarlos y persistirlos. Esto aísla la lógica de negocio de los detalles de almacenamiento.</p>
+<h3 id="service-layer"><strong>Service Layer</strong></h3>
+<p>Las clases <code>UserService</code>, <code>CropService</code> y <code>CropTypeService</code> conforman la <span style="color: #6dbc19;"><strong>capa de servicios</strong></span>, que encapsula la lógica de la aplicación y coordina las operaciones entre el repositorio y los modelos.</p>
+<h3 id="dependency-inversion-principle-dip"><strong>Dependency Inversion Principle (DIP)</strong></h3>
+<p>Los servicios dependen de la abstracción <span style="color: #6dbc19;"><code>Database</code></span> (protocolo), no de la implementación concreta <code>JSONStorage</code>. Esto permite cambiar la implementación sin modificar los servicios.</p>
+<h3 id="data-mapper"><strong>Data Mapper</strong></h3>
+<p><span style="color: #6dbc19;"><code>JSONStorage</code></span> actúa como un <span style="color: #6dbc19;"><strong>Data Mapper</strong></span>, transformando los objetos de dominio en diccionarios aptos para JSON y viceversa, manteniendo el dominio puro.</p>
+<h3 id="value-objects"><strong>Value Objects</strong></h3>
+<p><span style="color: #6dbc19;"><code>DailyCondition</code></span> es un objeto valor inmutable, sin identidad propia, que describe el estado de un cultivo en un día concreto.</p>
+<hr />
+<h2 id="manejo-de-excepciones"><strong>Manejo de Excepciones</strong></h2>
+<p>El sistema cuenta con una jerarquía de excepciones personalizadas definida en <span style="color: #6dbc19;"><code>exceptions.py</code></span>, que permite capturar errores de manera granular y mostrar mensajes adecuados al usuario. Las excepciones se lanzan desde la capa de servicios cuando se viola alguna regla de negocio o se detecta un error de validación.</p>
+<div class="highlight"><pre><span></span><code>CultivaLabError
+├── UserError
+│   ├── UserNotFoundError
+│   ├── UserAlreadyExistsError
+│   └── InvalidCredentialsError
+├── AuthorizationError
+│   ├── UnauthorizedAccessError
+│   ├── ResourceOwnershipError
+│   └── AdminAlreadyExistsError
+├── CropError
+│   ├── CropNotFoundError
+│   └── CropTypeNotFoundError
+├── InvalidInputError
+└── BusinessRuleViolationError
+</code></pre></div>
+<p>Esta estructura facilita la depuración y el testing, ya que cada tipo de error puede ser tratado de forma específica.</p>
+<hr />
+<h2 id="consideraciones-de-escalabilidad"><strong>Consideraciones de Escalabilidad</strong></h2>
+<p>La arquitectura actual permite futuras mejoras sin reescrituras masivas:</p>
+<ul>
+<li><strong>Cambio de persistencia</strong>: Basta con implementar una nueva clase que cumpla el protocolo <code>Database</code> (por ejemplo, <code>SQLDatabase</code> o <code>MongoDatabase</code>) y reemplazar la instancia en la inicialización.</li>
+<li><strong>Interfaz web</strong>: Se puede crear una API REST que utilice los mismos servicios, reutilizando toda la lógica de negocio.</li>
+<li><strong>Nuevos modelos de crecimiento</strong>: El cálculo de biomasa está encapsulado en métodos privados de <code>CropService</code>; se pueden agregar estrategias alternativas sin afectar el resto.</li>
+<li><strong>Internacionalización</strong>: Los mensajes están centralizados en la CLI y las excepciones; añadir soporte para múltiples idiomas sería sencillo.</li>
+</ul>
+<hr />
+<h2 id="conclusion"><strong>Conclusión</strong></h2>
+<p>La arquitectura de CultivaLab refleja buenas prácticas de ingeniería de software: separación de capas, uso de patrones, inyección de dependencias y manejo adecuado de errores. Esto no solo facilita el mantenimiento y la evolución del proyecto, sino que también lo convierte en un excelente ejemplo de código limpio para propósitos académicos y profesionales.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "content.code.copy", "content.code.annotate", "content.tabs.link", "navigation.instant"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
