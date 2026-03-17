@@ -1,7 +1,7 @@
 # **Arquitectura del Sistema**
 
 <p align="center">
-  <img src="assets/CultivaLab.png" alt="CultivaLab Logo" width="650"/>
+  <img src="../assets/CultivaLab.png" alt="CultivaLab Logo" width="650"/>
 </p>
   
 <div align="center">
