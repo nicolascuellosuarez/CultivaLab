@@ -1,8 +1,4 @@
 # **Arquitectura del Sistema**
-
-<p align="center">
-  <img src="../assets/CultivaLab.png" alt="CultivaLab Logo" width="650"/>
-</p>
   
 <div align="center">
   <img src="https://img.shields.io/badge/Python-3.10+-blue" alt="Python">
