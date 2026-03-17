@@ -18,27 +18,26 @@ import bcrypt
 
 MASTER_KEY = "admin12345"
 
-"""
-Class CropService created to include the service logic
-of crops, the pilot model to simulate their growth, and
-logic restrictions based in the exceptions made.
-"""
-
 
 class CropService:
+    """
+    Class CropService created to include the service logic
+    of crops, the pilot model to simulate their growth, and
+    logic restrictions based in the exceptions made.
+    """
+
     def __init__(self, storage: Database) -> None:
         self.storage: Database = storage
-
-    """
-    Three factors will be used to simulate the growth.
-    They will act as a pilot of the math model. The first
-    factor: enviromental factor; Crop Type, temperature,
-    rain and sun hours received by the crop.
-    """
 
     def _calculate_environment_factor(
         self, crop_type: CropType, temperature: float, rain: float, sun_hours: float
     ) -> float:
+        """
+        Three factors will be used to simulate the growth.
+        They will act as a pilot of the math model. The first
+        factor: enviromental factor; Crop Type, temperature,
+        rain and sun hours received by the crop.
+        """
         # Three factors, using the parameters
         temperature_factor = max(
             0,
@@ -57,14 +56,13 @@ class CropService:
 
         return temperature_factor * rain_factor * sun_hours_factor
 
-    """
-    Second part of model, the phase is also an important factor
-    in the growth process of a crop. Depending on the phase,
-    the crop can increase its biomass to a greater or lesser
-    extent.
-    """
-
     def _calculate_phase_factor(self, crop: Crop, crop_type: CropType) -> float:
+        """
+        Second part of model, the phase is also an important factor
+        in the growth process of a crop. Depending on the phase,
+        the crop can increase its biomass to a greater or lesser
+        extent.
+        """
         current_day = len(crop.conditions) + 1
         phase = current_day / crop_type.days_cycle
 
@@ -74,12 +72,11 @@ class CropService:
             return 1.0
         return max(0.2, 1.5 - phase)
 
-    """
-    Method created to calculate the growing capacity of
-    a crop, based on its potential performance and current biomass.
-    """
-
     def _calculate_capacity_factor(self, crop: Crop, crop_type: CropType) -> float:
+        """
+        Method created to calculate the growing capacity of
+        a crop, based on its potential performance and current biomass.
+        """
         current_biomass = (
             crop.conditions[-1].estimated_biomass
             if crop.conditions
@@ -91,11 +88,6 @@ class CropService:
             / crop_type.potential_performance,
         )
 
-    """
-    Method used to calculate the total factor, and calculates
-    the growth of the crop in a day.
-    """
-
     def _calculate_growth(
         self,
         crop_type: CropType,
@@ -103,15 +95,13 @@ class CropService:
         phase_factor: float,
         capacity_factor: float,
     ) -> float:
+        """
+        Method used to calculate the total factor, and calculates
+        the growth of the crop in a day.
+        """
         base_rate = 0.05  # Hardcoded Base rate, remember - this is a pilot model
         total_factor = (env_factor * phase_factor * capacity_factor) ** 1.5
         return crop_type.potential_performance * base_rate * total_factor
-
-    """
-    simulate_day method to implement the logic of what happens
-    if the user simulates a day in app. Validations are made
-    to have restrictions and normal data in app.
-    """
 
     def simulate_day(
         self,
@@ -121,6 +111,11 @@ class CropService:
         rain: float,
         sun_hours: float,
     ) -> Crop:
+        """
+        simulate_day method to implement the logic of what happens
+        if the user simulates a day in app. Validations are made
+        to have restrictions and normal data in app.
+        """
         if not isinstance(temperature, (int, float)):
             raise InvalidInputError("La temperatura debe ser numérica.")
         if not isinstance(rain, (int, float)):
@@ -181,13 +176,12 @@ class CropService:
         self.storage.save_crop(crop)
         return crop
 
-    """
-    Method created to allow a user to make new crops.
-    """
-
     def create_crop(
         self, name: str, crop_type_id: str, user_id: str, start_date: datetime
     ) -> Crop:
+        """
+        Method created to allow a user to make new crops.
+        """
         user = self.storage.get_user_by_id(user_id)
         crop_type = self.storage.get_crop_type_by_id(crop_type_id)
         # Method validations
@@ -214,11 +208,10 @@ class CropService:
         self.storage.save_crop(new_crop)
         return new_crop
 
-    """
-    Method created to get a crop based on its ID.
-    """
-
     def get_crop_by_id(self, crop_id: str, requesting_user_id: str) -> Crop:
+        """
+        Method created to get a crop based on its ID.
+        """
         requesting_user = self.storage.get_user_by_id(requesting_user_id)
         crop = self.storage.get_crop_by_id(crop_id)
         if not requesting_user:
@@ -231,11 +224,10 @@ class CropService:
             raise ResourceOwnershipError("No puedes acceder a este cultivo.")
         return crop
 
-    """
-    Method created to get the crops created by an user.
-    """
-
     def get_crops_by_user(self, user_id: str, requesting_user_id: str) -> list[Crop]:
+        """
+        Method created to get the crops created by an user.
+        """
         requesting_user = self.storage.get_user_by_id(requesting_user_id)
         crops = self.storage.get_crops_by_user(user_id)
         owner = self.storage.get_user_by_id(user_id)
@@ -250,13 +242,12 @@ class CropService:
             raise ResourceOwnershipError("No puedes acceder a estos cultivos.")
         return crops
 
-    """
-    Method created to see the history of conditions of a crop.
-    """
-
     def get_crop_history(
         self, crop_id: str, requesting_user_id: str
     ) -> list[DailyCondition]:
+        """
+        Method created to see the history of conditions of a crop.
+        """
         requesting_user = self.storage.get_user_by_id(requesting_user_id)
         crop = self.storage.get_crop_by_id(crop_id)
         if not requesting_user:
@@ -270,11 +261,10 @@ class CropService:
             raise ResourceOwnershipError("No puedes acceder a estos cultivos.")
         return crop.conditions
 
-    """
-    Method created to update name or state of a crop.
-    """
-
     def update_crops(self, crop_id: str, requesting_user_id: str, **kwargs) -> Crop:
+        """
+        Method created to update name or state of a crop.
+        """
         requesting_user = self.storage.get_user_by_id(requesting_user_id)
         crop = self.storage.get_crop_by_id(crop_id)
         if not requesting_user:
@@ -301,11 +291,10 @@ class CropService:
         self.storage.save_crop(crop)
         return crop
 
-    """
-    Method created to delete a crop.
-    """
-
     def delete_crop(self, crop_id: str, requesting_user_id: str) -> None:
+        """
+        Method created to delete a crop.
+        """
         # Validations
         requesting_user = self.storage.get_user_by_id(requesting_user_id)
         crop = self.storage.get_crop_by_id(crop_id)
@@ -329,12 +318,11 @@ class CropService:
 
         self.storage.delete_crop(crop_id)
 
-    """
-    Method created to see the crop statistics in
-    its history.
-    """
-
     def get_crop_statistics(self, crop_id: str, requesting_user_id: str) -> dict:
+        """
+        Method created to see the crop statistics in
+        its history.
+        """
         requesting_user = self.storage.get_user_by_id(requesting_user_id)
         if not requesting_user:
             raise UserNotFoundError(requesting_user_id)
@@ -394,23 +382,21 @@ class CropService:
         }
 
 
-"""
-UserService class created as a logic layer in CultivaLab;
-it's the brain of business service in the app, and connects
-the actions in the ICL and the Storage.
-"""
-
-
 class UserService:
+    """
+    UserService class created as a logic layer in CultivaLab;
+    it's the brain of business service in the app, and connects
+    the actions in the ICL and the Storage.
+    """
+
     def __init__(self, storage: Database) -> None:
         self.storage: Database = storage
 
-    """
-    Method created to implement the logic needed to
-    register a new user.
-    """
-
     def register_user(self, username: str, password: str) -> User:
+        """
+        Method created to implement the logic needed to
+        register a new user.
+        """
         if (not username) or (not username.strip()):
             raise InvalidInputError("El nombre de usuario no puede estar vacío.")
         if (not password) or (not password.strip()):
@@ -434,12 +420,11 @@ class UserService:
         self.storage.save_user(new_user)
         return new_user
 
-    """
-    Method created to allow the unique admin registration;
-    the master key is hard - coded at the beginning of this module.
-    """
-
     def register_admin(self, admin_key: str, username: str, password: str) -> User:
+        """
+        Method created to allow the unique admin registration;
+        the master key is hard - coded at the beginning of this module.
+        """
         if (not username) or (not username.strip()):
             raise InvalidInputError("El nombre de usuario no puede estar vacío.")
         if (not password) or (not password.strip()):
@@ -467,11 +452,10 @@ class UserService:
         self.storage.save_user(new_admin)
         return new_admin
 
-    """
-    Method created to implement the logic of the log - in in app.
-    """
-
     def login(self, username: str, password: str) -> User:
+        """
+        Method created to implement the logic of the log - in in app.
+        """
         if (not username) or (not username.strip()):
             raise InvalidInputError("El nombre de usuario no puede estar vacío.")
         if (not password) or (not password.strip()):
@@ -488,12 +472,11 @@ class UserService:
 
         return user
 
-    """
-    Method created to get the user information by its ID;
-    it can be used by the admin or the user.
-    """
-
     def get_user_by_id(self, user_id: str, requesting_user_id: str) -> User | None:
+        """
+        Method created to get the user information by its ID;
+        it can be used by the admin or the user.
+        """
         if (not user_id) or (not user_id.strip()):
             raise InvalidInputError("El ID del usuario no puede estar vacío.")
         if (not requesting_user_id) or (not requesting_user_id.strip()):
@@ -512,12 +495,11 @@ class UserService:
 
         return user
 
-    """
-    Method created to get the user information by its username;
-    it can be used by the admin or the user.
-    """
-
     def get_user_by_username(self, username: str, requesting_user_id: str):
+        """
+        Method created to get the user information by its username;
+        it can be used by the admin or the user.
+        """
         if (not username) or (not username.strip()):
             raise InvalidInputError("El Username del usuario no puede estar vacío.")
         if (not requesting_user_id) or (not requesting_user_id.strip()):
@@ -536,12 +518,11 @@ class UserService:
 
         return user
 
-    """
-    Method created to get all the users registered in app;
-    it can be used by the admin only.
-    """
-
     def get_all_users(self, requesting_user_id: str) -> list[User]:
+        """
+        Method created to get all the users registered in app;
+        it can be used by the admin only.
+        """
         if not (requesting_user_id) or not (requesting_user_id.strip()):
             raise InvalidInputError("El ID no puede estar vacío.")
         requesting_user = self.storage.get_user_by_id(requesting_user_id)
@@ -552,13 +533,12 @@ class UserService:
 
         return self.storage.get_users()
 
-    """
-    Method created for the users (or admin) to change their passwords.
-    """
-
     def update_password(
         self, user_id: str, old_password: str, new_password: str
     ) -> None:
+        """
+        Method created for the users (or admin) to change their passwords.
+        """
         if not (user_id) or not (user_id.strip()):
             raise InvalidInputError("El ID del usuario no puede estar vacío.")
         if not old_password:
@@ -589,13 +569,12 @@ class UserService:
 
         self.storage.save_user(user)
 
-    """
-    Method created for the users (or admin) to change their usernames.
-    """
-
     def update_username(
         self, user_id: str, new_username: str, requesting_user_id: str
     ) -> None:
+        """
+        Method created for the users (or admin) to change their usernames.
+        """
         if (not user_id) or (not user_id.strip()):
             raise InvalidInputError("El ID del usuario no puede estar vacío.")
         if (not new_username) or (not new_username.strip()):
@@ -621,12 +600,11 @@ class UserService:
         user.username = new_username
         self.storage.save_user(user)
 
-    """
-    Method created for the users to delete their "accounts".
-    It can only be used by users.
-    """
-
     def delete_user(self, user_id: str, requesting_user_id: str) -> None:
+        """
+        Method created for the users to delete their "accounts".
+        It can only be used by users.
+        """
         if (not user_id) or (not user_id.strip()):
             raise InvalidInputError("El ID del usuario no puede estar vacío.")
         if (not requesting_user_id) or (not requesting_user_id.strip()):
@@ -644,12 +622,11 @@ class UserService:
             raise ResourceOwnershipError("No puedes acceder a esta información.")
         self.storage.delete_user(user.id)
 
-    """
-    Method created for the users to get all their crops.
-    It can be used by users and admin.
-    """
-
     def get_user_crops(self, user_id: str, requesting_user_id: str) -> list[Crop]:
+        """
+        Method created for the users to get all their crops.
+        It can be used by users and admin.
+        """
         if (not user_id) or (not user_id.strip()):
             raise InvalidInputError("El ID del usuario no puede estar vacío.")
         if (not requesting_user_id) or (not requesting_user_id.strip()):
@@ -669,21 +646,16 @@ class UserService:
         return self.storage.get_crops_by_user(user_id)
 
 
-"""
-CropTypeService class created to implement the logic
-of crop types in CultivaLab; needed for creation and elections
-of crop types.
-"""
-
-
 class CropTypeService:
+    """
+    CropTypeService class created to implement the logic
+    of crop types in CultivaLab; needed for creation and elections
+    of crop types.
+    """
+
     def __init__(self, storage: Database, user_service: UserService):
         self.storage: Database = storage
         self.user_service: UserService = user_service
-
-    """
-    Method implemented for the admin to create new crop types.
-    """
 
     def create_crop_type(
         self,
@@ -696,6 +668,9 @@ class CropTypeService:
         initial_biomass: float,
         potential_performance: float,
     ) -> CropType:
+        """
+        Method implemented for the admin to create new crop types.
+        """
         # Initial validations, values can not be 0 or lesser.
         if not isinstance(optimal_temp, (int, float)):
             raise InvalidInputError("La temperatura debe ser numérica.")
@@ -752,11 +727,10 @@ class CropTypeService:
         self.storage.save_crop_type(new_crop_type)
         return new_crop_type
 
-    """
-    Method created to get a crop type based on its ID.
-    """
-
     def get_crop_type_by_id(self, crop_type_id: str) -> CropType:
+        """
+        Method created to get a crop type based on its ID.
+        """
         if (not crop_type_id) or (not crop_type_id.strip()):
             raise InvalidInputError("El valor de entrada no puede estar vacío.")
 
@@ -766,11 +740,10 @@ class CropTypeService:
 
         return searched_crop_type
 
-    """
-    Method created to get a crop type based on its name.
-    """
-
     def get_crop_type_by_name(self, crop_type_name: str) -> CropType:
+        """
+        Method created to get a crop type based on its name.
+        """
         if (not crop_type_name) or (not crop_type_name.strip()):
             raise InvalidInputError("El valor de entrada no puede estar vacío.")
         crop_type_name = crop_type_name.strip().capitalize()
@@ -780,21 +753,19 @@ class CropTypeService:
 
         return searched_crop_type
 
-    """
-    Method created to get a list of every crop type created
-    by admin. 
-    """
-
     def get_crop_types(self) -> list[CropType]:
+        """
+        Method created to get a list of every crop type created
+        by admin.
+        """
         return self.storage.get_crop_types()
 
-    """
-    update_crop_type method created to update information
-    or arguments about a crop type; every attribute is
-    allowed for changes excepting the ID.
-    """
-
     def update_crop_type(self, admin_id: str, crop_type_id: str, **kwargs) -> CropType:
+        """
+        update_crop_type method created to update information
+        or arguments about a crop type; every attribute is
+        allowed for changes excepting the ID.
+        """
         if (not admin_id) or (not admin_id.strip()):
             raise InvalidInputError("El valor de entrada no puede estar vacío.")
         if (not crop_type_id) or (not crop_type_id.strip()):
@@ -852,12 +823,11 @@ class CropTypeService:
         self.storage.save_crop_type(crop_type)
         return crop_type
 
-    """
-    Deletes a crop type only if there is no crops of that crop type
-    in Database.
-    """
-
     def delete_crop_type(self, admin_id: str, crop_type_to_eliminate_id: str) -> None:
+        """
+        Deletes a crop type only if there is no crops of that crop type
+        in Database.
+        """
         if (not admin_id) or (not admin_id.strip()):
             raise InvalidInputError("El valor de entrada no puede estar vacío.")
         if (not crop_type_to_eliminate_id) or (not crop_type_to_eliminate_id.strip()):
@@ -882,12 +852,11 @@ class CropTypeService:
 
         self.storage.delete_crop_type(crop_type_to_eliminate_id)
 
-    """
-    Get the stats of active crops of every crop type, and the
-    average performance of every crop type.
-    """
-
     def get_crop_types_with_stats(self, admin_id: str) -> list[dict]:
+        """
+        Get the stats of active crops of every crop type, and the
+        average performance of every crop type.
+        """
         if (not admin_id) or (not admin_id.strip()):
             raise InvalidInputError("El valor no puede estar vacío.")
         admin_user = self.storage.get_user_by_id(admin_id)

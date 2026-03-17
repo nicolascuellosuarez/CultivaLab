@@ -2,26 +2,25 @@ from dataclasses import dataclass
 from enum import Enum
 from datetime import datetime
 
-"""
-UserRole Dataclass implementation, inherits from Enum Module.
-Allows the differentiation between the two profile types.
-"""
-
 
 @dataclass
 class UserRole(Enum):
+    """
+    UserRole Dataclass implementation, inherits from Enum Module.
+    Allows the differentiation between the two profile types.
+    """
+
     ADMIN = "admin"
     USER = "user"
     # Class constants
 
 
-"""
-User Dataclass implementation, with its respective attributes. 
-"""
-
-
 @dataclass
 class User:
+    """
+    User Dataclass implementation, with its respective attributes.
+    """
+
     id: str
     username: str
     password_hash: str
@@ -31,14 +30,13 @@ class User:
     # A list with the crops created by usr.
 
 
-"""
-A CropType class, managed by Admin, where the Admin can add
-new available crops for Users creation.
-"""
-
-
 @dataclass
 class CropType:
+    """
+    A CropType class, managed by Admin, where the Admin can add
+    new available crops for Users creation.
+    """
+
     id: str
     name: str
     optimal_temp: float
@@ -55,14 +53,13 @@ class CropType:
     # Max biomass level in g / (m ^ 2)
 
 
-"""
-A DailyCondition class, where the User can fill out
-the day condition in each day to simule.
-"""
-
-
 @dataclass
 class DailyCondition:
+    """
+    A DailyCondition class, where the User can fill out
+    the day condition in each day to simule.
+    """
+
     day: int
     temperature: float
     # Average temperature otd in °C
@@ -73,13 +70,12 @@ class DailyCondition:
     # Expected biomass otd in g / (m ^ 2)
 
 
-"""
-A crop class, that the user can use to create new crops.
-"""
-
-
 @dataclass
 class Crop:
+    """
+    A crop class, that the user can use to create new crops.
+    """
+
     id: str
     name: str
     user_id: str

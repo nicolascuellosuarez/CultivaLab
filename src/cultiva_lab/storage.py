@@ -5,15 +5,15 @@ from pathlib import Path
 from dataclasses import asdict
 from datetime import datetime
 
-"""
-Database class created as a Protocol in order to use SOLID
-principles; with this, the Service logic does not depends
-on the JSON implementation; if later, a connection with Supa -
-Base is created, it will be easier to adapt the contract.
-"""
-
 
 class Database(Protocol):
+    """
+    Database class created as a Protocol in order to use SOLID
+    principles; with this, the Service logic does not depends
+    on the JSON implementation; if later, a connection with Supa -
+    Base is created, it will be easier to adapt the contract.
+    """
+
     def read(self) -> dict[str, list]: ...
     def save(self, data: dict[str, list]) -> None: ...
     def get_users(self) -> list[User]: ...
@@ -36,26 +36,23 @@ class Database(Protocol):
     def clear_all_data(self) -> None: ...
 
 
-"""
-JSONStorage class for the implementation of the logic of each
-method on the Protocol for it to work on the current database.
-"""
-
-
 class JSONStorage:
     """
-    __init__ method with a filepath parameter (Path type), to
-    create the path as an attribute for all methods.
+    JSONStorage class for the implementation of the logic of each
+    method on the Protocol for it to work on the current database.
     """
 
     def __init__(self, filepath: str | Path = "data/database.json") -> None:
+        """
+        __init__ method with a filepath parameter (Path type), to
+        create the path as an attribute for all methods.
+        """
         self.filepath: Path = Path(filepath)
 
-    """
-    A read method created to read the DataBase when needed.
-    """
-
     def read(self) -> dict[str, list]:
+        """
+        A read method created to read the DataBase when needed.
+        """
         # If the filepath does not exists, the program returns a completely empty dictionary.
         if not self.filepath.exists():
             return {"users": [], "crops": [], "crop_types": []}
@@ -68,22 +65,20 @@ class JSONStorage:
             "crop_types": db.get("crop_types", []),
         }
 
-    """
-    A save method, created to save the DataBase every time 
-    changes are made.
-    """
-
     def save(self, data: dict[str, list]) -> None:
+        """
+        A save method, created to save the DataBase every time
+        changes are made.
+        """
         with open(self.filepath, "w") as f:
             json.dump(
                 data, f, indent=4, ensure_ascii=False
             )  # Dumps it in a dictionary called data.
 
-    """
-    A get users method, to read all the users registered in DB.
-    """
-
     def get_users(self) -> list[User]:
+        """
+        A get users method, to read all the users registered in DB.
+        """
         users = self.read().get(
             "users", []
         )  # Creates an users list with the current Users registered in the DB.
@@ -98,12 +93,11 @@ class JSONStorage:
 
         return users_list
 
-    """
-    A search method, called get user by id, where the Admin can search and
-    get the information about a specific user by searching it by its ID.
-    """
-
     def get_user_by_id(self, user_id: str) -> User | None:
+        """
+        A search method, called get user by id, where the Admin can search and
+        get the information about a specific user by searching it by its ID.
+        """
         users = self.read().get("users", [])
 
         for user in users:
@@ -115,12 +109,11 @@ class JSONStorage:
                 )  # The user_data is unpackaged and showed as an User object.
         return None
 
-    """
-    A search method, called get user by username, where the Admin can search and
-    get the information about a specific user by searching it by its username.
-    """
-
     def get_user_by_username(self, username: str) -> User | None:
+        """
+        A search method, called get user by username, where the Admin can search and
+        get the information about a specific user by searching it by its username.
+        """
         users = self.read().get("users", [])
 
         for user in users:
@@ -130,13 +123,13 @@ class JSONStorage:
                 return User(**user_data)
         return None
 
-    """
-    A save user method that works receiving an User object in the parameter,
-    and searchs in the user list of the DB; If the user already exists,
-    it overrides it, if not, then it adds it to the DB.
-    """
-
     def save_user(self, user: User) -> None:
+        """
+        A save user method that works receiving an User object in the parameter,
+        and searchs in the user list of the DB; If the user already exists,
+        it overrides it, if not, then it adds it to the DB.
+        """
+
         data = self.read()
         users = data["users"]
         user_dict = asdict(user)
@@ -153,13 +146,12 @@ class JSONStorage:
         users.append(user_dict)  # The object in the parameter is added to the list.
         self.save(data)
 
-    """
-    A delete user method, that receives an ID in the parameter.
-    It toures the users list in the DB, if the user id equals the ID,
-    then it's deleted.
-    """
-
     def delete_user(self, user_id: str) -> None:
+        """
+        A delete user method, that receives an ID in the parameter.
+        It toures the users list in the DB, if the user id equals the ID,
+        then it's deleted.
+        """
         data = self.read()
         users = data["users"]
 
@@ -169,11 +161,10 @@ class JSONStorage:
                 self.save(data)
                 return
 
-    """
-    A get crops method, used to get all crops registered in DB.
-    """
-
     def get_crops(self) -> list[Crop]:
+        """
+        A get crops method, used to get all crops registered in DB.
+        """
         crops = self.read().get("crops", [])
         crops_list = []
 
@@ -200,11 +191,10 @@ class JSONStorage:
 
         return crops_list
 
-    """
-    Get crop by id method created to find a crop searching by its ID.
-    """
-
     def get_crop_by_id(self, crop_id: str) -> Crop | None:
+        """
+        Get crop by id method created to find a crop searching by its ID.
+        """
         crops = self.read().get("crops", [])
 
         for crop in crops:
@@ -229,12 +219,11 @@ class JSONStorage:
                 return Crop(**crop_data)
         return None
 
-    """
-    Get crop by user method created to find the crops created by an user
-    using their ID.
-    """
-
     def get_crops_by_user(self, user_id: str) -> list[Crop]:
+        """
+        Get crop by user method created to find the crops created by an user
+        using their ID.
+        """
         crops = self.read().get("crops", [])
         user_crops = []  # Init a new list where the crops created by the user will be added.
 
@@ -261,11 +250,10 @@ class JSONStorage:
                 user_crops.append(new_crop)
         return user_crops
 
-    """
-    Get crop by user method created to find same type crops.
-    """
-
     def get_crops_by_type(self, crop_type_id: str) -> list[Crop]:
+        """
+        Get crop by user method created to find same type crops.
+        """
         crops = self.read().get("crops", [])
         crops_in_crop_type = []
 
@@ -290,11 +278,10 @@ class JSONStorage:
                 crops_in_crop_type.append(new_crop)
         return crops_in_crop_type
 
-    """
-    Get crop by user method created to find active crops.
-    """
-
     def get_active_crops(self) -> list[Crop]:
+        """
+        Get crop by user method created to find active crops.
+        """
         crops = self.read().get("crops", [])
         active_crops = []
 
@@ -319,12 +306,11 @@ class JSONStorage:
                 active_crops.append(new_crop)
         return active_crops
 
-    """
-    Save crop method created to save a crop in the list if it doesn't exists yet.
-    If it already exists in the DB, the method overwrites the past information.
-    """
-
     def save_crop(self, crop: Crop) -> None:
+        """
+        Save crop method created to save a crop in the list if it doesn't exists yet.
+        If it already exists in the DB, the method overwrites the past information.
+        """
         data = self.read()
         crops = data["crops"]
         crop_dict = asdict(
@@ -344,11 +330,10 @@ class JSONStorage:
         crops.append(crop_dict)
         self.save(data)
 
-    """
-    Delete crop method created to delete a crop based on its ID.
-    """
-
     def delete_crop(self, crop_id: str) -> None:
+        """
+        Delete crop method created to delete a crop based on its ID.
+        """
         data = self.read()
         crops = data["crops"]
 
@@ -358,11 +343,10 @@ class JSONStorage:
                 self.save(data)
                 return
 
-    """
-    Get Crop Types method too see all the crop types available in the app.
-    """
-
     def get_crop_types(self) -> list[CropType]:
+        """
+        Get Crop Types method too see all the crop types available in the app.
+        """
         crop_types = self.read().get("crop_types", [])
         crop_types_list = []  # Appending it on a new list
 
@@ -373,11 +357,10 @@ class JSONStorage:
             )  # Unpackaging the crop type data to make it a CropType obkect
         return crop_types_list  # Returning the lists.
 
-    """
-    Get Crop Type by ID method to search a crop type using its ID.
-    """
-
     def get_crop_type_by_id(self, crop_type_id: str) -> CropType | None:
+        """
+        Get Crop Type by ID method to search a crop type using its ID.
+        """
         crop_types = self.read().get("crop_types", [])
 
         for crop_type in crop_types:
@@ -386,11 +369,10 @@ class JSONStorage:
                 return CropType(**crop_type_data)  # Returning the CropType object
         return None
 
-    """
-    Get Crop Type by Name method to search a crop type using its name.
-    """
-
     def get_crop_type_by_name(self, name: str) -> CropType | None:
+        """
+        Get Crop Type by Name method to search a crop type using its name.
+        """
         crop_types = self.read().get("crop_types", [])
 
         for crop_type in crop_types:
@@ -399,11 +381,10 @@ class JSONStorage:
                 return CropType(**crop_type_data)
         return None
 
-    """
-    Save Crop Type in DB.
-    """
-
     def save_crop_type(self, crop_type: CropType) -> None:
+        """
+        Save Crop Type in DB.
+        """
         data = self.read()
         crop_types = data.get("crop_types", [])
         crop_type_dict = asdict(crop_type)
@@ -417,11 +398,10 @@ class JSONStorage:
         crop_types.append(crop_type_dict)
         self.save(data)
 
-    """
-    Delete Crop Type method to delete a Crop Type based on its ID.
-    """
-
     def delete_crop_type(self, crop_type_id: str) -> None:
+        """
+        Delete Crop Type method to delete a Crop Type based on its ID.
+        """
         data = self.read()
         crop_types = data.get("crop_types", [])
 
@@ -431,11 +411,10 @@ class JSONStorage:
                 self.save(data)
                 return
 
-    """
-    Clear All Data method implemented to Clear everithing from the DB if needed. 
-    """
-
     def clear_all_data(self) -> None:
+        """
+        Clear All Data method implemented to Clear everithing from the DB if needed.
+        """
         # Defining the empty structure
         empty_data = {"users": [], "crops": [], "crop_types": []}
 

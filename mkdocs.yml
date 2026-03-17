@@ -29,11 +29,16 @@ plugins:
             show_source: true
             show_root_heading: true
             show_category_heading: true
-  - mermaid2
 
 nav:
-  - Home: index.md
-  - Getting Star
+  - Origen: index.md
+  - Introduzcámonos: getting-started.md 
+  - Arquitectura del Sistema: architecture.md
+  - Modelos de Datos: models-overview.md
+  - Capa de Servicios: services-overview.md
+  - Capa de Persistencia: storage.md
+  - Excepciones: exceptions.md
+  - Pruebas: tests.md
 
 markdown_extensions:
   - admonition
@@ -45,3 +50,5 @@ markdown_extensions:
   - pymdownx.details
   - pymdownx.tabbed
   - tables
+  - attr_list
+  - md_in_html

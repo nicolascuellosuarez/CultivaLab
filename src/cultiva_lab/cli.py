@@ -198,45 +198,32 @@ def logout():
 
 
 def menu_user():
+    """Menú principal para usuarios normales."""
+    acciones = {
+        "Mis cultivos": listar_mis_cultivos,
+        "Crear nuevo cultivo": crear_cultivo,
+        "Buscar cultivos": menu_buscar_cultivos,
+        "Ver detalles de un cultivo": ver_detalle_cultivo,
+        "Simular día en un cultivo": simular_dia,
+        "Estadísticas de un cultivo": ver_estadisticas,
+        "Editar nombre de un cultivo": editar_cultivo,
+        "Eliminar un cultivo": eliminar_cultivo,
+        "Gestionar mi perfil": menu_gestionar_perfil,
+        "Cerrar sesión": logout,
+    }
+
     while True:
         opcion = questionary.select(
             f"Menú de Usuario: {current_user.username}",
-            choices=[
-                "Mis cultivos",
-                "Crear nuevo cultivo",
-                "Buscar cultivos",
-                "Ver detalles de un cultivo",
-                "Simular día en un cultivo",
-                "Estadísticas de un cultivo",
-                "Editar nombre de un cultivo",
-                "Eliminar un cultivo",
-                "Gestionar mi perfil",
-                "Cerrar sesión",
-            ],
+            choices=list(acciones.keys()),
             style=custom_style,
         ).ask()
 
-        if opcion == "Mis cultivos":
-            listar_mis_cultivos()
-        elif opcion == "Crear nuevo cultivo":
-            crear_cultivo()
-        elif opcion == "Buscar cultivos":
-            menu_buscar_cultivos()
-        elif opcion == "Ver detalles de un cultivo":
-            ver_detalle_cultivo()
-        elif opcion == "Simular día en un cultivo":
-            simular_dia()
-        elif opcion == "Estadísticas de un cultivo":
-            ver_estadisticas()
-        elif opcion == "Editar nombre de un cultivo":
-            editar_cultivo()
-        elif opcion == "Eliminar un cultivo":
-            eliminar_cultivo()
-        elif opcion == "Gestionar mi perfil":
-            menu_gestionar_perfil()
-        elif opcion == "Cerrar sesión":
+        if opcion == "Cerrar sesión":
             logout()
             break
+
+        acciones[opcion]()
 
 
 def listar_mis_cultivos():
@@ -526,12 +513,30 @@ def buscar_cultivo_por_nombre():
 
 def buscar_cultivo_por_tipo():
     """Buscar cultivos por tipo de cultivo."""
+    tipo_obj = _seleccionar_tipo_cultivo()
+    if not tipo_obj:
+        return
+
+    resultados = _obtener_cultivos_por_tipo(tipo_obj.id)
+    if not resultados:
+        console.print(
+            Panel(
+                f"No tienes cultivos de tipo {tipo_obj.name}.", style=f"bold {MARRON}"
+            )
+        )
+        return
+
+    _mostrar_resultados_por_tipo(resultados, tipo_obj.name)
+
+
+def _seleccionar_tipo_cultivo():
+    """Muestra lista de tipos y retorna el seleccionado o None."""
     tipos = crop_type_service.get_crop_types()
     if not tipos:
         console.print(
             Panel("No hay tipos de cultivo disponibles.", style=f"bold {MARRON}")
         )
-        return
+        return None
 
     opciones = [t.name for t in tipos]
     opciones.append("Volver")
@@ -541,23 +546,21 @@ def buscar_cultivo_por_tipo():
     ).ask()
 
     if tipo_elegido == "Volver":
-        return
+        return None
 
-    tipo_obj = next((t for t in tipos if t.name == tipo_elegido), None)
-    if not tipo_obj:
-        return
+    return next((t for t in tipos if t.name == tipo_elegido), None)
 
+
+def _obtener_cultivos_por_tipo(tipo_id):
+    """Obtiene los cultivos del usuario actual filtrados por tipo."""
     crops = crop_service.get_crops_by_user(current_user.id, current_user.id)
-    resultados = [c for c in crops if c.crop_type_id == tipo_obj.id]
+    return [c for c in crops if c.crop_type_id == tipo_id]
 
-    if not resultados:
-        console.print(
-            Panel(f"No tienes cultivos de tipo {tipo_elegido}.", style=f"bold {MARRON}")
-        )
-        return
 
+def _mostrar_resultados_por_tipo(resultados, tipo_nombre):
+    """Muestra la tabla con los cultivos encontrados."""
     table = Table(
-        title=f"Cultivos de tipo {tipo_elegido}",
+        title=f"Cultivos de tipo {tipo_nombre}",
         title_style=f"bold {VERDE}",
         border_style=VERDE,
     )
@@ -706,10 +709,28 @@ def eliminar_mi_cuenta():
 
 def ver_cultivos_usuario_con_filtros():
     """Admin puede ver cultivos de usuarios con filtros."""
+    target_user = _seleccionar_usuario()
+    if not target_user:
+        return
+
+    filtro = _seleccionar_filtro(target_user.username)
+    if not filtro:
+        return
+
+    crops = _obtener_cultivos_con_filtro(target_user.id, filtro)
+    if not crops:
+        console.print(Panel("No se encontraron cultivos.", style=f"bold {MARRON}"))
+        return
+
+    _mostrar_tabla_cultivos(crops, target_user.username)
+
+
+def _seleccionar_usuario():
+    """Selecciona un usuario de la lista."""
     users = user_service.get_all_users(current_user.id)
     if not users:
         console.print(Panel("No hay usuarios.", style=f"bold {MARRON}"))
-        return
+        return None
 
     opciones = [f"{u.username} (ID: {u.id})" for u in users]
     opciones.append("Volver")
@@ -719,13 +740,16 @@ def ver_cultivos_usuario_con_filtros():
     ).ask()
 
     if elegido == "Volver":
-        return
+        return None
 
     idx = opciones.index(elegido)
-    target_user = users[idx]
+    return users[idx]
 
+
+def _seleccionar_filtro(username):
+    """Selecciona el tipo de filtro a aplicar."""
     filtro = questionary.select(
-        f"Filtrar cultivos de {target_user.username}:",
+        f"Filtrar cultivos de {username}:",
         choices=[
             "Todos",
             "Por ID",
@@ -738,40 +762,63 @@ def ver_cultivos_usuario_con_filtros():
         style=custom_style,
     ).ask()
 
-    if filtro == "Volver":
-        return
+    return None if filtro == "Volver" else filtro
 
-    crops = crop_service.get_crops_by_user(target_user.id, current_user.id)
 
-    if filtro == "Por ID":
-        crop_id = questionary.text("ID del cultivo:", style=custom_style).ask()
-        if crop_id:
-            crops = [c for c in crops if c.id == crop_id]
-    elif filtro == "Por nombre":
-        nombre = questionary.text("Nombre (o parte):", style=custom_style).ask()
-        if nombre:
-            nombre_lower = nombre.lower()
-            crops = [c for c in crops if nombre_lower in c.name.lower()]
-    elif filtro == "Por tipo":
-        tipos = crop_type_service.get_crop_types()
-        if tipos:
-            opciones_tipo = [t.name for t in tipos]
-            tipo_elegido = questionary.select(
-                "Tipo:", choices=opciones_tipo, style=custom_style
-            ).ask()
-            tipo_obj = next(t for t in tipos if t.name == tipo_elegido)
-            crops = [c for c in crops if c.crop_type_id == tipo_obj.id]
-    elif filtro == "Solo activos":
-        crops = [c for c in crops if c.active]
-    elif filtro == "Solo cosechados":
-        crops = [c for c in crops if not c.active]
+def _obtener_cultivos_con_filtro(user_id, filtro):
+    """Obtiene los cultivos aplicando el filtro seleccionado."""
+    crops = crop_service.get_crops_by_user(user_id, current_user.id)
 
-    if not crops:
-        console.print(Panel("No se encontraron cultivos.", style=f"bold {MARRON}"))
-        return
+    if filtro == "Todos":
+        return crops
 
+    filtros_map = {
+        "Por ID": _filtrar_por_id,
+        "Por nombre": _filtrar_por_nombre,
+        "Por tipo": _filtrar_por_tipo,
+        "Solo activos": lambda c: [cult for cult in c if cult.active],
+        "Solo cosechados": lambda c: [cult for cult in c if not cult.active],
+    }
+
+    if filtro in filtros_map:
+        return filtros_map[filtro](crops)
+
+    return crops
+
+
+def _filtrar_por_id(crops):
+    """Filtra cultivos por ID."""
+    crop_id = questionary.text("ID del cultivo:", style=custom_style).ask()
+    return [c for c in crops if c.id == crop_id] if crop_id else crops
+
+
+def _filtrar_por_nombre(crops):
+    """Filtra cultivos por nombre (búsqueda parcial)."""
+    nombre = questionary.text("Nombre (o parte):", style=custom_style).ask()
+    if not nombre:
+        return crops
+    nombre_lower = nombre.lower()
+    return [c for c in crops if nombre_lower in c.name.lower()]
+
+
+def _filtrar_por_tipo(crops):
+    """Filtra cultivos por tipo."""
+    tipos = crop_type_service.get_crop_types()
+    if not tipos:
+        return crops
+
+    opciones_tipo = [t.name for t in tipos]
+    tipo_elegido = questionary.select(
+        "Tipo:", choices=opciones_tipo, style=custom_style
+    ).ask()
+    tipo_obj = next(t for t in tipos if t.name == tipo_elegido)
+    return [c for c in crops if c.crop_type_id == tipo_obj.id]
+
+
+def _mostrar_tabla_cultivos(crops, username):
+    """Muestra los cultivos en una tabla formateada."""
     table = Table(
-        title=f"Cultivos de {target_user.username}",
+        title=f"Cultivos de {username}",
         title_style=f"bold {VERDE}",
         border_style=VERDE,
     )
@@ -960,70 +1007,73 @@ def seleccionar_crop_type(mensaje="Selecciona un tipo:"):
 
 
 def editar_crop_type():
+    """Edita un tipo de cultivo existente (solo admin)."""
     tipo = seleccionar_crop_type("Selecciona el tipo a editar:")
     if not tipo:
         return
-    # Permitir cambiar algunos campos
-    cambios = {}
-    name = questionary.text(
-        f"Nuevo nombre (dejar vacío para '{tipo.name}'):", style=custom_style
-    ).ask()
-    if name and name.strip():
-        cambios["name"] = name.strip()
 
-    temp = questionary.text(
-        f"Nueva temperatura óptima (dejar vacío para {tipo.optimal_temp}):",
-        style=custom_style,
-    ).ask()
-    if temp:
-        cambios["optimal_temp"] = float(temp)
+    cambios = _recolectar_cambios_crop_type(tipo)
 
-    water = questionary.text(
-        f"Nueva agua necesaria (dejar vacío para {tipo.needed_water}):",
-        style=custom_style,
-    ).ask()
-    if water:
-        cambios["needed_water"] = float(water)
-
-    light = questionary.text(
-        f"Nueva luz necesaria (dejar vacío para {tipo.needed_light}):",
-        style=custom_style,
-    ).ask()
-    if light:
-        cambios["needed_light"] = float(light)
-
-    cycle = questionary.text(
-        f"Nuevo ciclo en días (dejar vacío para {tipo.days_cycle}):", style=custom_style
-    ).ask()
-    if cycle:
-        cambios["days_cycle"] = int(cycle)
-
-    init = questionary.text(
-        f"Nueva biomasa inicial (dejar vacío para {tipo.initial_biomass}):",
-        style=custom_style,
-    ).ask()
-    if init:
-        cambios["initial_biomass"] = float(init)
-
-    pot = questionary.text(
-        f"Nuevo potencial (dejar vacío para {tipo.potential_performance}):",
-        style=custom_style,
-    ).ask()
-    if pot:
-        cambios["potential_performance"] = float(pot)
-
-    if cambios:
-        try:
-            crop_type_service.update_crop_type(current_user.id, tipo.id, **cambios)
-            console.print(Panel("Tipo actualizado.", style=f"bold {VERDE}"))
-        except (
-            BusinessRuleViolationError,
-            ResourceOwnershipError,
-            InvalidInputError,
-        ) as e:
-            console.print(Panel(f"{str(e)}", style=f"bold {MARRON}"))
-    else:
+    if not cambios:
         console.print(Panel("No se realizaron cambios.", style=f"bold {MARRON}"))
+        return
+
+    _aplicar_cambios_crop_type(tipo.id, cambios)
+
+
+def _recolectar_cambios_crop_type(tipo):
+    """Solicita al usuario los nuevos valores y retorna un diccionario con los cambios."""
+    cambios = {}
+
+    _preguntar_campo(cambios, "name", "Nombre", tipo.name, str)
+    _preguntar_campo(
+        cambios, "optimal_temp", "Temperatura óptima", tipo.optimal_temp, float
+    )
+    _preguntar_campo(
+        cambios, "needed_water", "Agua necesaria", tipo.needed_water, float
+    )
+    _preguntar_campo(cambios, "needed_light", "Luz necesaria", tipo.needed_light, float)
+    _preguntar_campo(cambios, "days_cycle", "Ciclo en días", tipo.days_cycle, int)
+    _preguntar_campo(
+        cambios, "initial_biomass", "Biomasa inicial", tipo.initial_biomass, float
+    )
+    _preguntar_campo(
+        cambios, "potential_performance", "Potencial", tipo.potential_performance, float
+    )
+
+    return cambios
+
+
+def _preguntar_campo(cambios, campo, nombre_mostrar, valor_actual, tipo_conversion):
+    """Pregunta un campo y lo agrega a cambios si el usuario ingresó un valor."""
+    valor_str = questionary.text(
+        f"Nuevo {nombre_mostrar} (dejar vacío para '{valor_actual}'):",
+        style=custom_style,
+    ).ask()
+
+    if valor_str and valor_str.strip():
+        try:
+            cambios[campo] = tipo_conversion(valor_str)
+        except ValueError:
+            console.print(
+                Panel(
+                    f"Valor inválido para {nombre_mostrar}. Se ignora.",
+                    style=f"bold {MARRON}",
+                )
+            )
+
+
+def _aplicar_cambios_crop_type(tipo_id, cambios):
+    """Aplica los cambios al tipo de cultivo."""
+    try:
+        crop_type_service.update_crop_type(current_user.id, tipo_id, **cambios)
+        console.print(Panel("Tipo actualizado.", style=f"bold {VERDE}"))
+    except (
+        BusinessRuleViolationError,
+        ResourceOwnershipError,
+        InvalidInputError,
+    ) as e:
+        console.print(Panel(f"{str(e)}", style=f"bold {MARRON}"))
 
 
 def eliminar_crop_type():
@@ -1127,85 +1177,16 @@ def ver_estadisticas_globales():
 def eliminar_usuario_admin():
     """Admin puede eliminar cualquier usuario (seleccionando de una lista)."""
     try:
-        users = user_service.get_all_users(current_user.id)
-        if not users:
-            console.print(Panel("No hay usuarios registrados.", style=f"bold {MARRON}"))
+        usuario_a_eliminar = _seleccionar_usuario_para_eliminar()
+        if not usuario_a_eliminar:
             return
 
-        # Filtrar para que no pueda eliminarse a sí mismo
-        otros_usuarios = [u for u in users if u.id != current_user.id]
-
-        if not otros_usuarios:
-            console.print(
-                Panel("No hay otros usuarios para eliminar.", style=f"bold {MARRON}")
-            )
+        if not _confirmar_eliminacion(usuario_a_eliminar):
             return
 
-        opciones = [
-            f"{u.username} (ID: {u.id}) - {len(u.crop_ids)} cultivos"
-            for u in otros_usuarios
-        ]
-        opciones.append("Cancelar")
-
-        elegido = questionary.select(
-            "Selecciona el usuario a eliminar:", choices=opciones, style=custom_style
-        ).ask()
-
-        if elegido == "Cancelar":
-            return
-
-        idx = opciones.index(elegido)
-        usuario_a_eliminar = otros_usuarios[idx]
-
-        # Confirmación
-        console.print(
-            Panel(
-                f"[bold]ADVERTENCIA:[/bold] Se eliminará:\n"
-                f"• Usuario: {usuario_a_eliminar.username}\n"
-                f"• Cultivos asociados: {len(usuario_a_eliminar.crop_ids)}\n"
-                f"• Esta acción NO se puede deshacer.",
-                style=f"bold {MARRON}",
-            )
-        )
-
-        confirm = questionary.confirm(
-            f"¿Estás SEGURO de eliminar a '{usuario_a_eliminar.username}'?",
-            default=False,
-        ).ask()
-
-        if not confirm:
-            return
-
-        # PRIMERO: Eliminar todos los cultivos del usuario
-        crops = crop_service.get_crops_by_user(usuario_a_eliminar.id, current_user.id)
-        for crop in crops:
-            try:
-                crop_service.delete_crop(crop.id, current_user.id)
-                console.print(f"Cultivo '{crop.name}' eliminado.")
-            except Exception as e:
-                console.print(f"Error al eliminar cultivo {crop.name}: {str(e)}")
-
-        # LUEGO: Eliminar el usuario
-        user_service.delete_user(usuario_a_eliminar.id, current_user.id)
-
-        # Verificar que se eliminó
-        usuario_verificacion = user_service.storage.get_user_by_id(
-            usuario_a_eliminar.id
-        )
-        if usuario_verificacion is None:
-            console.print(
-                Panel(
-                    f"Usuario '{usuario_a_eliminar.username}' eliminado correctamente.",
-                    style=f"bold {VERDE}",
-                )
-            )
-        else:
-            console.print(
-                Panel(
-                    "El usuario parece no haberse eliminado. Intenta manualmente.",
-                    style=f"bold {MARRON}",
-                )
-            )
+        _eliminar_cultivos_del_usuario(usuario_a_eliminar)
+        _eliminar_usuario(usuario_a_eliminar)
+        _verificar_eliminacion(usuario_a_eliminar)
 
     except ResourceOwnershipError:
         console.print(
@@ -1213,6 +1194,99 @@ def eliminar_usuario_admin():
         )
     except Exception as e:
         console.print(Panel(f"Error: {str(e)}", style=f"bold {MARRON}"))
+
+
+def _obtener_usuarios_no_admin():
+    """Retorna lista de usuarios excluyendo al admin actual."""
+    users = user_service.get_all_users(current_user.id)
+    if not users:
+        console.print(Panel("No hay usuarios registrados.", style=f"bold {MARRON}"))
+        return []
+
+    otros_usuarios = [u for u in users if u.id != current_user.id]
+    if not otros_usuarios:
+        console.print(
+            Panel("No hay otros usuarios para eliminar.", style=f"bold {MARRON}")
+        )
+        return []
+
+    return otros_usuarios
+
+
+def _seleccionar_usuario_para_eliminar():
+    """Muestra lista de usuarios y retorna el seleccionado o None."""
+    otros_usuarios = _obtener_usuarios_no_admin()
+    if not otros_usuarios:
+        return None
+
+    opciones = [
+        f"{u.username} (ID: {u.id}) - {len(u.crop_ids)} cultivos"
+        for u in otros_usuarios
+    ]
+    opciones.append("Cancelar")
+
+    elegido = questionary.select(
+        "Selecciona el usuario a eliminar:", choices=opciones, style=custom_style
+    ).ask()
+
+    if elegido == "Cancelar":
+        return None
+
+    idx = opciones.index(elegido)
+    return otros_usuarios[idx]
+
+
+def _confirmar_eliminacion(usuario):
+    """Muestra advertencia y pide confirmación."""
+    console.print(
+        Panel(
+            f"[bold]ADVERTENCIA:[/bold] Se eliminará:\n"
+            f"• Usuario: {usuario.username}\n"
+            f"• Cultivos asociados: {len(usuario.crop_ids)}\n"
+            f"• Esta acción NO se puede deshacer.",
+            style=f"bold {MARRON}",
+        )
+    )
+
+    return questionary.confirm(
+        f"¿Estás SEGURO de eliminar a '{usuario.username}'?",
+        default=False,
+    ).ask()
+
+
+def _eliminar_cultivos_del_usuario(usuario):
+    """Elimina todos los cultivos asociados al usuario."""
+    crops = crop_service.get_crops_by_user(usuario.id, current_user.id)
+    for crop in crops:
+        try:
+            crop_service.delete_crop(crop.id, current_user.id)
+            console.print(f"Cultivo '{crop.name}' eliminado.")
+        except Exception as e:
+            console.print(f"Error al eliminar cultivo {crop.name}: {str(e)}")
+
+
+def _eliminar_usuario(usuario):
+    """Elimina el usuario del sistema."""
+    user_service.delete_user(usuario.id, current_user.id)
+
+
+def _verificar_eliminacion(usuario):
+    """Verifica que el usuario fue eliminado correctamente."""
+    usuario_verificacion = user_service.storage.get_user_by_id(usuario.id)
+    if usuario_verificacion is None:
+        console.print(
+            Panel(
+                f"Usuario '{usuario.username}' eliminado correctamente.",
+                style=f"bold {VERDE}",
+            )
+        )
+    else:
+        console.print(
+            Panel(
+                "El usuario parece no haberse eliminado. Intenta manualmente.",
+                style=f"bold {MARRON}",
+            )
+        )
 
 
 if __name__ == "__main__":

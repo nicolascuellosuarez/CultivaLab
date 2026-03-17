@@ -14,7 +14,7 @@
 
 ## **¿Qué es CultivaLab?**
 
-**CultivaLab** es una aplicación de <span style="color: #6dbc19;">*línea de comandos*</span> diseñada para agricultura de precisión. Permite a investigadores y agricultores modelar el crecimiento de cultivos bajo diferentes condiciones ambientales, simulando el desarrollo día a día y generando estadísticas predictivas sobre el rendimiento esperado. 
+**CultivaLab** es una aplicación de <span style="color: #6dbc19;">*línea de comandos*</span> diseñada para agricultura de precisión. Permite a investigadores y agricultores modelar el crecimiento de cultivos bajo diferentes condiciones ambientales, simulando el desarrollo día a día y generando estadísticas sobre el rendimiento. 
 
 El sistema implementa un <span style="color: #6dbc19;">*modelo mecanicista*</span> basado en factores ambientales como <span style="color: #6dbc19;">**temperatura**</span>, <span style="color: #6dbc19;">**agua**</span> y <span style="color: #6dbc19;">**luz**</span>, los cuales afectan directamente el desarrollo de la planta. La arquitectura del software es modular y escalable, permitiendo futuras expansiones como la integración con bases de datos externas o interfaces web.
 
@@ -32,6 +32,31 @@ Los usuarios normales pueden crear y gestionar sus propios cultivos, mientras qu
 ## **Características Principales.**
 
 El sistema implementa una arquitectura de usuarios con **roles diferenciados**, permitiendo separar claramente las responsabilidades entre <span style="color: #6dbc19;">**usuarios estándar**</span> y <span style="color: #6dbc19;">**administradores**</span>. Los usuarios normales pueden crear y gestionar sus propios cultivos dentro de la plataforma, mientras que el administrador mantiene el control del catálogo global de <span style="color: #6dbc19;">*tipos de cultivo*</span>, garantizando la consistencia de la información base del sistema.
+
+<div style="display:flex; gap:20px;">
+<div style="flex:1;">
+<h3>Menú de Administrador</h3>
+<script 
+src="https://asciinema.org/a/ttnizKgi8QRBjeod.js"
+id="asciicast-ttnizKgi8QRBjeod"
+data-rows="25"
+data-cols="90"
+data-font-size="16"
+async>
+</script>
+</div>
+<div style="flex:1;">
+<h3>Menú de Usuario</h3>
+<script 
+src="https://asciinema.org/a/z2rxAUVoVt88H1tN.js"
+id="asciicast-z2rxAUVoVt88H1tN"
+data-rows="25"
+data-cols="90"
+data-font-size="16"
+async>
+</script>
+</div>
+</div>
 
 La plataforma también incorpora un <span style="color: #6dbc19;">**sistema de simulación diaria**</span> que permite registrar condiciones ambientales relevantes para el crecimiento de los cultivos. Entre estas variables se encuentran:
 
