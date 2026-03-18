@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from datetime import datetime
 from .daily_condition import DailyCondition
+from src.cultiva_lab.exceptions import InvalidInputError
 
 
 @dataclass
@@ -19,3 +20,69 @@ class Crop:
     # List that will be filled
     # with DailyCondition objects per day
     active: bool
+
+    def __post_init__(self):
+        """
+        Validates crop data after initialization.
+        """
+
+        self._validate_name()
+        self._validate_user_id()
+        self._validate_crop_type_id()
+        self._validate_dates()
+        self._validate_conditions()
+        self._validate_active()
+
+    def _validate_name(self):
+        """
+        Validates that the crop name is a non-empty string.
+        """
+
+        if not isinstance(self.name, str) or not self.name.strip():
+            raise InvalidInputError("El nombre del Cultivo no puede estár vacío.")
+
+    def _validate_user_id(self):
+        """
+        Validates that the user ID is a non-empty string.
+        """
+
+        if not isinstance(self.user_id, str) or not self.user_id.strip():
+            raise InvalidInputError("El ID del usuario dueño no puede estar vacío.")
+
+    def _validate_crop_type_id(self):
+        """
+        Validates that the crop type ID is a non-empty string.
+        """
+
+        if not isinstance(self.crop_type_id, str) or not self.crop_type_id.strip():
+            raise InvalidInputError("El ID del tipo de cultivo no puede estár vacío.")
+
+    def _validate_dates(self):
+        """
+        Validates that start_date and last_sim_date are datetime objects.
+        """
+
+        if not isinstance(self.start_date, datetime):
+            raise InvalidInputError(
+                "La fecha de inicio debe estar en formato de fecha."
+            )
+        if not isinstance(self.last_sim_date, datetime):
+            raise InvalidInputError(
+                "La fecha de última simulación debe estar en formato de fecha."
+            )
+
+    def _validate_conditions(self):
+        """
+        Validates that conditions is a list.
+        """
+
+        if not isinstance(self.conditions, list):
+            raise InvalidInputError("Las condiciones deben estár en una lista.")
+
+    def _validate_active(self):
+        """
+        Validates that active is a boolean.
+        """
+
+        if not isinstance(self.active, bool):
+            raise InvalidInputError("La actividad es un dato booleano.")
