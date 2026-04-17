@@ -18,7 +18,13 @@ class Crop:
     last_sim_date: datetime
     conditions: list[DailyCondition]
     # List that will be filled
-    # with DailyCondition objects per day
+    # with DailyCondition objects per day.
+    water_stored: float
+    # Water stored in the floor (mm).
+    consecutive_stress_days: int
+    # Counter of stress days of a crop.
+    current_phase: str
+    # Current phenological phase
     active: bool
 
     def __post_init__(self):
@@ -31,6 +37,9 @@ class Crop:
         self._validate_crop_type_id()
         self._validate_dates()
         self._validate_conditions()
+        self._validate_water_stored()
+        self._validate_consecutive_stress_days
+        self._validate_current_phase
         self._validate_active()
 
     def _validate_name(self):
@@ -78,6 +87,34 @@ class Crop:
 
         if not isinstance(self.conditions, list):
             raise InvalidInputError("Las condiciones deben estár en una lista.")
+        
+    def _validate_water_stored(self):
+        """
+        Validates if water stored data is in the right type.
+        """
+
+        if not isinstance(self.water_stored, float):
+            raise InvalidInputError("El agua almacenada en el suelo no está en un tipo válido.")
+        
+    def _validate_consecutive_stress_days(self):
+        """
+        Validates if the variable that stores the current number of consecutive 
+        stress days in the simulation is in the right type.
+        """
+
+        if not isinstance(self.consecutive_stress_days, int):
+            raise InvalidInputError("El contador de días consecutivos en este tramo no está en un tipo válido")
+        
+    def _validate_current_phase(self):
+        """
+        Validates if the current phase of the growing simulation
+        is valid.
+        """
+
+        valid_phases = ["Fase Inicial", "Fase Media", "Fase Final"]
+
+        if self.current_phase not in valid_phases:
+            raise InvalidInputError("La fase fenológica no es válida.")
 
     def _validate_active(self):
         """

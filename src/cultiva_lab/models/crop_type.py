@@ -13,6 +13,16 @@ class CropType:
     name: str
     optimal_temp: float
     # Optimal temperature in °C
+    minimum_temp: float
+    # Minimum base temperature
+    maximum_temp: float
+    # Maximum base temperature
+    cold_sensibility: float
+    heat_sensibility: float
+    # Sensibility factors for breathing process
+    cold_factor: float
+    heat_factor: float
+    # Exponential factors for breathing factors
     needed_water: float
     # Needed water in mm per day
     needed_light: float
@@ -64,6 +74,28 @@ class CropType:
             raise InvalidInputError("La temperatura óptima debe ser un número.")
         if self.optimal_temp < -7:
             raise InvalidInputError("La temperatura óptima no puede ser menor a -7°C.")
+
+    def _validate_minimum_temp(self):
+        """
+        Validates that the minimum optimal temperature is in the right type
+        """
+
+        if not isinstance(self.minimum_temp, (int, float)):
+            raise InvalidInputError("La mínima temperatura óptima no esta en un tipo válido.")
+        if self.minimum_temp >= self.maximum_temp:
+            raise InvalidInputError("La mínima temperatura óptima no puede ser mayor o igual a la mayor temperatura óptima.")
+        if self.minimum_temp < -7:
+            raise InvalidInputError("La mínima temperatura óptima no puede ser menor a-7°C.")
+        
+    def _validate_maximum_temp(self):
+        """
+        Validates that the maximum optimal temperature is in the right type
+        """
+
+        if not isinstance(self.maximum_temp, (int, float)):
+            raise InvalidInputError("La máxima temperatura óptima no esta en un tipo válido.")
+        if self.maximum_temp < -7:
+            raise InvalidInputError("La máxima temperatura óptima no puede ser menor a -7 grados")
 
     def _validate_needed_water(self):
         """
