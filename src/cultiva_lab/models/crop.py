@@ -95,6 +95,8 @@ class Crop:
 
         if not isinstance(self.water_stored, float):
             raise InvalidInputError("El agua almacenada en el suelo no está en un tipo válido.")
+        if self.water_stored < 0:
+            raise InvalidInputError("El agua almacenada no puede tener valores negativos.")
         
     def _validate_consecutive_stress_days(self):
         """
@@ -104,6 +106,8 @@ class Crop:
 
         if not isinstance(self.consecutive_stress_days, int):
             raise InvalidInputError("El contador de días consecutivos en este tramo no está en un tipo válido")
+        if self.consecutive_stress_days < 0:
+            raise InvalidInputError("Los días de estrés consecutivos no pueden ser negativos.")
         
     def _validate_current_phase(self):
         """
