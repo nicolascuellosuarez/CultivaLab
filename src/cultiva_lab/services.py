@@ -38,7 +38,7 @@ class CropService:
         factor: enviromental factor; Crop Type, temperature,
         rain and sun hours received by the crop.
         """
-        
+
         # Three factors, using the parameters
         temperature_factor = max(
             0,
@@ -120,22 +120,25 @@ class CropService:
         """
 
         self._validate_environmental_inputs(temperature, rain, sun_hours)
-        
+
         crop = self._get_and_validate_crop(crop_id, user_id)
         crop_type = self._get_crop_type(crop.crop_type_id)
-        
-        growth = self._calculate_daily_growth(crop, crop_type, temperature, rain, sun_hours)
+
+        growth = self._calculate_daily_growth(
+            crop, crop_type, temperature, rain, sun_hours
+        )
         new_biomass = self._calculate_new_biomass(crop, crop_type, growth)
-        
+
         updated_crop = self._update_crop_with_new_condition(
             crop, crop_type, temperature, rain, sun_hours, new_biomass
         )
-        
+
         self.storage.save_crop(updated_crop)
         return updated_crop
 
-
-    def _validate_environmental_inputs(self, temperature: float, rain: float, sun_hours: float):
+    def _validate_environmental_inputs(
+        self, temperature: float, rain: float, sun_hours: float
+    ):
         """
         Validates that environmental inputs are within acceptable ranges.
         """
@@ -146,9 +149,11 @@ class CropService:
             raise InvalidInputError("La lluvia debe ser numérica.")
         if not isinstance(sun_hours, (int, float)):
             raise InvalidInputError("Las horas de sol deben ser numéricas.")
-        
+
         if temperature < -10 or temperature >= 56.7:
-            raise InvalidInputError("La temperatura ingresada no es real (debe estar entre -10°C y 56.7°C).")
+            raise InvalidInputError(
+                "La temperatura ingresada no es real (debe estar entre -10°C y 56.7°C)."
+            )
         if rain < 0:
             raise InvalidInputError("Valor de lluvia inválido (no puede ser negativo).")
         if sun_hours < 0 or sun_hours > 12:
@@ -162,13 +167,13 @@ class CropService:
         crop = self.storage.get_crop_by_id(crop_id)
         if not crop:
             raise CropNotFoundError(crop_id)
-        
+
         if not crop.active:
             raise InvalidInputError("El cultivo ya está cosechado.")
-        
+
         if crop.user_id != user_id:
             raise ResourceOwnershipError("No puedes simular este cultivo.")
-        
+
         return crop
 
     def _get_crop_type(self, crop_type_id: str) -> CropType:
@@ -182,24 +187,33 @@ class CropService:
         return crop_type
 
     def _calculate_daily_growth(
-        self, crop: Crop, crop_type: CropType, 
-        temperature: float, rain: float, sun_hours: float
+        self,
+        crop: Crop,
+        crop_type: CropType,
+        temperature: float,
+        rain: float,
+        sun_hours: float,
     ) -> float:
         """
         Calculates the growth for the current day based on environmental factors.
         """
 
-
         if len(crop.conditions) >= crop_type.days_cycle:
             raise InvalidInputError("El ciclo del cultivo ya terminó")
-        
-        env_factor = self._calculate_environment_factor(crop_type, temperature, rain, sun_hours)
+
+        env_factor = self._calculate_environment_factor(
+            crop_type, temperature, rain, sun_hours
+        )
         phase_factor = self._calculate_phase_factor(crop, crop_type)
         capacity_factor = self._calculate_capacity_factor(crop, crop_type)
-        
-        return self._calculate_growth(crop_type, env_factor, phase_factor, capacity_factor)
 
-    def _calculate_new_biomass(self, crop: Crop, crop_type: CropType, growth: float) -> float:
+        return self._calculate_growth(
+            crop_type, env_factor, phase_factor, capacity_factor
+        )
+
+    def _calculate_new_biomass(
+        self, crop: Crop, crop_type: CropType, growth: float
+    ) -> float:
         """
         Calculates the new biomass after growth, without exceeding potential.
         """
@@ -212,9 +226,13 @@ class CropService:
         return min(current_biomass + growth, crop_type.potential_performance)
 
     def _update_crop_with_new_condition(
-        self, crop: Crop, crop_type: CropType,
-        temperature: float, rain: float, sun_hours: float,
-        new_biomass: float
+        self,
+        crop: Crop,
+        crop_type: CropType,
+        temperature: float,
+        rain: float,
+        sun_hours: float,
+        new_biomass: float,
     ) -> Crop:
         """
         Creates a new daily condition and updates the crop.
@@ -227,13 +245,13 @@ class CropService:
             sun_hours=sun_hours,
             estimated_biomass=new_biomass,
         )
-    
+
         crop.conditions.append(new_condition)
         crop.last_sim_date += timedelta(days=1)
-        
+
         if len(crop.conditions) >= crop_type.days_cycle:
             crop.active = False
-        
+
         return crop
 
     def create_crop(
@@ -242,7 +260,6 @@ class CropService:
         """
         Method created to allow a user to make new crops.
         """
-
 
         user = self.storage.get_user_by_id(user_id)
         crop_type = self.storage.get_crop_type_by_id(crop_type_id)
@@ -274,7 +291,6 @@ class CropService:
         """
         Method created to get a crop based on its ID.
         """
-
 
         requesting_user = self.storage.get_user_by_id(requesting_user_id)
         crop = self.storage.get_crop_by_id(crop_id)
@@ -387,14 +403,12 @@ class CropService:
         Generates statistics for a crop based on its growth history.
         """
 
-
         self._validate_user_exists(requesting_user_id)
-        
+
         crop = self._get_and_validate_crop_access(crop_id, requesting_user_id)
         crop_type = self._get_crop_type(crop.crop_type_id)
-        
-        return self._calculate_statistics(crop, crop_type)
 
+        return self._calculate_statistics(crop, crop_type)
 
     def _validate_user_exists(self, user_id: str):
         """
@@ -412,11 +426,11 @@ class CropService:
         crop = self.storage.get_crop_by_id(crop_id)
         if not crop:
             raise CropNotFoundError(crop_id)
-        
+
         user = self.storage.get_user_by_id(user_id)
         if user_id != crop.user_id and user.role.value != UserRole.ADMIN.value:
             raise ResourceOwnershipError("No puedes acceder a este cultivo.")
-        
+
         return crop
 
     def _get_crop_type(self, crop_type_id: str) -> CropType:
@@ -436,12 +450,12 @@ class CropService:
 
         if not crop.conditions:
             return self._empty_statistics()
-        
+
         averages = self._calculate_averages(crop.conditions)
         growth_stats = self._calculate_growth_stats(crop.conditions, crop_type)
         stress_days = self._calculate_stress_days(crop.conditions, crop_type)
         performance = self._calculate_performance(crop.conditions, crop_type)
-        
+
         return {
             "average_temperature": averages["temp"],
             "average_rain": averages["rain"],
@@ -455,7 +469,7 @@ class CropService:
         """
         Returns empty statistics for crops with no conditions.
         """
-        
+
         return {
             "average_temperature": 0,
             "average_rain": 0,
@@ -483,9 +497,10 @@ class CropService:
         """Counts days where temperature was outside optimal range."""
         lower = crop_type.optimal_temp * 0.8
         upper = crop_type.optimal_temp * 1.2
-        
-        return sum(1 for c in conditions 
-                if c.temperature < lower or c.temperature > upper)
+
+        return sum(
+            1 for c in conditions if c.temperature < lower or c.temperature > upper
+        )
 
     def _calculate_performance(self, conditions: list, crop_type: CropType) -> float:
         """Calculates performance ratio (final / potential)."""
@@ -540,21 +555,21 @@ class UserService:
         self._validate_username_and_password(username, password)
         self._ensure_no_admin_exists()
         self._ensure_username_unique(username)
-        
+
         new_admin = self._create_admin_user(username, password)
         self.storage.save_user(new_admin)
         return new_admin
-
 
     def _validate_admin_key(self, admin_key: str):
         """
         Validates that the admin key is not empty and matches the master key.
         """
-        
+
         if (not admin_key) or (not admin_key.strip()):
             raise InvalidInputError("La llave de administrador no puede estar vacía.")
-        
+
         from src.cultiva_lab.services import MASTER_KEY
+
         if admin_key != MASTER_KEY:
             raise InvalidInputError("La llave de administrador no es correcta.")
 
@@ -565,12 +580,14 @@ class UserService:
 
         if (not username) or (not username.strip()):
             raise InvalidInputError("El nombre de usuario no puede estar vacío.")
-        
+
         if (not password) or (not password.strip()):
             raise InvalidInputError("La contraseña no puede estar vacía.")
-        
+
         if len(password) < 8:
-            raise InvalidInputError("La contraseña es demasiado corta (mínimo 8 caracteres).")
+            raise InvalidInputError(
+                "La contraseña es demasiado corta (mínimo 8 caracteres)."
+            )
 
     def _ensure_no_admin_exists(self):
         """
@@ -594,10 +611,12 @@ class UserService:
         """
         Creates a new admin user with hashed password.
         """
-        
+
         user_id = str(uuid.uuid4())
-        hashed = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
-        
+        hashed = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode(
+            "utf-8"
+        )
+
         return User(user_id, username, hashed, UserRole.ADMIN, [])
 
     def login(self, username: str, password: str) -> User:
@@ -718,7 +737,7 @@ class UserService:
         self.storage.save_user(user)
 
     def update_username(
-    self, user_id: str, new_username: str, requesting_user_id: str
+        self, user_id: str, new_username: str, requesting_user_id: str
     ) -> None:
         """
         Updates the username of a user.
@@ -726,27 +745,29 @@ class UserService:
         """
 
         self._validate_inputs(user_id, new_username, requesting_user_id)
-        
+
         user = self._get_user(user_id)
         self._validate_requesting_user(requesting_user_id)
         self._validate_ownership(user_id, requesting_user_id)
-        
+
         self._validate_username_not_taken(new_username, user.username)
-        
+
         user.username = new_username
         self.storage.save_user(user)
 
-    def _validate_inputs(self, user_id: str, new_username: str, requesting_user_id: str):
+    def _validate_inputs(
+        self, user_id: str, new_username: str, requesting_user_id: str
+    ):
         """
         Validates that all inputs are non-empty.
         """
-        
+
         if (not user_id) or (not user_id.strip()):
             raise InvalidInputError("El ID del usuario no puede estar vacío.")
-        
+
         if (not new_username) or (not new_username.strip()):
             raise InvalidInputError("El username nuevo no puede estar vacío.")
-        
+
         if (not requesting_user_id) or (not requesting_user_id.strip()):
             raise InvalidInputError("El ID del solicitante no puede estar vacío.")
 
@@ -764,7 +785,7 @@ class UserService:
         """
         Validates that the requesting user exists.
         """
-        
+
         requesting_user = self.storage.get_user_by_id(requesting_user_id)
         if not requesting_user:
             raise UserNotFoundError(requesting_user_id)
@@ -776,19 +797,23 @@ class UserService:
         """
 
         if user_id != requesting_user_id:
-            raise ResourceOwnershipError("No puedes modificar el username de otro usuario.")
+            raise ResourceOwnershipError(
+                "No puedes modificar el username de otro usuario."
+            )
 
     def _validate_username_not_taken(self, new_username: str, current_username: str):
         """
         Validates that the new username is not already taken by another user.
         """
-        
+
         if new_username == current_username:
             raise InvalidInputError("El nuevo username debe ser diferente al actual.")
-        
+
         existing_user = self.storage.get_user_by_username(new_username)
         if existing_user:
-            raise UserAlreadyExistsError(f"El username '{new_username}' ya está en uso.")
+            raise UserAlreadyExistsError(
+                f"El username '{new_username}' ya está en uso."
+            )
 
     def delete_user(self, user_id: str, requesting_user_id: str) -> None:
         """
@@ -852,25 +877,28 @@ class CropTypeService:
         Validates that the user exists and is an admin.
         """
 
-
         if (not admin_id) or (not admin_id.strip()):
             raise InvalidInputError("El ID no puede estar vacío.")
-        
+
         admin_user = self.storage.get_user_by_id(admin_id)
         if not admin_user:
             raise UserNotFoundError(admin_id)
-        
+
         if admin_user.role.value != UserRole.ADMIN.value:
             raise ResourceOwnershipError("No puedes acceder a esta información.")
 
     def _validate_input_types(
-        self, optimal_temp: float, needed_water: float, needed_light: int,
-        days_cycle: float, initial_biomass: float, potential_performance: float
+        self,
+        optimal_temp: float,
+        needed_water: float,
+        needed_light: int,
+        days_cycle: float,
+        initial_biomass: float,
+        potential_performance: float,
     ):
         """
         Validates that all parameters have the correct types.
         """
-
 
         validations = [
             (optimal_temp, (int, float), "La temperatura debe ser numérica."),
@@ -878,23 +906,32 @@ class CropTypeService:
             (needed_light, (int, float), "Las horas de sol deben ser numéricas."),
             (days_cycle, int, "Los días de ciclo deben ser numéricos y enteros."),
             (initial_biomass, (int, float), "La biomasa inicial debe ser numérica."),
-            (potential_performance, (int, float), "El potencial de desempeño debe ser numérico."),
+            (
+                potential_performance,
+                (int, float),
+                "El potencial de desempeño debe ser numérico.",
+            ),
         ]
-        
+
         for value, expected_type, error_msg in validations:
             if not isinstance(value, expected_type):
                 raise InvalidInputError(error_msg)
 
     def _validate_input_ranges(
-        self, optimal_temp, needed_water, needed_light,
-        days_cycle, initial_biomass, potential_performance
+        self,
+        optimal_temp,
+        needed_water,
+        needed_light,
+        days_cycle,
+        initial_biomass,
+        potential_performance,
     ):
         """
         Validates that all values are within acceptable ranges.
         """
         if optimal_temp < -7:
             raise InvalidInputError("La temperatura no puede ser menor a -7°C.")
-        
+
         positive_params = [
             (needed_water, "Agua necesaria"),
             (needed_light, "Luz necesaria"),
@@ -902,7 +939,7 @@ class CropTypeService:
             (initial_biomass, "Biomasa inicial"),
             (potential_performance, "Rendimiento potencial"),
         ]
-        
+
         for value, param_name in positive_params:
             if value <= 0:
                 raise InvalidInputError(f"{param_name} debe ser mayor a cero.")
@@ -911,7 +948,6 @@ class CropTypeService:
         """
         Validates and formats the crop type name.
         """
-
 
         if (not name) or not (name.strip()):
             raise InvalidInputError("El nombre no puede estar vacío.")
@@ -922,14 +958,19 @@ class CropTypeService:
         Validates that no crop type with the same name exists.
         """
 
-
         existing_type = self.storage.get_crop_type_by_name(name)
         if existing_type:
             raise DuplicateDataError("El tipo de cultivo ya existe.")
 
     def _create_crop_type_instance(
-        self, name, optimal_temp, needed_water, needed_light,
-        days_cycle, initial_biomass, potential_performance
+        self,
+        name,
+        optimal_temp,
+        needed_water,
+        needed_light,
+        days_cycle,
+        initial_biomass,
+        potential_performance,
     ) -> CropType:
         """
         Creates a new CropType instance.
@@ -947,15 +988,15 @@ class CropTypeService:
         )
 
     def create_crop_type(
-    self,
-    admin_id: str,
-    name: str,
-    optimal_temp: float,
-    needed_water: float,
-    needed_light: float,
-    days_cycle: int,
-    initial_biomass: float,
-    potential_performance: float,
+        self,
+        admin_id: str,
+        name: str,
+        optimal_temp: float,
+        needed_water: float,
+        needed_light: float,
+        days_cycle: int,
+        initial_biomass: float,
+        potential_performance: float,
     ) -> CropType:
         """
         Method implemented for the admin to create new crop types.
@@ -963,20 +1004,33 @@ class CropTypeService:
 
         self._validate_admin(admin_id)
         self._validate_input_types(
-            optimal_temp, needed_water, needed_light, 
-            days_cycle, initial_biomass, potential_performance
+            optimal_temp,
+            needed_water,
+            needed_light,
+            days_cycle,
+            initial_biomass,
+            potential_performance,
         )
         self._validate_input_ranges(
-            optimal_temp, needed_water, needed_light,
-            days_cycle, initial_biomass, potential_performance
+            optimal_temp,
+            needed_water,
+            needed_light,
+            days_cycle,
+            initial_biomass,
+            potential_performance,
         )
-        
+
         name = self._validate_and_format_name(name)
         self._validate_unique_name(name)
 
         new_crop_type = self._create_crop_type_instance(
-            name, optimal_temp, needed_water, needed_light,
-            days_cycle, initial_biomass, potential_performance
+            name,
+            optimal_temp,
+            needed_water,
+            needed_light,
+            days_cycle,
+            initial_biomass,
+            potential_performance,
         )
 
         self.storage.save_crop_type(new_crop_type)
@@ -1021,38 +1075,39 @@ class CropTypeService:
         Every attribute is allowed for changes except the ID.
         """
         self._validate_admin_access(admin_id)
-        
+
         crop_type = self._get_crop_type_for_update(crop_type_id)
         self._validate_no_active_crops(crop_type_id)
-        
+
         validated_kwargs = self._validate_and_filter_update_fields(kwargs)
         self._apply_updates(crop_type, validated_kwargs)
-        
+
         self.storage.save_crop_type(crop_type)
         return crop_type
-
 
     def _validate_admin_access(self, admin_id: str):
         """Validates that the user exists and is an admin."""
         if (not admin_id) or (not admin_id.strip()):
             raise InvalidInputError("El ID de administrador no puede estar vacío.")
-        
+
         admin_user = self.storage.get_user_by_id(admin_id)
         if not admin_user:
             raise UserNotFoundError(admin_id)
-        
+
         if admin_user.role.value != UserRole.ADMIN.value:
-            raise ResourceOwnershipError("No tienes permisos para realizar esta acción.")
+            raise ResourceOwnershipError(
+                "No tienes permisos para realizar esta acción."
+            )
 
     def _get_crop_type_for_update(self, crop_type_id: str) -> CropType:
         """Retrieves and validates that the crop type exists."""
         if (not crop_type_id) or (not crop_type_id.strip()):
             raise InvalidInputError("El ID del tipo de cultivo no puede estar vacío.")
-        
+
         crop_type = self.storage.get_crop_type_by_id(crop_type_id)
         if not crop_type:
             raise CropTypeNotFoundError(crop_type_id)
-        
+
         return crop_type
 
     def _validate_no_active_crops(self, crop_type_id: str):
@@ -1074,7 +1129,7 @@ class CropTypeService:
             "initial_biomass": self._validate_positive_number_field,
             "potential_performance": self._validate_positive_number_field,
         }
-        
+
         validated = {}
         for key, value in kwargs.items():
             if key not in allowed_fields:
@@ -1083,7 +1138,7 @@ class CropTypeService:
                 )
             validator = allowed_fields[key]
             validated[key] = validator(key, value)
-        
+
         return validated
 
     def _validate_name_field(self, key: str, value: any) -> str:
@@ -1096,9 +1151,9 @@ class CropTypeService:
         """Validates that a numeric field is positive."""
         try:
             num_value = float(value)
-        except (TypeError, ValueError):
+        except TypeError, ValueError:
             raise InvalidInputError(f"El valor para '{key}' debe ser numérico.")
-        
+
         if num_value <= 0:
             raise InvalidInputError(f"El valor para '{key}' debe ser mayor a cero.")
         return num_value
@@ -1107,9 +1162,9 @@ class CropTypeService:
         """Validates that an integer field is positive."""
         try:
             int_value = int(value)
-        except (TypeError, ValueError):
+        except TypeError, ValueError:
             raise InvalidInputError(f"El valor para '{key}' debe ser un número entero.")
-        
+
         if int_value <= 0:
             raise InvalidInputError(f"El valor para '{key}' debe ser mayor a cero.")
         return int_value
@@ -1124,40 +1179,41 @@ class CropTypeService:
         Deletes a crop type only if there are no active crops using it.
         """
         self._validate_admin_access(admin_id)
-        
+
         crop_type = self._get_crop_type(crop_type_to_eliminate_id)
         self._validate_no_active_crops_using(crop_type)
-        
-        self.storage.delete_crop_type(crop_type_to_eliminate_id)
 
+        self.storage.delete_crop_type(crop_type_to_eliminate_id)
 
     def _validate_admin_access(self, admin_id: str):
         """Validates that the user exists and is an admin."""
         if (not admin_id) or (not admin_id.strip()):
             raise InvalidInputError("El ID de administrador no puede estar vacío.")
-        
+
         admin_user = self.storage.get_user_by_id(admin_id)
         if not admin_user:
             raise UserNotFoundError(admin_id)
-        
+
         if admin_user.role.value != UserRole.ADMIN.value:
-            raise ResourceOwnershipError("No tienes permisos para realizar esta acción.")
+            raise ResourceOwnershipError(
+                "No tienes permisos para realizar esta acción."
+            )
 
     def _get_crop_type(self, crop_type_id: str) -> CropType:
         """Retrieves and validates that the crop type exists."""
         if (not crop_type_id) or (not crop_type_id.strip()):
             raise InvalidInputError("El ID del tipo de cultivo no puede estar vacío.")
-        
+
         crop_type = self.storage.get_crop_type_by_id(crop_type_id)
         if not crop_type:
             raise CropTypeNotFoundError(crop_type_id)
-        
+
         return crop_type
 
     def _validate_no_active_crops_using(self, crop_type: CropType):
         """Validates that no active crops are using this crop type."""
         crops = self.storage.get_crops()
-        
+
         for crop in crops:
             if crop.crop_type_id == crop_type.id and crop.active:
                 raise BusinessRuleViolationError(

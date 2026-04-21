@@ -97,7 +97,9 @@ class CropType:
         if not isinstance(self.optimal_temp, (int, float)):
             raise InvalidInputError("La temperatura óptima debe ser un número.")
         if self.minimum_temp and self.minimum_temp >= self.maximum_temp:
-            raise InvalidInputError("La mayor tenmperatura óptima no puede ser menor o igual a la menor temperatura óptima.")
+            raise InvalidInputError(
+                "La mayor tenmperatura óptima no puede ser menor o igual a la menor temperatura óptima."
+            )
         if self.optimal_temp < -7:
             raise InvalidInputError("La temperatura óptima no puede ser menor a -7°C.")
 
@@ -107,63 +109,91 @@ class CropType:
         """
 
         if not isinstance(self.minimum_temp, (int, float)):
-            raise InvalidInputError("La mínima temperatura óptima no está en un tipo válido.")
+            raise InvalidInputError(
+                "La mínima temperatura óptima no está en un tipo válido."
+            )
         if self.maximum_temp and self.minimum_temp >= self.maximum_temp:
-            raise InvalidInputError("La mínima temperatura óptima no puede ser mayor o igual a la mayor temperatura óptima.")
+            raise InvalidInputError(
+                "La mínima temperatura óptima no puede ser mayor o igual a la mayor temperatura óptima."
+            )
         if self.minimum_temp < -7:
-            raise InvalidInputError("La mínima temperatura óptima no puede ser menor a-7°C.")
-        
+            raise InvalidInputError(
+                "La mínima temperatura óptima no puede ser menor a-7°C."
+            )
+
     def _validate_maximum_temp(self):
         """
         Validates that the maximum optimal temperature is in the right type
         """
 
         if not isinstance(self.maximum_temp, (int, float)):
-            raise InvalidInputError("La máxima temperatura óptima no está en un tipo válido.")
+            raise InvalidInputError(
+                "La máxima temperatura óptima no está en un tipo válido."
+            )
         if self.minimum_temp and self.minimum_temp >= self.maximum_temp:
-            raise InvalidInputError("La mínima temperatura óptima no puede ser mayor o igual a la mayor temperatura óptima.")
+            raise InvalidInputError(
+                "La mínima temperatura óptima no puede ser mayor o igual a la mayor temperatura óptima."
+            )
         if self.maximum_temp < -7:
-            raise InvalidInputError("La máxima temperatura óptima no puede ser menor a -7 grados")
-        
+            raise InvalidInputError(
+                "La máxima temperatura óptima no puede ser menor a -7 grados"
+            )
+
     def _validate_cold_sensibility(self):
         """
         Validates if cold sensibility is valid.
         """
 
         if not isinstance(self.cold_sensibility, (int, float)):
-            raise InvalidInputError("La sensibilidad al frío no está en un tipo válido.")
+            raise InvalidInputError(
+                "La sensibilidad al frío no está en un tipo válido."
+            )
         if self.cold_sensibility < 0:
-            raise InvalidInputError("La sensibilidad al frío de la planta no puede ser negativa.")
-    
+            raise InvalidInputError(
+                "La sensibilidad al frío de la planta no puede ser negativa."
+            )
+
     def _validate_heat_sensibility(self):
         """
         Validates if heat sensibility is valid.
         """
 
         if not isinstance(self.heat_sensibility, (int, float)):
-            raise InvalidInputError("La sensibilidad al calor no está en un tipo válido.")
+            raise InvalidInputError(
+                "La sensibilidad al calor no está en un tipo válido."
+            )
         if self.head_sensibility < 0:
-            raise InvalidInputError("La sensibilidad al calor de la planta no puede ser negativa.")
-        
+            raise InvalidInputError(
+                "La sensibilidad al calor de la planta no puede ser negativa."
+            )
+
     def _validate_cold_factor(self):
         """
         Validates if breathing factor of cold is valid.
         """
 
         if not isinstance(self.cold_factor, (int, float)):
-            raise InvalidInputError("El factor de respiración con respecto al frío no está en un tipo válido.")
+            raise InvalidInputError(
+                "El factor de respiración con respecto al frío no está en un tipo válido."
+            )
         if self.cold_factor <= 0:
-            raise InvalidInputError("El factor de respiración con respecto al frío no puede ser menor o igual a 0.")
-        
+            raise InvalidInputError(
+                "El factor de respiración con respecto al frío no puede ser menor o igual a 0."
+            )
+
     def _validate_heat_factor(self):
         """
         Validates if breathing factor of cold is valid.
         """
 
         if not isinstance(self.heat_factor, (int, float)):
-            raise InvalidInputError("El factor de respiración con respecto al calor no está en un tipo válido.")
+            raise InvalidInputError(
+                "El factor de respiración con respecto al calor no está en un tipo válido."
+            )
         if self.heat_factor <= 0:
-            raise InvalidInputError("El factor de respiración con respecto al calor no puede ser menor o igual a 0.")
+            raise InvalidInputError(
+                "El factor de respiración con respecto al calor no puede ser menor o igual a 0."
+            )
 
     def _validate_water_wilting(self):
         """
@@ -171,38 +201,54 @@ class CropType:
         """
 
         if not isinstance(self.water_wilting, (float, int)):
-            raise InvalidInputError("El valor de marchitación del agua no está en un tipo válido.")
+            raise InvalidInputError(
+                "El valor de marchitación del agua no está en un tipo válido."
+            )
         if self.water_wilting <= 0:
-            raise InvalidInputError("El valor de marchitación del agua no puede ser negativo ni 0.")
-        if (self.water_opt_low, 
-            self.needed_water, 
-            self.water_opt_high, 
-            self.water_capacity) and not (self.water_wilting < 
-                                          self.water_opt_low < 
-                                          self.needed_Water < 
-                                          self.water_opt_high < 
-                                          self.water_capacity):
+            raise InvalidInputError(
+                "El valor de marchitación del agua no puede ser negativo ni 0."
+            )
+        if (
+            self.water_opt_low,
+            self.needed_water,
+            self.water_opt_high,
+            self.water_capacity,
+        ) and not (
+            self.water_wilting
+            < self.water_opt_low
+            < self.needed_Water
+            < self.water_opt_high
+            < self.water_capacity
+        ):
             raise InvalidInputError("Los valores de niveles de agua no son válidos.")
-        
+
     def _validate_water_opt_low(self):
         """
         Validates if the lower optimum level of water is valid.
         """
 
         if not isinstance(self.water_opt_low, (int, float)):
-            raise InvalidInputError("El valor de el menor valor óptimo del agua no está en un tipo válido.")
+            raise InvalidInputError(
+                "El valor de el menor valor óptimo del agua no está en un tipo válido."
+            )
         if self.water_opt_low <= 0:
-            raise InvalidInputError("El valor de el menor valor óptimo del agua no puede ser menor o igual a 0.")
-        if (self.water_wilting, 
-            self.needed_water, 
-            self.water_opt_high, 
-            self.water_capacity) and not (self.water_wilting < 
-                                          self.water_opt_low < 
-                                          self.needed_Water < 
-                                          self.water_opt_high < 
-                                          self.water_capacity):
+            raise InvalidInputError(
+                "El valor de el menor valor óptimo del agua no puede ser menor o igual a 0."
+            )
+        if (
+            self.water_wilting,
+            self.needed_water,
+            self.water_opt_high,
+            self.water_capacity,
+        ) and not (
+            self.water_wilting
+            < self.water_opt_low
+            < self.needed_Water
+            < self.water_opt_high
+            < self.water_capacity
+        ):
             raise InvalidInputError("Los valores de niveles de agua no son válidos.")
-        
+
     def _validate_needed_water(self):
         """
         Validates that needed water is a positive number.
@@ -212,33 +258,45 @@ class CropType:
             raise InvalidInputError("El agua necesaria debe ser un número.")
         if self.needed_water <= 0:
             raise InvalidInputError("El agua necesaria debe ser mayor a cero.")
-        if (self.water_wilting, 
-            self.water_opt_low, 
-            self.water_opt_high, 
-            self.water_capacity) and not (self.water_wilting < 
-                                          self.water_opt_low < 
-                                          self.needed_Water < 
-                                          self.water_opt_high < 
-                                          self.water_capacity):
+        if (
+            self.water_wilting,
+            self.water_opt_low,
+            self.water_opt_high,
+            self.water_capacity,
+        ) and not (
+            self.water_wilting
+            < self.water_opt_low
+            < self.needed_Water
+            < self.water_opt_high
+            < self.water_capacity
+        ):
             raise InvalidInputError("Los valores de niveles de agua no son válidos.")
-        
+
     def _validate_water_opt_high(self):
         """
         Validates if higher optimum level of water is valid.
         """
 
         if not isinstance(self.water_opt_high, (int, float)):
-            raise InvalidInputError("El valor de el mayor valor óptimo del agua no esta en un tipo válido.")
+            raise InvalidInputError(
+                "El valor de el mayor valor óptimo del agua no esta en un tipo válido."
+            )
         if self.water_opt_high <= 0:
-            raise InvalidInputError("El valor de el mayor valor óptimo del agua no puede ser menor o igual a 0.")
-        if (self.water_wilting, 
-            self.water_opt_low, 
-            self.needed_water, 
-            self.water_capacity) and not (self.water_wilting < 
-                                          self.water_opt_low < 
-                                          self.needed_Water < 
-                                          self.water_opt_high < 
-                                          self.water_capacity):
+            raise InvalidInputError(
+                "El valor de el mayor valor óptimo del agua no puede ser menor o igual a 0."
+            )
+        if (
+            self.water_wilting,
+            self.water_opt_low,
+            self.needed_water,
+            self.water_capacity,
+        ) and not (
+            self.water_wilting
+            < self.water_opt_low
+            < self.needed_Water
+            < self.water_opt_high
+            < self.water_capacity
+        ):
             raise InvalidInputError("Los valores de niveles de agua no son válidos.")
 
     def _validate_water_capacity(self):
@@ -247,30 +305,40 @@ class CropType:
         """
 
         if not isinstance(self.water_capacity, (int, float)):
-            raise InvalidInputError("El valor del mayor valor de crecimiento del agua no es un tipo válido.")
+            raise InvalidInputError(
+                "El valor del mayor valor de crecimiento del agua no es un tipo válido."
+            )
         if self.water_capacity <= 0:
-            raise InvalidInputError("El valor del mayor valor de crecimiento del agua no puede ser menor o igual a 0.")
-        if (self.water_wilting, 
-            self.water_opt_low, 
+            raise InvalidInputError(
+                "El valor del mayor valor de crecimiento del agua no puede ser menor o igual a 0."
+            )
+        if (
+            self.water_wilting,
+            self.water_opt_low,
             self.needed_water,
-            self.water_opt_high) and not (self.water_wilting < 
-                                          self.water_opt_low < 
-                                          self.needed_Water < 
-                                          self.water_opt_high < 
-                                          self.water_capacity):
+            self.water_opt_high,
+        ) and not (
+            self.water_wilting
+            < self.water_opt_low
+            < self.needed_Water
+            < self.water_opt_high
+            < self.water_capacity
+        ):
             raise InvalidInputError("Los valores de niveles de agua no son válidos.")
-    
+
     def _validate_water_sensibility(self):
         """
         Validates if water breathing sensibility is valid.
         """
 
         if not isinstance(self.water_sensibility, (int, float)):
-            raise InvalidInputError("El coeficiente de sensibilidad del agua no está en un tipo válido.")
+            raise InvalidInputError(
+                "El coeficiente de sensibilidad del agua no está en un tipo válido."
+            )
         if self.water_sensibility <= 0:
-            raise InvalidInputError("El valor del coeficiente de sensibilidad del agua no puede ser menor o igual a 0.")
-    
-
+            raise InvalidInputError(
+                "El valor del coeficiente de sensibilidad del agua no puede ser menor o igual a 0."
+            )
 
     def _validate_needed_light(self):
         """
@@ -282,41 +350,61 @@ class CropType:
         if self.needed_light <= 0:
             raise InvalidInputError("La luz necesaria debe ser mayor a cero.")
         if self.needed_light_max and self.needed_light_max <= self.needed_light:
-            raise InvalidInputError("La mayor cantidad de horas posibles no puede ser menor o igual a las horas óptimas.")
-        
+            raise InvalidInputError(
+                "La mayor cantidad de horas posibles no puede ser menor o igual a las horas óptimas."
+            )
+
     def _validate_needed_light_max(self):
         """
         Validates that max value of hours before photoinhibition is valid.
         """
 
         if not isinstance(self.needed_light_max, (int, float)):
-            raise InvalidInputError("La mayor cantidad de horas posibles debe ser un número.")
+            raise InvalidInputError(
+                "La mayor cantidad de horas posibles debe ser un número."
+            )
         if self.needed_light_max <= 0:
-            raise InvalidInputError("La mayor cantidad de horas posibles no puede ser menor o igual a 0.")
+            raise InvalidInputError(
+                "La mayor cantidad de horas posibles no puede ser menor o igual a 0."
+            )
         if self.needed_light and self.needed_light_max <= self.needed_light:
-            raise InvalidInputError("La mayor cantidad de horas posibles no puede ser menor o igual a las horas óptimas.")
-        
+            raise InvalidInputError(
+                "La mayor cantidad de horas posibles no puede ser menor o igual a las horas óptimas."
+            )
+
     def _validate_light_sensibility(self):
         """
         Validates if sensibility factor of light stress is valid.
         """
 
         if not isinstance(self.light_sensibility, (int, float)):
-            raise InvalidInputError("El factor de sensibilidad a la luz no está en un tipo válido.")
+            raise InvalidInputError(
+                "El factor de sensibilidad a la luz no está en un tipo válido."
+            )
         if self.light_sensibility <= 0:
-            raise InvalidInputError("El factor de sensibilidad a la luz no puede ser menor o igual a 0.")
-        
+            raise InvalidInputError(
+                "El factor de sensibilidad a la luz no puede ser menor o igual a 0."
+            )
+
     def _validate_phenological_initial_coefficient(self):
         """
         Validates if the coefficient of the first phase of growing is valid.
         """
 
         if not isinstance(self.phenological_initial_coefficient, (int, float)):
-            raise InvalidInputError("El factor fenológico de inicio no está en un tipo válido.")
+            raise InvalidInputError(
+                "El factor fenológico de inicio no está en un tipo válido."
+            )
         if self.phenological_initial_coefficient <= 0:
-            raise InvalidInputError("El factor fenológico de crecimiento no puede ser menor o igual a 0.")
-        if self.phenological_mid_coefficient and (self.phenological_initial_coefficient > self.phenological_mid_coefficient):
-            raise InvalidInputError("El factor fenológico de inicio no puede ser mayor al de el medio.")
+            raise InvalidInputError(
+                "El factor fenológico de crecimiento no puede ser menor o igual a 0."
+            )
+        if self.phenological_mid_coefficient and (
+            self.phenological_initial_coefficient > self.phenological_mid_coefficient
+        ):
+            raise InvalidInputError(
+                "El factor fenológico de inicio no puede ser mayor al de el medio."
+            )
 
     def _validate_days_cycle(self):
         """

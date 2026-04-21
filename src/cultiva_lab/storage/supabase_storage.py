@@ -8,9 +8,11 @@ key: str = os.environ.get("SUPABASE_KEY")
 
 supabase: Client = create_client(url, key)
 
+
 def check_data():
     response = supabase.table("users").select("*").execute()
     print(response.data)
+
 
 if __name__ == "__main__":
     check_data()

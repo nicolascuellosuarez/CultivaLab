@@ -87,28 +87,36 @@ class Crop:
 
         if not isinstance(self.conditions, list):
             raise InvalidInputError("Las condiciones deben estár en una lista.")
-        
+
     def _validate_water_stored(self):
         """
         Validates if water stored data is in the right type.
         """
 
         if not isinstance(self.water_stored, float):
-            raise InvalidInputError("El agua almacenada en el suelo no está en un tipo válido.")
+            raise InvalidInputError(
+                "El agua almacenada en el suelo no está en un tipo válido."
+            )
         if self.water_stored < 0:
-            raise InvalidInputError("El agua almacenada no puede tener valores negativos.")
-        
+            raise InvalidInputError(
+                "El agua almacenada no puede tener valores negativos."
+            )
+
     def _validate_consecutive_stress_days(self):
         """
-        Validates if the variable that stores the current number of consecutive 
+        Validates if the variable that stores the current number of consecutive
         stress days in the simulation is in the right type.
         """
 
         if not isinstance(self.consecutive_stress_days, int):
-            raise InvalidInputError("El contador de días consecutivos en este tramo no está en un tipo válido")
+            raise InvalidInputError(
+                "El contador de días consecutivos en este tramo no está en un tipo válido"
+            )
         if self.consecutive_stress_days < 0:
-            raise InvalidInputError("Los días de estrés consecutivos no pueden ser negativos.")
-        
+            raise InvalidInputError(
+                "Los días de estrés consecutivos no pueden ser negativos."
+            )
+
     def _validate_current_phase(self):
         """
         Validates if the current phase of the growing simulation
