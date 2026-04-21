@@ -14,9 +14,9 @@ class CropType:
     optimal_temp: float
     # Optimal temperature in °C
     minimum_temp: float
-    # Minimum base temperature
+    # Minimum base temperature in °C
     maximum_temp: float
-    # Maximum base temperature
+    # Maximum base temperature in °C
     cold_sensibility: float
     heat_sensibility: float
     # Sensibility factors for breathing process
@@ -28,7 +28,7 @@ class CropType:
     needed_water: float
     water_opt_high: float
     water_capacity: float
-    # Levels of water
+    # Levels of water in mm
     water_sensibility: float
     # Water sensibility factor of breathing
     needed_light: float
@@ -42,6 +42,16 @@ class CropType:
     # Coefficients of every growing phase
     days_cycle: int
     # Days needed for harvest
+    photosyntesis_max_rate: float
+    breathing_base_rate: float
+    # Rates of photosynthesis and breathing
+    theta: float
+    # Logistic assymetry factor
+    consecutive_stress_days: int
+    consecutive_stress_days_limit: int
+    # Limit counter of consecutive stress days
+    theta_coefficient: float
+    # Water transpiration coefficient
     initial_biomass: float
     # Initial biomass level in g / (m ^ 2)
     potential_performance: float
@@ -62,10 +72,16 @@ class CropType:
         self._validate_needed_light()
         self._validate_needed_light_max()
         self._validate_light_sensibility()
-        self._phenological_initial_coefficient()
-        self._phenological_mid_coefficient()
-        self._phenological_end_coefficient()
+        self._validate_phenological_initial_coefficient()
+        self._validate_phenological_mid_coefficient()
+        self._validate_phenological_end_coefficient()
         self._validate_days_cycle()
+        self._validate_photosyntesis_max_rate()
+        self._validate_breathing_base_rate()
+        self._validate_theta()
+        self._validate_consecutive_stress_days()
+        self._validate_consecutive_stress_days_limit()
+        self._validate_theta_coefficient()
         self._validate_initial_biomass()
         self._validate_potential_performance()
 
@@ -406,6 +422,53 @@ class CropType:
                 "El factor fenológico de inicio no puede ser mayor al de el medio."
             )
 
+    def _validate_phenological_mid_coefficient(self):
+        """
+        Validates if the coefficient of the second phase is valid.
+        """
+
+        if not isinstance(self.phenological_mid_coefficient, (int, float)):
+            raise InvalidInputError(
+                "El factor fenológico de la fase media de crecimiento no tiene un tipo válido."
+            )
+        if self.phenological_mid_coefficient <= 0:
+            raise InvalidInputError(
+                "El factor fenológico de la fase media del crecimiento no puede ser menor o igual a 0."
+            )
+        if (
+            self.phenological_initial_coefficient
+            and self.phenological_end_coefficient
+            and (
+                self.phenological_initial_coefficient
+                >= self.phenological_mid_coefficient
+                or self.phenological_end_coefficient
+                >= self.phenological_mid_coefficient
+            )
+        ):
+            raise InvalidInputError(
+                "El factor fenológico de la fase media debe ser mayor al de la inicial y final."
+            )
+
+    def _validate_phenological_end_coefficient(self):
+        """
+        Validates if the coefficient of the final phase is valid.
+        """
+
+        if not isinstance(self.phenological_end_coefficient, (int, float)):
+            raise InvalidInputError(
+                "El factor fenológico de la última fase no está en un tipo válido."
+            )
+        if self.phenological_end_coefficient <= 0:
+            raise InvalidInputError(
+                "El factor fenológico de la última fase no puede ser menor o igual a 0."
+            )
+        if self.phenological_mid_coefficient and (
+            self.phenological_end_coefficient > self.phenological_mid_coefficient
+        ):
+            raise InvalidInputError(
+                "El factor fenológico final no puede ser mayor al de el medio."
+            )
+
     def _validate_days_cycle(self):
         """
         Validates that days cycle is a positive integer.
@@ -415,6 +478,90 @@ class CropType:
             raise InvalidInputError("Los días de ciclo deben ser un número entero.")
         if self.days_cycle <= 0:
             raise InvalidInputError("Los días de ciclo deben ser mayores a cero.")
+
+    def _validate_photosyntesis_max_rate(self):
+        """
+        Validates if the max rate of photosyntesis per day is valid.
+        """
+
+        if not isinstance(self.photosyntesis_max_rate, (float, int)):
+            raise InvalidInputError(
+                "La tasa máxima de fotosíntesis por día no está en un tipo válido."
+            )
+        if self.photosyntesis_max_rate <= 0:
+            raise InvalidInputError(
+                "La tasa máxima de fotosíntesis por día no puede ser menor o igual a 0."
+            )
+
+    def _validate_breathing_base_rate(self):
+        """
+        Validates if the base breathing rate per day is valid.
+        """
+
+        if not isinstance(self.breathing_base_rate, (float, int)):
+            raise InvalidInputError(
+                "La tasa base de respiración por día no está en un tipo válido."
+            )
+        if self.breathing_base_rate <= 0:
+            raise InvalidInputError(
+                "La tasa base de respiración no puede ser menor o igual a 0."
+            )
+
+    def _validate_theta(self):
+        """
+        Validates if the theta assymmetric factor is valid.
+        """
+
+        if not isinstance(self.theta, (int, float)):
+            raise InvalidInputError(
+                "El factor de asimetría en el crecimiento no está en un tipo válido."
+            )
+        if self.theta <= 0:
+            raise InvalidInputError(
+                "El factor de asimetría en el crecimiento no puede ser menor o igual."
+            )
+
+    def _validate_consecutive_stress_days(self):
+        """
+        Validates if the stress days that are consecutive are valid.
+        """
+
+        if not isinstance(self.consecutive_stress_days, (int)):
+            raise InvalidInputError(
+                "La cantidad de días consecutivos actual no es válida."
+            )
+        if self.consecutive_stress_days < 0:
+            raise InvalidInputError(
+                "La cantidad de días consecutivos no puede ser menor a 0."
+            )
+
+    def _validate_consecutive_stress_days_limit(self):
+        """
+        Validates if the maximum quantity of consecutive stress days is valid.
+        """
+
+        if not isinstance(self.consecutive_stress_days_limit, (int)):
+            raise InvalidInputError(
+                "La cantidad de días de estrés límite no está en el tipo adecuado."
+            )
+        if self.consecutive_stress_days_limit < 0:
+            raise InvalidInputError(
+                "La cantidad de días de estrés límite no puede ser menor a 0."
+            )
+
+    def _validate_theta_coefficient(self):
+        """
+        Validates if water transpiration coefficient is valid.
+        """
+
+        if not isinstance(self.theta_coefficient, (int, float)):
+            raise InvalidInputError(
+                "El coeficiente de transpiración no está en un tipo válido."
+            )
+        if self.theta_coefficient <= 0:
+            raise InvalidInputError(
+                "El coeficiente de transpiracion del agua no puede ser menor o igual a 0."
+            )
 
     def _validate_initial_biomass(self):
         """

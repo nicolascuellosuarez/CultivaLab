@@ -38,8 +38,8 @@ class Crop:
         self._validate_dates()
         self._validate_conditions()
         self._validate_water_stored()
-        self._validate_consecutive_stress_days
-        self._validate_current_phase
+        self._validate_consecutive_stress_days()
+        self._validate_current_phase()
         self._validate_active()
 
     def _validate_name(self):
