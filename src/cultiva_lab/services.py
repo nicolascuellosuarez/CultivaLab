@@ -15,6 +15,7 @@ from src.cultiva_lab.exceptions import (
 from datetime import datetime, timedelta
 import uuid
 import bcrypt
+import math
 
 MASTER_KEY = "admin12345"
 
@@ -29,83 +30,26 @@ class CropService:
     def __init__(self, storage: Database) -> None:
         self.storage: Database = storage
 
-    def _calculate_environment_factor(
-        self, crop_type: CropType, temperature: float, rain: float, sun_hours: float
-    ) -> float:
-        """
-        Three factors will be used to simulate the growth.
-        They will act as a pilot of the math model. The first
-        factor: enviromental factor; Crop Type, temperature,
-        rain and sun hours received by the crop.
-        """
+    def _calculate_production_thermal_factor(self, crop_type: CropType, temperature: float) -> float:
+        if temperature < crop_type.minimum_temp:
+            f_T = math.exp(- (temperature - crop_type.minimum_temp)**2 / (2 * (crop_type.temperature_curve_length)**2))
+        elif crop_type.minimum_temp <= temperature <= crop_type.maximum_temp:
+            f_T = 1
+        elif temperature > crop_type.maximum_temp:
+            f_T =  math.exp(- (temperature - crop_type.maximum_temp) ** 2 / (2 * (crop_type.temperature_curve_length) ** 2))
+        return f_T
 
-        # Three factors, using the parameters
-        temperature_factor = max(
-            0,
-            1
-            - (abs(temperature - crop_type.optimal_temp) / crop_type.optimal_temp)
-            * 0.5,
-        )
-        rain_factor = (
-            min(1, rain / crop_type.needed_water) if crop_type.needed_water > 0 else 1
-        )
-        sun_hours_factor = (
-            min(1, sun_hours / crop_type.needed_light)
-            if crop_type.needed_light > 0
-            else 1
-        )
+    def _calculate_water_factor_production(self, crop_type: CropType, water_stored: float) -> float:
+        f_W = (1 / (1 + math.exp(crop_type.water_stress_constant * (crop_type.water_opt_low - water_stored)))) * (1 / (1 + math.exp(-crop_type.water_stress_constant * (water_stored - crop_type.water_opt_high))))
 
-        return temperature_factor * rain_factor * sun_hours_factor
-
-    def _calculate_phase_factor(self, crop: Crop, crop_type: CropType) -> float:
-        """
-        Second part of model, the phase is also an important factor
-        in the growth process of a crop. Depending on the phase,
-        the crop can increase its biomass to a greater or lesser
-        extent.
-        """
-
-        current_day = len(crop.conditions) + 1
-        phase = current_day / crop_type.days_cycle
-
-        if phase < 0.2:
-            return 0.5 + (phase * 2.5)
-        elif phase < 0.7:
-            return 1.0
-        return max(0.2, 1.5 - phase)
-
-    def _calculate_capacity_factor(self, crop: Crop, crop_type: CropType) -> float:
-        """
-        Method created to calculate the growing capacity of
-        a crop, based on its potential performance and current biomass.
-        """
-
-        current_biomass = (
-            crop.conditions[-1].estimated_biomass
-            if crop.conditions
-            else crop_type.initial_biomass
-        )
-        return max(
-            0,
-            (crop_type.potential_performance - current_biomass)
-            / crop_type.potential_performance,
-        )
-
-    def _calculate_growth(
-        self,
-        crop_type: CropType,
-        env_factor: float,
-        phase_factor: float,
-        capacity_factor: float,
-    ) -> float:
-        """
-        Method used to calculate the total factor, and calculates
-        the growth of the crop in a day.
-        """
-
-        base_rate = 0.05  # Hardcoded Base rate, remember - this is a pilot model
-        total_factor = (env_factor * phase_factor * capacity_factor) ** 1.5
-        return crop_type.potential_performance * base_rate * total_factor
+    def _calculate_light_production_factor(self, crop_type: CropType, sun_hours: int) -> float:
+        if sun_hours <= crop_type.needed_light:
+            f_L = crop_type.needed_light / (crop_type.needed_light + crop_type.light_km)
+        elif crop_type.needed_light < sun_hours <= crop_type.needed_light_max:
+            f_L = math.exp(- (sun_hours - crop_type.needed_light)**2 / (2 * (crop_type.light_sigma ** 2)))
+        elif crop_type.needed_light > crop_type.needed_light_max:
+            f_L = math.exp(- (crop_type.needed_light_max - crop_type.needed_light)**2 / (2 * (crop_type.light_sigma ** 2)))
+        return f_L
 
     def simulate_day(
         self,

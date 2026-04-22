@@ -11,8 +11,6 @@ class CropType:
 
     id: str
     name: str
-    optimal_temp: float
-    # Optimal temperature in °C
     minimum_temp: float
     # Minimum base temperature in °C
     maximum_temp: float
@@ -23,6 +21,8 @@ class CropType:
     cold_factor: float
     heat_factor: float
     # Exponential factors for breathing factors
+    temperature_curve_length: float
+    # Temperature's curve length
     water_wilting: float
     water_opt_low: float
     needed_water: float
@@ -31,11 +31,17 @@ class CropType:
     # Levels of water in mm
     water_sensibility: float
     # Water sensibility factor of breathing
+    water_stress_constant: float
+    # Pendant for sigmoidal function
     needed_light: float
     needed_light_max: float
     # Optimal and maximum light hours in hours per day
     light_sensibility: float
     # Sensibility to light factor
+    light_km: float
+    # Light efficience for 50%
+    light_sigma: float
+    # Sigma for the light function
     phenological_initial_coefficient: float
     phenological_mid_coefficient: float
     phenological_end_coefficient: float
@@ -47,7 +53,6 @@ class CropType:
     # Rates of photosynthesis and breathing
     theta: float
     # Logistic assymetry factor
-    consecutive_stress_days: int
     consecutive_stress_days_limit: int
     # Limit counter of consecutive stress days
     theta_coefficient: float
@@ -61,17 +66,25 @@ class CropType:
         """Validates crop type data after initialization."""
         self._validate_id()
         self._validate_name()
-        self._validate_optimal_temp()
         self._validate_minimum_temp()
         self._validate_maximum_temp()
         self._validate_cold_sensibility()
         self._validate_heat_sensibility()
         self._validate_cold_factor()
         self._validate_heat_factor()
+        self._validate_temperature_curve_length()
+        self._validate_water_wilting()
+        self._validate_water_opt_low()
         self._validate_needed_water()
+        self._validate_water_opt_high()
+        self._validate_water_capacity()
+        self._validate_water_sensibility()
+        self._validate_water_stress_constant()
         self._validate_needed_light()
         self._validate_needed_light_max()
         self._validate_light_sensibility()
+        self._validate_light_km()
+        self._validate_light_sigma()
         self._validate_phenological_initial_coefficient()
         self._validate_phenological_mid_coefficient()
         self._validate_phenological_end_coefficient()
@@ -79,7 +92,6 @@ class CropType:
         self._validate_photosyntesis_max_rate()
         self._validate_breathing_base_rate()
         self._validate_theta()
-        self._validate_consecutive_stress_days()
         self._validate_consecutive_stress_days_limit()
         self._validate_theta_coefficient()
         self._validate_initial_biomass()
@@ -104,20 +116,6 @@ class CropType:
             raise InvalidInputError(
                 "El nombre del tipo de cultivo debe ser un texto no vacío."
             )
-
-    def _validate_optimal_temp(self):
-        """
-        Validates that optimal temperature is a number and within valid range.
-        """
-
-        if not isinstance(self.optimal_temp, (int, float)):
-            raise InvalidInputError("La temperatura óptima debe ser un número.")
-        if self.minimum_temp and self.minimum_temp >= self.maximum_temp:
-            raise InvalidInputError(
-                "La mayor tenmperatura óptima no puede ser menor o igual a la menor temperatura óptima."
-            )
-        if self.optimal_temp < -7:
-            raise InvalidInputError("La temperatura óptima no puede ser menor a -7°C.")
 
     def _validate_minimum_temp(self):
         """
@@ -178,7 +176,7 @@ class CropType:
             raise InvalidInputError(
                 "La sensibilidad al calor no está en un tipo válido."
             )
-        if self.head_sensibility < 0:
+        if self.heat_sensibility < 0:
             raise InvalidInputError(
                 "La sensibilidad al calor de la planta no puede ser negativa."
             )
@@ -210,6 +208,16 @@ class CropType:
             raise InvalidInputError(
                 "El factor de respiración con respecto al calor no puede ser menor o igual a 0."
             )
+        
+    def _validate_temperature_curve_length(self):
+        """
+        Validates if the curving function length for temperature is valid.
+        """
+
+        if not isinstance(self.temperature_curve_length, (int, float)):
+            raise InvalidInputError("El factor de decrecimiento o crecimiento de factor de temperatura no está en un tipo adecuado.")
+        if self.temperature_curve_length <= 0:
+            raise InvalidInputError("El factor de decrecimiento o crecimiento de factor de temperatura no puede ser menor o igual a 0.")
 
     def _validate_water_wilting(self):
         """
@@ -232,7 +240,7 @@ class CropType:
         ) and not (
             self.water_wilting
             < self.water_opt_low
-            < self.needed_Water
+            < self.needed_water
             < self.water_opt_high
             < self.water_capacity
         ):
@@ -259,7 +267,7 @@ class CropType:
         ) and not (
             self.water_wilting
             < self.water_opt_low
-            < self.needed_Water
+            < self.needed_water
             < self.water_opt_high
             < self.water_capacity
         ):
@@ -282,7 +290,7 @@ class CropType:
         ) and not (
             self.water_wilting
             < self.water_opt_low
-            < self.needed_Water
+            < self.needed_water
             < self.water_opt_high
             < self.water_capacity
         ):
@@ -309,7 +317,7 @@ class CropType:
         ) and not (
             self.water_wilting
             < self.water_opt_low
-            < self.needed_Water
+            < self.needed_water
             < self.water_opt_high
             < self.water_capacity
         ):
@@ -336,7 +344,7 @@ class CropType:
         ) and not (
             self.water_wilting
             < self.water_opt_low
-            < self.needed_Water
+            < self.needed_water
             < self.water_opt_high
             < self.water_capacity
         ):
@@ -355,6 +363,16 @@ class CropType:
             raise InvalidInputError(
                 "El valor del coeficiente de sensibilidad del agua no puede ser menor o igual a 0."
             )
+    
+    def _validate_water_stress_constant(self):
+        """
+        Validates if water stress constant is valid.
+        """
+
+        if not isinstance(self.water_stress_constant, (int, float)):
+            raise InvalidInputError("La constante de estrés con respecto al agua no está en un tipo válido.")
+        if self.water_stress_constant <= 0:
+            raise InvalidInputError("La constante de estrés con respecto al agua no puede ser menor o igual a 0.")
 
     def _validate_needed_light(self):
         """
@@ -401,6 +419,26 @@ class CropType:
             raise InvalidInputError(
                 "El factor de sensibilidad a la luz no puede ser menor o igual a 0."
             )
+        
+    def _validate_light_km(self):
+        """
+        Validates if Michaelis Constant is valid.
+        """
+
+        if not isinstance(self.light_km, (int, float)):
+            raise InvalidInputError("La Constante de Michaelis no está en un tipo valido.")
+        if self.light_km <= 0:
+            raise InvalidInputError("La Constante de Michaelis no puede ser menor o igual a 0.")
+        
+    def _validate_light_sigma(self):
+        """
+        Validates if the factor of light is valid.
+        """
+
+        if not isinstance(self.light_sigma, (int, float)):
+            raise InvalidInputError("El factor sigma de crecimiento no está en un tipo válido.")
+        if self.light_sigma <= 0:
+            raise InvalidInputError("El factor sigma de crecimiento no puede ser menor o igual a 0.")
 
     def _validate_phenological_initial_coefficient(self):
         """
@@ -519,20 +557,6 @@ class CropType:
         if self.theta <= 0:
             raise InvalidInputError(
                 "El factor de asimetría en el crecimiento no puede ser menor o igual."
-            )
-
-    def _validate_consecutive_stress_days(self):
-        """
-        Validates if the stress days that are consecutive are valid.
-        """
-
-        if not isinstance(self.consecutive_stress_days, (int)):
-            raise InvalidInputError(
-                "La cantidad de días consecutivos actual no es válida."
-            )
-        if self.consecutive_stress_days < 0:
-            raise InvalidInputError(
-                "La cantidad de días consecutivos no puede ser menor a 0."
             )
 
     def _validate_consecutive_stress_days_limit(self):
