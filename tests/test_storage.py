@@ -1,5 +1,5 @@
 from src.cultiva_lab.storage import JSONStorage
-from src.cultiva_lab.models import User, Crop, CropType, UserRole
+from src.cultiva_lab.models import User, Crop, CropType, UserRole, DailyCondition
 from datetime import datetime
 
 """
@@ -8,15 +8,79 @@ will be on proving the operation of JSONStorage
 methods implementations from a Protocol.
 """
 
-"""
-If the file does not exist yet, storage.read() should
-return the expected initial structure of the DB.
-"""
 
+def create_valid_crop_type(
+    id: str,
+    name: str,
+    minimum_temp: float,
+    maximum_temp: float,
+    needed_water: float,
+    needed_light: float,
+    days_cycle: int,
+    initial_biomass: float,
+    potential_performance: float,
+    **kwargs
+) -> CropType:
+    """
+    Crea un CropType con valores de agua que cumplen:
+    water_wilting < water_opt_low < needed_water < water_opt_high < water_capacity
+    """
+    water_wilting = kwargs.get("water_wilting", 30.0)
+    water_opt_low = kwargs.get("water_opt_low", 60.0)
+    water_opt_high = kwargs.get("water_opt_high", 150.0)
+    water_capacity = kwargs.get("water_capacity", 200.0)
+    # Asegurar orden correcto
+    water_wilting = min(water_wilting, water_opt_low - 1)
+    water_opt_low = max(water_opt_low, water_wilting + 1)
+    needed_water = max(needed_water, water_opt_low + 1)
+    water_opt_high = max(water_opt_high, needed_water + 1)
+    water_capacity = max(water_capacity, water_opt_high + 1)
+
+    return CropType(
+        id=id,
+        name=name,
+        minimum_temp=minimum_temp,
+        maximum_temp=maximum_temp,
+        cold_sensibility=kwargs.get("cold_sensibility", 0.5),
+        heat_sensibility=kwargs.get("heat_sensibility", 0.5),
+        cold_factor=kwargs.get("cold_factor", 0.1),
+        heat_factor=kwargs.get("heat_factor", 0.1),
+        temperature_curve_length=kwargs.get("temperature_curve_length", 5.0),
+        water_wilting=water_wilting,
+        water_opt_low=water_opt_low,
+        needed_water=needed_water,
+        water_opt_high=water_opt_high,
+        water_capacity=water_capacity,
+        water_sensibility=kwargs.get("water_sensibility", 0.3),
+        water_stress_constant=kwargs.get("water_stress_constant", 0.4),
+        needed_light=needed_light,
+        needed_light_max=kwargs.get("needed_light_max", needed_light + 4),
+        light_sensibility=kwargs.get("light_sensibility", 1.0),
+        light_km=kwargs.get("light_km", needed_light * 0.5),
+        light_sigma=kwargs.get("light_sigma", 2.0),
+        phenological_initial_coefficient=kwargs.get("phenological_initial_coefficient", 0.4),
+        phenological_mid_coefficient=kwargs.get("phenological_mid_coefficient", 1.1),
+        phenological_end_coefficient=kwargs.get("phenological_end_coefficient", 0.6),
+        days_cycle=days_cycle,
+        photosyntesis_max_rate=kwargs.get("photosyntesis_max_rate", 0.22),
+        breathing_base_rate=kwargs.get("breathing_base_rate", 0.05),
+        theta=kwargs.get("theta", 1.5),
+        consecutive_stress_days_limit=kwargs.get("consecutive_stress_days_limit", 5),
+        theta_coefficient=kwargs.get("theta_coefficient", 0.0023),
+        initial_biomass=initial_biomass,
+        potential_performance=potential_performance,
+    )
+
+
+# ------------------------------------------------------------
+# Tests
+# ------------------------------------------------------------
 
 def test_read_returns_empty_dict_when_file_dont_exists(tmp_path):
-    # The program will use the tmp path, not mocks to check
-    # the operation of the database
+    """
+    If the file does not exist yet, storage.read() should
+    return the expected initial structure of the DB.
+    """
     temp_file = tmp_path / "test_db.json"
     assert not temp_file.exists()
 
@@ -26,13 +90,11 @@ def test_read_returns_empty_dict_when_file_dont_exists(tmp_path):
     assert result == {"users": [], "crops": [], "crop_types": []}
 
 
-"""
-Method created to see if the DataBase, effectively,
-works; makes a first user and proves the registration.
-"""
-
-
 def test_save_and_get_users(tmp_path):
+    """
+    Method created to see if the DataBase, effectively,
+    works; makes a first user and proves the registration.
+    """
     temp_file = tmp_path / "test_db.json"
     storage = JSONStorage(temp_file)
 
@@ -47,13 +109,11 @@ def test_save_and_get_users(tmp_path):
     assert users[0].role == user.role
 
 
-"""
-Method created to validate the update of a user that already exists,
-instead of making a new one with the same ID.
-"""
-
-
 def test_save_user_updates_existing_instead_of_duplicate(tmp_path):
+    """
+    Method created to validate the update of a user that already exists,
+    instead of making a new one with the same ID.
+    """
     temp_file = tmp_path / "test_db.json"
     storage = JSONStorage(temp_file)
 
@@ -71,13 +131,11 @@ def test_save_user_updates_existing_instead_of_duplicate(tmp_path):
     assert users[0].role == evaluating_user.role
 
 
-"""
-Method created to see if the delete_user method works;
-eliminating the user from the DataBase.
-"""
-
-
 def test_delete_user_removes_from_storage(tmp_path):
+    """
+    Method created to see if the delete_user method works;
+    eliminating the user from the DataBase.
+    """
     temp_file = tmp_path / "test_db.json"
     storage = JSONStorage(temp_file)
 
@@ -100,12 +158,10 @@ def test_delete_user_removes_from_storage(tmp_path):
     assert updated_users[0].password_hash == user2.password_hash
 
 
-"""
-Method created to see the operation of the get_user_by_id function.
-"""
-
-
 def test_get_user_by_id_works_and_returns_none_if_not_found(tmp_path):
+    """
+    Method created to see the operation of the get_user_by_id function.
+    """
     temp_path = tmp_path / "test_db.json"
     storage = JSONStorage(temp_path)
 
@@ -119,13 +175,11 @@ def test_get_user_by_id_works_and_returns_none_if_not_found(tmp_path):
     assert storage.get_user_by_id("4567") is None
 
 
-"""
-Method created to see the operation of the get_user_by_username
-function.
-"""
-
-
 def test_get_user_by_username_works_and_returns_none_if_not_found(tmp_path):
+    """
+    Method created to see the operation of the get_user_by_username
+    function.
+    """
     temp_path = tmp_path / "test_db.json"
     storage = JSONStorage(temp_path)
 
@@ -139,58 +193,105 @@ def test_get_user_by_username_works_and_returns_none_if_not_found(tmp_path):
     assert storage.get_user_by_username("catima") is None
 
 
-"""
-Test created to see the operation of the save and get crops methods
-in storage.
-"""
-
-
 def test_save_and_get_crops(tmp_path):
+    """
+    Test created to see the operation of the save and get crops methods
+    in storage.
+    """
     temp_path = tmp_path / "test_db.json"
     storage = JSONStorage(temp_path)
 
     user1 = User("123", "nikoloko", "hashed_pwd", UserRole.USER, [])
     storage.save_user(user1)
 
-    banana_crop_type = CropType(
-        "123", "Cultivo de Bananas", 27, 5.83, 12, 360, 0.75, 50
+    banana_crop_type = create_valid_crop_type(
+        id="123",
+        name="Cultivo de Bananas",
+        minimum_temp=22.0,
+        maximum_temp=32.0,
+        needed_water=100.0,
+        needed_light=12.0,
+        days_cycle=360,
+        initial_biomass=0.75,
+        potential_performance=50.0,
     )
     storage.save_crop_type(banana_crop_type)
+
     now = datetime.now()
-    crop = Crop("123", "Cultivo de Bananas", "123", "123", now, now, [], True)
+    crop = Crop(
+        id="123",
+        name="Cultivo de Bananas",
+        user_id="123",
+        crop_type_id="123",
+        start_date=now,
+        last_sim_date=now,
+        conditions=[],
+        active=True,
+        water_stored=0.0,
+        consecutive_stress_days=0,
+        current_phase="Fase Inicial"
+    )
     storage.save_crop(crop)
 
     crops = storage.get_crops()
-
     assert len(crops) == 1
     assert crops[0].id == crop.id
     assert crops[0].name == crop.name
 
 
-"""
-Method created to supervise the correct operation save_crop method
-in storage, not only saving new crops, also editing existing ones
-if the ID already exists.
-"""
-
-
 def test_save_crop_updates_existing_instead_of_duplicate(tmp_path):
+    """
+    Method created to supervise the correct operation save_crop method
+    in storage, not only saving new crops, also editing existing ones
+    if the ID already exists.
+    """
     temp_file = tmp_path / "test_db.json"
     storage = JSONStorage(temp_file)
 
     user1 = User("123", "nikoloko", "hashed_pwd", UserRole.USER, [])
     storage.save_user(user1)
 
-    banana_crop_type = CropType(
-        "123", "Cultivo de Bananas", 27, 5.83, 12, 360, 0.75, 50
+    banana_crop_type = create_valid_crop_type(
+        id="123",
+        name="Cultivo de Bananas",
+        minimum_temp=22.0,
+        maximum_temp=32.0,
+        needed_water=100.0,
+        needed_light=12.0,
+        days_cycle=360,
+        initial_biomass=0.75,
+        potential_performance=50.0,
     )
     storage.save_crop_type(banana_crop_type)
+
     now = datetime.now()
-    crop = Crop("123", "Cultivo de Bananas", "123", "123", now, now, [], True)
+    crop = Crop(
+        id="123",
+        name="Cultivo de Bananas",
+        user_id="123",
+        crop_type_id="123",
+        start_date=now,
+        last_sim_date=now,
+        conditions=[],
+        active=True,
+        water_stored=0.0,
+        consecutive_stress_days=0,
+        current_phase="Fase Inicial"
+    )
     storage.save_crop(crop)
 
     evaluating_crop = Crop(
-        "123", "Cultivo de Bananas #2", "123", "123", now, now, [], True
+        id="123",
+        name="Cultivo de Bananas #2",
+        user_id="123",
+        crop_type_id="123",
+        start_date=now,
+        last_sim_date=now,
+        conditions=[],
+        active=True,
+        water_stored=0.0,
+        consecutive_stress_days=0,
+        current_phase="Fase Inicial"
     )
     storage.save_crop(evaluating_crop)
 
@@ -201,28 +302,59 @@ def test_save_crop_updates_existing_instead_of_duplicate(tmp_path):
     assert crops[0].user_id == evaluating_crop.user_id
 
 
-"""
-Method created to see if the delete_crop method works;
-eliminating the crop from the DataBase.
-"""
-
-
 def test_delete_crop_removes_from_storage(tmp_path):
+    """
+    Method created to see if the delete_crop method works;
+    eliminating the crop from the DataBase.
+    """
     temp_file = tmp_path / "test_db.json"
     storage = JSONStorage(temp_file)
 
     user1 = User("123", "nikoloko", "hashed_pwd", UserRole.USER, [])
     storage.save_user(user1)
 
-    banana_crop_type = CropType(
-        "123", "Cultivo de Bananas", 27, 5.83, 12, 360, 0.75, 50
+    banana_crop_type = create_valid_crop_type(
+        id="123",
+        name="Cultivo de Bananas",
+        minimum_temp=22.0,
+        maximum_temp=32.0,
+        needed_water=100.0,
+        needed_light=12.0,
+        days_cycle=360,
+        initial_biomass=0.75,
+        potential_performance=50.0,
     )
     storage.save_crop_type(banana_crop_type)
-    now = datetime.now()
 
-    crop1 = Crop("123", "Cultivo de Bananas", "123", "123", now, now, [], True)
+    now = datetime.now()
+    crop1 = Crop(
+        id="123",
+        name="Cultivo de Bananas",
+        user_id="123",
+        crop_type_id="123",
+        start_date=now,
+        last_sim_date=now,
+        conditions=[],
+        active=True,
+        water_stored=0.0,
+        consecutive_stress_days=0,
+        current_phase="Fase Inicial"
+    )
     storage.save_crop(crop1)
-    crop2 = Crop("1234", "Cultivo de Bananas #2", "123", "123", now, now, [], True)
+
+    crop2 = Crop(
+        id="1234",
+        name="Cultivo de Bananas #2",
+        user_id="123",
+        crop_type_id="123",
+        start_date=now,
+        last_sim_date=now,
+        conditions=[],
+        active=True,
+        water_stored=0.0,
+        consecutive_stress_days=0,
+        current_phase="Fase Inicial"
+    )
     storage.save_crop(crop2)
 
     crops = storage.get_crops()
@@ -237,25 +369,43 @@ def test_delete_crop_removes_from_storage(tmp_path):
     assert updated_crops[0].name == crop2.name
 
 
-"""
-Method created to see the operation of the get_crop_by_id function.
-"""
-
-
 def test_get_crop_by_id_works_and_returns_none_if_not_found(tmp_path):
+    """
+    Method created to see the operation of the get_crop_by_id function.
+    """
     temp_path = tmp_path / "test_db.json"
     storage = JSONStorage(temp_path)
 
     user1 = User("123", "nikoloko", "hashed_pwd", UserRole.USER, [])
     storage.save_user(user1)
 
-    banana_crop_type = CropType(
-        "123", "Cultivo de Bananas", 27, 5.83, 12, 360, 0.75, 50
+    banana_crop_type = create_valid_crop_type(
+        id="123",
+        name="Cultivo de Bananas",
+        minimum_temp=22.0,
+        maximum_temp=32.0,
+        needed_water=100.0,
+        needed_light=12.0,
+        days_cycle=360,
+        initial_biomass=0.75,
+        potential_performance=50.0,
     )
     storage.save_crop_type(banana_crop_type)
-    now = datetime.now()
 
-    crop = Crop("123", "Cultivo de Bananas", "123", "123", now, now, [], True)
+    now = datetime.now()
+    crop = Crop(
+        id="123",
+        name="Cultivo de Bananas",
+        user_id="123",
+        crop_type_id="123",
+        start_date=now,
+        last_sim_date=now,
+        conditions=[],
+        active=True,
+        water_stored=0.0,
+        consecutive_stress_days=0,
+        current_phase="Fase Inicial"
+    )
     storage.save_crop(crop)
 
     crop_in_db = storage.get_crop_by_id(crop.id)
@@ -265,13 +415,11 @@ def test_get_crop_by_id_works_and_returns_none_if_not_found(tmp_path):
     assert storage.get_crop_by_id("4567") is None
 
 
-"""
-Method created to see the operation of the get_crop_by_user
-function.
-"""
-
-
 def test_get_crops_by_user_returns_only_that_user_crops(tmp_path):
+    """
+    Method created to see the operation of the get_crop_by_user
+    function.
+    """
     temp_path = tmp_path / "test_db.json"
     storage = JSONStorage(temp_path)
 
@@ -280,50 +428,122 @@ def test_get_crops_by_user_returns_only_that_user_crops(tmp_path):
     user2 = User("1234", "catima", "hashed_pwd", UserRole.USER, [])
     storage.save_user(user2)
 
-    banana_crop_type = CropType(
-        "123", "Cultivo de Bananas", 27, 5.83, 12, 360, 0.75, 50
+    banana_crop_type = create_valid_crop_type(
+        id="123",
+        name="Cultivo de Bananas",
+        minimum_temp=22.0,
+        maximum_temp=32.0,
+        needed_water=100.0,
+        needed_light=12.0,
+        days_cycle=360,
+        initial_biomass=0.75,
+        potential_performance=50.0,
     )
     storage.save_crop_type(banana_crop_type)
 
     now = datetime.now()
-    crop1 = Crop("c1", "Cultivo de Bananas", "123", "123", now, now, [], True)
+    crop1 = Crop(
+        id="c1",
+        name="Cultivo de Bananas",
+        user_id="123",
+        crop_type_id="123",
+        start_date=now,
+        last_sim_date=now,
+        conditions=[],
+        active=True,
+        water_stored=0.0,
+        consecutive_stress_days=0,
+        current_phase="Fase Inicial"
+    )
     storage.save_crop(crop1)
-    crop2 = Crop("c2", "Cultivo de Bananas #2", "1234", "123", now, now, [], True)
+
+    crop2 = Crop(
+        id="c2",
+        name="Cultivo de Bananas #2",
+        user_id="1234",
+        crop_type_id="123",
+        start_date=now,
+        last_sim_date=now,
+        conditions=[],
+        active=True,
+        water_stored=0.0,
+        consecutive_stress_days=0,
+        current_phase="Fase Inicial"
+    )
     storage.save_crop(crop2)
 
     user1_crops = storage.get_crops_by_user(user1.id)
-
     assert len(user1_crops) == 1
     assert user1_crops[0].id == crop1.id
     assert user1_crops[0].name == crop1.name
 
 
-"""
-Method created to see the operation of get_crops_by_crop_type
-function.
-"""
-
-
 def test_get_crops_by_type_returns_only_crops_of_that_type(tmp_path):
+    """
+    Method created to see the operation of get_crops_by_crop_type
+    function.
+    """
     temp_path = tmp_path / "test_db.json"
     storage = JSONStorage(temp_path)
 
     user1 = User("123", "nikoloko", "hashed_pwd", UserRole.USER, [])
     storage.save_user(user1)
 
-    banana_crop_type = CropType(
-        "123", "Cultivo de Bananas", 27, 5.83, 12, 360, 0.75, 50
+    banana_crop_type = create_valid_crop_type(
+        id="123",
+        name="Cultivo de Bananas",
+        minimum_temp=22.0,
+        maximum_temp=32.0,
+        needed_water=100.0,
+        needed_light=12.0,
+        days_cycle=360,
+        initial_biomass=0.75,
+        potential_performance=50.0,
     )
     storage.save_crop_type(banana_crop_type)
-    apple_crop_type = CropType(
-        "1234", "Cultivo de Manzanas", 21.5, 4, 9, 145, 2.25, 200
+
+    apple_crop_type = create_valid_crop_type(
+        id="1234",
+        name="Cultivo de Manzanas",
+        minimum_temp=14.0,
+        maximum_temp=28.0,
+        needed_water=80.0,
+        needed_light=9.0,
+        days_cycle=200,
+        initial_biomass=0.65,
+        potential_performance=45.0,
     )
     storage.save_crop_type(apple_crop_type)
 
     now = datetime.now()
-    crop1 = Crop("c1", "Cultivo de Bananas", "123", "123", now, now, [], True)
-    crop2 = Crop("c2", "Cultivo de Manzanas", "123", "1234", now, now, [], True)
+    crop1 = Crop(
+        id="c1",
+        name="Cultivo de Bananas",
+        user_id="123",
+        crop_type_id="123",
+        start_date=now,
+        last_sim_date=now,
+        conditions=[],
+        active=True,
+        water_stored=0.0,
+        consecutive_stress_days=0,
+        current_phase="Fase Inicial"
+    )
     storage.save_crop(crop1)
+
+    crop2 = Crop(
+        id="c2",
+        name="Cultivo de Manzanas",
+        user_id="123",
+        crop_type_id="1234",
+        start_date=now,
+        last_sim_date=now,
+        conditions=[],
+        active=True,
+        water_stored=0.0,
+        consecutive_stress_days=0,
+        current_phase="Fase Inicial"
+    )
     storage.save_crop(crop2)
 
     banana_crops = storage.get_crops_by_type("123")
@@ -336,30 +556,74 @@ def test_get_crops_by_type_returns_only_crops_of_that_type(tmp_path):
     assert apple_crops[0].name == crop2.name
 
 
-"""
-Method created to see the operation of get_active_crops
-function.
-"""
-
-
 def test_get_active_crops_only_returns_active_crops(tmp_path):
+    """
+    Method created to see the operation of get_active_crops
+    function.
+    """
     temp_path = tmp_path / "test_db.json"
     storage = JSONStorage(temp_path)
 
     user = User("123", "nikoloko", "hashed_pwd", UserRole.USER, [])
     storage.save_user(user)
 
-    banana_crop_type = CropType(
-        "123", "Cultivo de Bananas", 27, 5.83, 12, 360, 0.75, 50
+    banana_crop_type = create_valid_crop_type(
+        id="123",
+        name="Cultivo de Bananas",
+        minimum_temp=22.0,
+        maximum_temp=32.0,
+        needed_water=100.0,
+        needed_light=12.0,
+        days_cycle=360,
+        initial_biomass=0.75,
+        potential_performance=50.0,
     )
     storage.save_crop_type(banana_crop_type)
 
     now = datetime.now()
-    crop1 = Crop("c1", "Cultivo de Bananas", "123", "123", now, now, [], False)
+    crop1 = Crop(
+        id="c1",
+        name="Cultivo de Bananas",
+        user_id="123",
+        crop_type_id="123",
+        start_date=now,
+        last_sim_date=now,
+        conditions=[],
+        active=False,
+        water_stored=0.0,
+        consecutive_stress_days=0,
+        current_phase="Fase Inicial"
+    )
     storage.save_crop(crop1)
-    crop2 = Crop("c2", "Cultivo de Bananas #2", "123", "123", now, now, [], True)
+
+    crop2 = Crop(
+        id="c2",
+        name="Cultivo de Bananas #2",
+        user_id="123",
+        crop_type_id="123",
+        start_date=now,
+        last_sim_date=now,
+        conditions=[],
+        active=True,
+        water_stored=0.0,
+        consecutive_stress_days=0,
+        current_phase="Fase Inicial"
+    )
     storage.save_crop(crop2)
-    crop3 = Crop("c3", "Cultivo de Bananas #3", "123", "123", now, now, [], True)
+
+    crop3 = Crop(
+        id="c3",
+        name="Cultivo de Bananas #3",
+        user_id="123",
+        crop_type_id="123",
+        start_date=now,
+        last_sim_date=now,
+        conditions=[],
+        active=True,
+        water_stored=0.0,
+        consecutive_stress_days=0,
+        current_phase="Fase Inicial"
+    )
     storage.save_crop(crop3)
 
     active_crops = storage.get_active_crops()
@@ -370,18 +634,24 @@ def test_get_active_crops_only_returns_active_crops(tmp_path):
     assert crop3.id in active_ids
 
 
-"""
-Test created to supervise the operations of get_crop_type
-and save_crop_type methods.
-"""
-
-
 def test_save_and_get_crop_types(tmp_path):
+    """
+    Test created to supervise the operations of get_crop_type
+    and save_crop_type methods.
+    """
     temp_path = tmp_path / "test_db.json"
     storage = JSONStorage(temp_path)
 
-    banana_crop_type = CropType(
-        "123", "Cultivo de Bananas", 27, 5.83, 12, 360, 0.75, 50
+    banana_crop_type = create_valid_crop_type(
+        id="123",
+        name="Cultivo de Bananas",
+        minimum_temp=22.0,
+        maximum_temp=32.0,
+        needed_water=100.0,
+        needed_light=12.0,
+        days_cycle=360,
+        initial_biomass=0.75,
+        potential_performance=50.0,
     )
     storage.save_crop_type(banana_crop_type)
 
@@ -391,46 +661,78 @@ def test_save_and_get_crop_types(tmp_path):
     assert crop_types[0].name == banana_crop_type.name
 
 
-"""
-Method created to validate the update of a crop type
-that already exists, instead of making a new one with 
-the same ID.
-"""
-
-
 def test_save_crop_type_updates_instead_of_duplicate(tmp_path):
+    """
+    Method created to validate the update of a crop type
+    that already exists, instead of making a new one with 
+    the same ID.
+    """
     temp_path = tmp_path / "test_db.json"
     storage = JSONStorage(temp_path)
 
-    banana_crop_type = CropType(
-        "123", "Cultivo de Bananas", 27, 5.83, 12, 360, 0.75, 50
+    banana_crop_type = create_valid_crop_type(
+        id="123",
+        name="Cultivo de Bananas",
+        minimum_temp=22.0,
+        maximum_temp=32.0,
+        needed_water=100.0,
+        needed_light=12.0,
+        days_cycle=360,
+        initial_biomass=0.75,
+        potential_performance=50.0,
     )
     storage.save_crop_type(banana_crop_type)
-    new_crop_type = CropType("123", "Cultivo de Bananas", 28, 5.83, 12, 360, 0.75, 50)
+
+    new_crop_type = create_valid_crop_type(
+        id="123",
+        name="Cultivo de Bananas",
+        minimum_temp=23.0,
+        maximum_temp=33.0,
+        needed_water=100.0,
+        needed_light=12.0,
+        days_cycle=360,
+        initial_biomass=0.75,
+        potential_performance=50.0,
+    )
     storage.save_crop_type(new_crop_type)
 
     crop_types_created = storage.get_crop_types()
     assert len(crop_types_created) == 1
     assert crop_types_created[0].id == new_crop_type.id
-    assert crop_types_created[0].optimal_temp == new_crop_type.optimal_temp
-
-
-"""
-Method created to see if the delete_crop_type method works;
-eliminating the crop type from the DataBase.
-"""
+    assert crop_types_created[0].minimum_temp == new_crop_type.minimum_temp
 
 
 def test_delete_crop_type_removes_from_storage(tmp_path):
+    """
+    Method created to see if the delete_crop_type method works;
+    eliminating the crop type from the DataBase.
+    """
     temp_path = tmp_path / "test_db.json"
     storage = JSONStorage(temp_path)
 
-    banana_crop_type = CropType(
-        "123", "Cultivo de Bananas", 27, 5.83, 12, 360, 0.75, 50
+    banana_crop_type = create_valid_crop_type(
+        id="123",
+        name="Cultivo de Bananas",
+        minimum_temp=22.0,
+        maximum_temp=32.0,
+        needed_water=100.0,
+        needed_light=12.0,
+        days_cycle=360,
+        initial_biomass=0.75,
+        potential_performance=50.0,
     )
     storage.save_crop_type(banana_crop_type)
-    apple_crop_type = CropType(
-        "1234", "Cultivo de Manzanas", 21.5, 4, 9, 145, 2.25, 200
+
+    apple_crop_type = create_valid_crop_type(
+        id="1234",
+        name="Cultivo de Manzanas",
+        minimum_temp=14.0,
+        maximum_temp=28.0,
+        needed_water=80.0,
+        needed_light=9.0,
+        days_cycle=200,
+        initial_biomass=0.65,
+        potential_performance=45.0,
     )
     storage.save_crop_type(apple_crop_type)
 
@@ -446,17 +748,23 @@ def test_delete_crop_type_removes_from_storage(tmp_path):
     assert updated_crop_types[0].name == apple_crop_type.name
 
 
-"""
-Method created to see the operation of the get_crop_type_by_id function.
-"""
-
-
 def test_get_crop_type_by_id_works_and_returns_none_if_not_found(tmp_path):
+    """
+    Method created to see the operation of the get_crop_type_by_id function.
+    """
     temp_path = tmp_path / "test_db.json"
     storage = JSONStorage(temp_path)
 
-    banana_crop_type = CropType(
-        "123", "Cultivo de Bananas", 27, 5.83, 12, 360, 0.75, 50
+    banana_crop_type = create_valid_crop_type(
+        id="123",
+        name="Cultivo de Bananas",
+        minimum_temp=22.0,
+        maximum_temp=32.0,
+        needed_water=100.0,
+        needed_light=12.0,
+        days_cycle=360,
+        initial_biomass=0.75,
+        potential_performance=50.0,
     )
     storage.save_crop_type(banana_crop_type)
 
@@ -467,17 +775,23 @@ def test_get_crop_type_by_id_works_and_returns_none_if_not_found(tmp_path):
     assert storage.get_crop_type_by_id("4567") is None
 
 
-"""
-Method created to see the operation of the get_crop_type_by_name function.
-"""
-
-
 def test_get_crop_type_by_name_works_and_returns_none_if_not_found(tmp_path):
+    """
+    Method created to see the operation of the get_crop_type_by_name function.
+    """
     temp_path = tmp_path / "test_db.json"
     storage = JSONStorage(temp_path)
 
-    banana_crop_type = CropType(
-        "123", "Cultivo de Bananas", 27, 5.83, 12, 360, 0.75, 50
+    banana_crop_type = create_valid_crop_type(
+        id="123",
+        name="Cultivo de Bananas",
+        minimum_temp=22.0,
+        maximum_temp=32.0,
+        needed_water=100.0,
+        needed_light=12.0,
+        days_cycle=360,
+        initial_biomass=0.75,
+        potential_performance=50.0,
     )
     storage.save_crop_type(banana_crop_type)
 
@@ -488,13 +802,11 @@ def test_get_crop_type_by_name_works_and_returns_none_if_not_found(tmp_path):
     assert storage.get_crop_type_by_name("Cultivo de Manzanas") is None
 
 
-"""
-Multiple operations (save, update, delete) should maintain
-consistent data in storage.
-"""
-
-
 def test_storage_maintains_data_integrity_after_multiple_ops(tmp_path):
+    """
+    Multiple operations (save, update, delete) should maintain
+    consistent data in storage.
+    """
     db_file = tmp_path / "test_db.json"
     storage = JSONStorage(db_file)
 
@@ -506,8 +818,16 @@ def test_storage_maintains_data_integrity_after_multiple_ops(tmp_path):
     updated_user1 = User("123", "nicolas", "hash1_updated", UserRole.USER, crop_ids=[])
     storage.save_user(updated_user1)
 
-    banana_crop_type = CropType(
-        "123", "Cultivo de Bananas", 27, 5.83, 12, 360, 0.75, 50
+    banana_crop_type = create_valid_crop_type(
+        id="123",
+        name="Cultivo de Bananas",
+        minimum_temp=22.0,
+        maximum_temp=32.0,
+        needed_water=100.0,
+        needed_light=12.0,
+        days_cycle=360,
+        initial_biomass=0.75,
+        potential_performance=50.0,
     )
     storage.save_crop_type(banana_crop_type)
 
