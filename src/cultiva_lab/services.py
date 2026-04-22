@@ -41,15 +41,49 @@ class CropService:
 
     def _calculate_water_factor_production(self, crop_type: CropType, water_stored: float) -> float:
         f_W = (1 / (1 + math.exp(crop_type.water_stress_constant * (crop_type.water_opt_low - water_stored)))) * (1 / (1 + math.exp(-crop_type.water_stress_constant * (water_stored - crop_type.water_opt_high))))
+        return f_W
 
     def _calculate_light_production_factor(self, crop_type: CropType, sun_hours: int) -> float:
         if sun_hours <= crop_type.needed_light:
-            f_L = crop_type.needed_light / (crop_type.needed_light + crop_type.light_km)
+            f_L = sun_hours / (sun_hours + crop_type.light_km)
         elif crop_type.needed_light < sun_hours <= crop_type.needed_light_max:
             f_L = math.exp(- (sun_hours - crop_type.needed_light)**2 / (2 * (crop_type.light_sigma ** 2)))
-        elif crop_type.needed_light > crop_type.needed_light_max:
+        elif sun_hours > crop_type.needed_light_max:
             f_L = math.exp(- (crop_type.needed_light_max - crop_type.needed_light)**2 / (2 * (crop_type.light_sigma ** 2)))
         return f_L
+    
+    def _calculate_breathing_thermal_factor(self, crop_type: CropType, temperature: float) -> float:
+        if temperature < crop_type.minimum_temp:
+            h_T = 1 + crop_type.cold_factor * math.exp(crop_type.cold_sensibility * (crop_type.minimum_temp - temperature))
+        elif temperature > crop_type.maximum_temp:
+            h_T = 1 + crop_type.heat_factor * math.exp(crop_type.heat_sensibility * (temperature - crop_type.maximum_temp))
+        elif crop_type.minimum_temp <= temperature <= crop_type.maximum_temp:
+            h_T = 1
+        return h_T
+    
+    def _calculate_breathing_water_factor(self, crop_type: CropType, f_W: float) -> float:
+        h_W = 1 + crop_type.water_sensibility * (1 - f_W)
+        return h_W
+
+    def _calculate_breathing_light_factor(self, crop_type: CropType, f_L: float) -> float:
+        h_L = 1 + crop_type.light_sensibility * (1 - f_L)
+        return h_L
+
+    def _calculate_logistic_growth_term(self, crop_type: CropType, biomass: float) -> float:
+        logistic_growth_term = (1 -(biomass / crop_type.potential_performance) ** crop_type.theta)
+        return logistic_growth_term
+    
+    def _calculate_photosynthesis(self, crop_type: CropType, biomass: float, logistic_growth_term: float, f_T: float, f_W: float, f_L: float) -> float:
+        R = crop_type.photosynthesis_max_rate * biomass * logistic_growth_term * f_T * f_W * f_L
+        return R
+
+    def _calculate_breathing_expense(self, crop_type: CropType, biomass: float, h_T: float, h_W: float, h_L: float) -> float:
+        B = crop_type.breathing_base_rate * biomass * h_T * h_W * h_L
+        return B
+    
+    def _calculate_net_growth(self, photosynthesis: float, breathing_expense: float) -> float:
+        dB_dt = photosynthesis - breathing_expense
+        return dB_dt
 
     def simulate_day(
         self,
