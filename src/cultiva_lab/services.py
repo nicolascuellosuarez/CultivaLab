@@ -213,7 +213,9 @@ class CropService:
         """
 
         delta_temp = max(crop_type.maximum_temp - crop_type.minimum_temp, 0.1)
-        evapotranspiration_reference = 0.0023 * (temperature + 17.8) * math.sqrt(delta_temp)
+        evapotranspiration_reference = (
+            0.0023 * (temperature + 17.8) * math.sqrt(delta_temp)
+        )
 
         return evapotranspiration_reference
 
@@ -400,12 +402,16 @@ class CropService:
             raise UserNotFoundError(requesting_user_id)
         if not crop:
             raise CropNotFoundError(crop_id)
-        if requesting_user_id != crop.user_id and requesting_user.role.value != UserRole.ADMIN.value:
+        if (
+            requesting_user_id != crop.user_id
+            and requesting_user.role.value != UserRole.ADMIN.value
+        ):
             raise ResourceOwnershipError("No puedes acceder a este cultivo.")
         return crop
 
     def _validate_environmental_inputs(
-    self, temperature: float, rain: float, sun_hours: float, irrigation: float = 0.0):
+        self, temperature: float, rain: float, sun_hours: float, irrigation: float = 0.0
+    ):
         """
         Validates that environmental inputs are within acceptable ranges.
         """
@@ -458,7 +464,8 @@ class CropService:
         return crop_type
 
     def create_crop(
-        self, name: str, crop_type_id: str, user_id: str, start_date: datetime) -> Crop:
+        self, name: str, crop_type_id: str, user_id: str, start_date: datetime
+    ) -> Crop:
         """
         Method created to allow a user to make new crops.
         """
@@ -487,7 +494,7 @@ class CropService:
             active=True,
             water_stored=0.0,
             consecutive_stress_days=0,
-            current_phase="Fase Inicial"
+            current_phase="Fase Inicial",
         )
         self.storage.save_crop(new_crop)
         return new_crop
@@ -1170,7 +1177,7 @@ class CropTypeService:
         potential_performance: float,
     ) -> CropType:
         """Creates a new CropType instance."""
-    
+
         return CropType(
             id=str(uuid.uuid4()),
             name=name,
@@ -1245,12 +1252,18 @@ class CropTypeService:
 
         self._validate_admin(admin_id)
         self._validate_input_types(
-            needed_water, needed_light, days_cycle,
-            initial_biomass, potential_performance
+            needed_water,
+            needed_light,
+            days_cycle,
+            initial_biomass,
+            potential_performance,
         )
         self._validate_input_ranges(
-            needed_water, needed_light, days_cycle,
-            initial_biomass, potential_performance
+            needed_water,
+            needed_light,
+            days_cycle,
+            initial_biomass,
+            potential_performance,
         )
 
         name = self._validate_and_format_name(name)
@@ -1409,29 +1422,55 @@ class CropTypeService:
         # First, apply all updates
         for key, value in updates.items():
             setattr(crop_type, key, value)
-        
+
         # Then, validate cross-field consistency
         # Temperature consistency
-        if hasattr(crop_type, 'minimum_temp') and hasattr(crop_type, 'maximum_temp'):
+        if hasattr(crop_type, "minimum_temp") and hasattr(crop_type, "maximum_temp"):
             if crop_type.minimum_temp >= crop_type.maximum_temp:
-                raise InvalidInputError("La temperatura mínima debe ser menor a la máxima.")
-        
+                raise InvalidInputError(
+                    "La temperatura mínima debe ser menor a la máxima."
+                )
+
         # Water levels consistency (if all are present)
-        water_attrs = ['water_wilting', 'water_opt_low', 'needed_water', 'water_opt_high', 'water_capacity']
+        water_attrs = [
+            "water_wilting",
+            "water_opt_low",
+            "needed_water",
+            "water_opt_high",
+            "water_capacity",
+        ]
         if all(hasattr(crop_type, attr) for attr in water_attrs):
-            if not (crop_type.water_wilting < crop_type.water_opt_low < crop_type.needed_water < crop_type.water_opt_high < crop_type.water_capacity):
+            if not (
+                crop_type.water_wilting
+                < crop_type.water_opt_low
+                < crop_type.needed_water
+                < crop_type.water_opt_high
+                < crop_type.water_capacity
+            ):
                 raise InvalidInputError(
                     "Los niveles de agua deben cumplir: water_wilting < water_opt_low < needed_water < water_opt_high < water_capacity"
                 )
-        
+
         # Light consistency
-        if hasattr(crop_type, 'needed_light') and hasattr(crop_type, 'needed_light_max'):
+        if hasattr(crop_type, "needed_light") and hasattr(
+            crop_type, "needed_light_max"
+        ):
             if crop_type.needed_light >= crop_type.needed_light_max:
-                raise InvalidInputError("La luz necesaria debe ser menor que la luz máxima.")
-        
+                raise InvalidInputError(
+                    "La luz necesaria debe ser menor que la luz máxima."
+                )
+
         # Phenological coefficients consistency
-        if hasattr(crop_type, 'phenological_initial_coefficient') and hasattr(crop_type, 'phenological_mid_coefficient') and hasattr(crop_type, 'phenological_end_coefficient'):
-            if not (crop_type.phenological_initial_coefficient <= crop_type.phenological_mid_coefficient >= crop_type.phenological_end_coefficient):
+        if (
+            hasattr(crop_type, "phenological_initial_coefficient")
+            and hasattr(crop_type, "phenological_mid_coefficient")
+            and hasattr(crop_type, "phenological_end_coefficient")
+        ):
+            if not (
+                crop_type.phenological_initial_coefficient
+                <= crop_type.phenological_mid_coefficient
+                >= crop_type.phenological_end_coefficient
+            ):
                 raise InvalidInputError(
                     "Los coeficientes fenológicos deben cumplir: initial ≤ mid ≥ end"
                 )
@@ -1509,7 +1548,7 @@ class CropTypeService:
 
         try:
             num_value = float(value)
-        except (TypeError, ValueError):
+        except TypeError, ValueError:
             raise InvalidInputError(f"El valor para '{key}' debe ser numérico.")
         if num_value < -7:
             raise InvalidInputError(f"El valor para '{key}' no puede ser menor a -7°C.")
@@ -1562,6 +1601,7 @@ class CropTypeService:
             validated[key] = validator(key, value)
 
         return validated
+
 
 """
 AuthService and a Session Manager left for a second

@@ -1,5 +1,5 @@
 from src.cultiva_lab.storage import JSONStorage
-from src.cultiva_lab.models import User, Crop, CropType, UserRole, DailyCondition
+from src.cultiva_lab.models import User, Crop, CropType, UserRole
 from datetime import datetime
 
 """
@@ -19,7 +19,7 @@ def create_valid_crop_type(
     days_cycle: int,
     initial_biomass: float,
     potential_performance: float,
-    **kwargs
+    **kwargs,
 ) -> CropType:
     """
     Crea un CropType con valores de agua que cumplen:
@@ -58,7 +58,9 @@ def create_valid_crop_type(
         light_sensibility=kwargs.get("light_sensibility", 1.0),
         light_km=kwargs.get("light_km", needed_light * 0.5),
         light_sigma=kwargs.get("light_sigma", 2.0),
-        phenological_initial_coefficient=kwargs.get("phenological_initial_coefficient", 0.4),
+        phenological_initial_coefficient=kwargs.get(
+            "phenological_initial_coefficient", 0.4
+        ),
         phenological_mid_coefficient=kwargs.get("phenological_mid_coefficient", 1.1),
         phenological_end_coefficient=kwargs.get("phenological_end_coefficient", 0.6),
         days_cycle=days_cycle,
@@ -75,6 +77,7 @@ def create_valid_crop_type(
 # ------------------------------------------------------------
 # Tests
 # ------------------------------------------------------------
+
 
 def test_read_returns_empty_dict_when_file_dont_exists(tmp_path):
     """
@@ -229,7 +232,7 @@ def test_save_and_get_crops(tmp_path):
         active=True,
         water_stored=0.0,
         consecutive_stress_days=0,
-        current_phase="Fase Inicial"
+        current_phase="Fase Inicial",
     )
     storage.save_crop(crop)
 
@@ -276,7 +279,7 @@ def test_save_crop_updates_existing_instead_of_duplicate(tmp_path):
         active=True,
         water_stored=0.0,
         consecutive_stress_days=0,
-        current_phase="Fase Inicial"
+        current_phase="Fase Inicial",
     )
     storage.save_crop(crop)
 
@@ -291,7 +294,7 @@ def test_save_crop_updates_existing_instead_of_duplicate(tmp_path):
         active=True,
         water_stored=0.0,
         consecutive_stress_days=0,
-        current_phase="Fase Inicial"
+        current_phase="Fase Inicial",
     )
     storage.save_crop(evaluating_crop)
 
@@ -338,7 +341,7 @@ def test_delete_crop_removes_from_storage(tmp_path):
         active=True,
         water_stored=0.0,
         consecutive_stress_days=0,
-        current_phase="Fase Inicial"
+        current_phase="Fase Inicial",
     )
     storage.save_crop(crop1)
 
@@ -353,7 +356,7 @@ def test_delete_crop_removes_from_storage(tmp_path):
         active=True,
         water_stored=0.0,
         consecutive_stress_days=0,
-        current_phase="Fase Inicial"
+        current_phase="Fase Inicial",
     )
     storage.save_crop(crop2)
 
@@ -404,7 +407,7 @@ def test_get_crop_by_id_works_and_returns_none_if_not_found(tmp_path):
         active=True,
         water_stored=0.0,
         consecutive_stress_days=0,
-        current_phase="Fase Inicial"
+        current_phase="Fase Inicial",
     )
     storage.save_crop(crop)
 
@@ -453,7 +456,7 @@ def test_get_crops_by_user_returns_only_that_user_crops(tmp_path):
         active=True,
         water_stored=0.0,
         consecutive_stress_days=0,
-        current_phase="Fase Inicial"
+        current_phase="Fase Inicial",
     )
     storage.save_crop(crop1)
 
@@ -468,7 +471,7 @@ def test_get_crops_by_user_returns_only_that_user_crops(tmp_path):
         active=True,
         water_stored=0.0,
         consecutive_stress_days=0,
-        current_phase="Fase Inicial"
+        current_phase="Fase Inicial",
     )
     storage.save_crop(crop2)
 
@@ -527,7 +530,7 @@ def test_get_crops_by_type_returns_only_crops_of_that_type(tmp_path):
         active=True,
         water_stored=0.0,
         consecutive_stress_days=0,
-        current_phase="Fase Inicial"
+        current_phase="Fase Inicial",
     )
     storage.save_crop(crop1)
 
@@ -542,7 +545,7 @@ def test_get_crops_by_type_returns_only_crops_of_that_type(tmp_path):
         active=True,
         water_stored=0.0,
         consecutive_stress_days=0,
-        current_phase="Fase Inicial"
+        current_phase="Fase Inicial",
     )
     storage.save_crop(crop2)
 
@@ -592,7 +595,7 @@ def test_get_active_crops_only_returns_active_crops(tmp_path):
         active=False,
         water_stored=0.0,
         consecutive_stress_days=0,
-        current_phase="Fase Inicial"
+        current_phase="Fase Inicial",
     )
     storage.save_crop(crop1)
 
@@ -607,7 +610,7 @@ def test_get_active_crops_only_returns_active_crops(tmp_path):
         active=True,
         water_stored=0.0,
         consecutive_stress_days=0,
-        current_phase="Fase Inicial"
+        current_phase="Fase Inicial",
     )
     storage.save_crop(crop2)
 
@@ -622,7 +625,7 @@ def test_get_active_crops_only_returns_active_crops(tmp_path):
         active=True,
         water_stored=0.0,
         consecutive_stress_days=0,
-        current_phase="Fase Inicial"
+        current_phase="Fase Inicial",
     )
     storage.save_crop(crop3)
 
@@ -664,7 +667,7 @@ def test_save_and_get_crop_types(tmp_path):
 def test_save_crop_type_updates_instead_of_duplicate(tmp_path):
     """
     Method created to validate the update of a crop type
-    that already exists, instead of making a new one with 
+    that already exists, instead of making a new one with
     the same ID.
     """
     temp_path = tmp_path / "test_db.json"

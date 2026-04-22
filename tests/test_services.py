@@ -13,12 +13,13 @@ from src.cultiva_lab.exceptions import (
     DuplicateDataError,
     BusinessRuleViolationError,
 )
-from datetime import datetime, timedelta
+from datetime import datetime
 import bcrypt
 
 """
 Helper for creating a valid crop type.
 """
+
 
 def create_valid_crop_type(
     id: str,
@@ -30,7 +31,7 @@ def create_valid_crop_type(
     days_cycle: int,
     initial_biomass: float,
     potential_performance: float,
-    **kwargs
+    **kwargs,
 ) -> CropType:
     """
     Crea un CropType con valores de agua que cumplen:
@@ -69,7 +70,9 @@ def create_valid_crop_type(
         light_sensibility=kwargs.get("light_sensibility", 1.0),
         light_km=kwargs.get("light_km", needed_light * 0.5),
         light_sigma=kwargs.get("light_sigma", 2.0),
-        phenological_initial_coefficient=kwargs.get("phenological_initial_coefficient", 0.4),
+        phenological_initial_coefficient=kwargs.get(
+            "phenological_initial_coefficient", 0.4
+        ),
         phenological_mid_coefficient=kwargs.get("phenological_mid_coefficient", 1.1),
         phenological_end_coefficient=kwargs.get("phenological_end_coefficient", 0.6),
         days_cycle=days_cycle,
@@ -79,7 +82,7 @@ def create_valid_crop_type(
         consecutive_stress_days_limit=kwargs.get("consecutive_stress_days_limit", 5),
         theta_coefficient=kwargs.get("theta_coefficient", 0.0023),
         initial_biomass=initial_biomass,
-        potential_performance=potential_performance
+        potential_performance=potential_performance,
     )
 
 
@@ -190,7 +193,9 @@ def test_simulate_day_success():
     )
 
     start_date = datetime.now()
-    initial_condition = DailyCondition(day=1, temperature=27, rain=100, sun_hours=12, estimated_biomass=0.75)
+    initial_condition = DailyCondition(
+        day=1, temperature=27, rain=100, sun_hours=12, estimated_biomass=0.75
+    )
     crop = Crop(
         id="456",
         name="Cultivo de Bananas",
@@ -202,7 +207,7 @@ def test_simulate_day_success():
         active=True,
         water_stored=100.0,
         consecutive_stress_days=0,
-        current_phase="Fase Inicial"
+        current_phase="Fase Inicial",
     )
 
     storage.get_crop_by_id.return_value = crop
@@ -248,7 +253,7 @@ def test_simulate_day_crop_inactive_fails():
         active=False,
         water_stored=100.0,
         consecutive_stress_days=0,
-        current_phase="Fase Inicial"
+        current_phase="Fase Inicial",
     )
     storage.get_crop_by_id.return_value = crop
     storage.get_crop_type_by_id.return_value = banana_crop_type
@@ -289,7 +294,7 @@ def test_simulate_day_wrong_owner_fails():
         active=True,
         water_stored=100.0,
         consecutive_stress_days=0,
-        current_phase="Fase Inicial"
+        current_phase="Fase Inicial",
     )
     storage.get_crop_by_id.return_value = crop
     storage.get_crop_type_by_id.return_value = banana_crop_type
@@ -320,8 +325,12 @@ def test_simulate_day_completes_cycle():
         potential_performance=100.0,
     )
     start_date = datetime.now()
-    condition1 = DailyCondition(day=1, temperature=27, rain=100, sun_hours=12, estimated_biomass=10)
-    condition2 = DailyCondition(day=2, temperature=27, rain=100, sun_hours=12, estimated_biomass=25)
+    condition1 = DailyCondition(
+        day=1, temperature=27, rain=100, sun_hours=12, estimated_biomass=10
+    )
+    condition2 = DailyCondition(
+        day=2, temperature=27, rain=100, sun_hours=12, estimated_biomass=25
+    )
     crop = Crop(
         id="456",
         name="Cultivo de Bananas",
@@ -333,7 +342,7 @@ def test_simulate_day_completes_cycle():
         active=True,
         water_stored=100.0,
         consecutive_stress_days=0,
-        current_phase="Fase Inicial"
+        current_phase="Fase Inicial",
     )
     storage.get_crop_by_id.return_value = crop
     storage.get_crop_type_by_id.return_value = banana_crop_type
@@ -366,11 +375,21 @@ def test_get_crop_statistics_with_data():
     )
     start_date = datetime.now()
     conditions = [
-        DailyCondition(day=1, temperature=27, rain=100, sun_hours=12, estimated_biomass=10),
-        DailyCondition(day=2, temperature=30, rain=100, sun_hours=10, estimated_biomass=15),
-        DailyCondition(day=3, temperature=25, rain=100, sun_hours=8, estimated_biomass=22),
-        DailyCondition(day=4, temperature=28, rain=100, sun_hours=11, estimated_biomass=30),
-        DailyCondition(day=5, temperature=26, rain=100, sun_hours=9, estimated_biomass=38),
+        DailyCondition(
+            day=1, temperature=27, rain=100, sun_hours=12, estimated_biomass=10
+        ),
+        DailyCondition(
+            day=2, temperature=30, rain=100, sun_hours=10, estimated_biomass=15
+        ),
+        DailyCondition(
+            day=3, temperature=25, rain=100, sun_hours=8, estimated_biomass=22
+        ),
+        DailyCondition(
+            day=4, temperature=28, rain=100, sun_hours=11, estimated_biomass=30
+        ),
+        DailyCondition(
+            day=5, temperature=26, rain=100, sun_hours=9, estimated_biomass=38
+        ),
     ]
     crop = Crop(
         id="456",
@@ -383,7 +402,7 @@ def test_get_crop_statistics_with_data():
         active=True,
         water_stored=100.0,
         consecutive_stress_days=0,
-        current_phase="Fase Inicial"
+        current_phase="Fase Inicial",
     )
     storage.get_crop_by_id.return_value = crop
     storage.get_crop_type_by_id.return_value = banana_crop_type
@@ -430,7 +449,7 @@ def test_get_crop_statistics_no_conditions():
         active=True,
         water_stored=100.0,
         consecutive_stress_days=0,
-        current_phase="Fase Inicial"
+        current_phase="Fase Inicial",
     )
     storage.get_crop_by_id.return_value = crop
     storage.get_crop_type_by_id.return_value = banana_crop_type
@@ -444,7 +463,6 @@ def test_get_crop_statistics_no_conditions():
     assert stats["total_growth"] == 0
     assert stats["stress_days"] == 0
     assert stats["performance_ratio"] == 0
-
 
 
 """
@@ -467,7 +485,7 @@ def test_get_crops_by_user_own_allowed():
         active=True,
         water_stored=100.0,
         consecutive_stress_days=0,
-        current_phase="Fase Inicial"
+        current_phase="Fase Inicial",
     )
     crop2 = Crop(
         id="789",
@@ -480,7 +498,7 @@ def test_get_crops_by_user_own_allowed():
         active=True,
         water_stored=100.0,
         consecutive_stress_days=0,
-        current_phase="Fase Inicial"
+        current_phase="Fase Inicial",
     )
     storage.get_user_by_id.return_value = owner
     storage.get_crops_by_user.return_value = [crop1, crop2]
@@ -501,7 +519,9 @@ def test_get_crops_by_user_other_forbidden():
     storage = Mock()
     owner = User("123", "nikoloko", "hashed_pwd", UserRole.USER, [])
     other = User("999", "otro", "hashed_pwd", UserRole.USER, [])
-    storage.get_user_by_id.side_effect = lambda uid: {"123": owner, "999": other}.get(uid)
+    storage.get_user_by_id.side_effect = lambda uid: {"123": owner, "999": other}.get(
+        uid
+    )
     service = CropService(storage)
     with pytest.raises(ResourceOwnershipError):
         service.get_crops_by_user("123", "999")
@@ -528,7 +548,7 @@ def test_get_crops_by_user_admin_can_see_any():
         active=True,
         water_stored=100.0,
         consecutive_stress_days=0,
-        current_phase="Fase Inicial"
+        current_phase="Fase Inicial",
     )
     crop2 = Crop(
         id="789",
@@ -541,7 +561,7 @@ def test_get_crops_by_user_admin_can_see_any():
         active=True,
         water_stored=100.0,
         consecutive_stress_days=0,
-        current_phase="Fase Inicial"
+        current_phase="Fase Inicial",
     )
     storage.get_user_by_id.side_effect = lambda id: admin if id == "999" else owner
     storage.get_crops_by_user.return_value = [crop1, crop2]
@@ -572,13 +592,15 @@ def test_update_crop_name_success():
         active=True,
         water_stored=100.0,
         consecutive_stress_days=0,
-        current_phase="Fase Inicial"
+        current_phase="Fase Inicial",
     )
     storage.get_crop_by_id.return_value = crop
     storage.get_user_by_id.return_value = owner
 
     service = CropService(storage)
-    updated_crop = service.update_crops("456", "123", name="Cultivo de Bananas Renombrado")
+    updated_crop = service.update_crops(
+        "456", "123", name="Cultivo de Bananas Renombrado"
+    )
     assert updated_crop.name == "Cultivo de Bananas Renombrado"
     storage.save_crop.assert_called_once()
 
@@ -603,7 +625,7 @@ def test_update_crop_forbidden_fields_fails():
         active=True,
         water_stored=100.0,
         consecutive_stress_days=0,
-        current_phase="Fase Inicial"
+        current_phase="Fase Inicial",
     )
     storage.get_crop_by_id.return_value = crop
     storage.get_user_by_id.return_value = owner
@@ -637,7 +659,7 @@ def test_delete_crop_own_allowed():
         active=True,
         water_stored=100.0,
         consecutive_stress_days=0,
-        current_phase="Fase Inicial"
+        current_phase="Fase Inicial",
     )
     storage.get_crop_by_id.return_value = crop
     storage.get_user_by_id.side_effect = lambda id: owner if id == "123" else None
@@ -670,7 +692,7 @@ def test_delete_crop_other_forbidden():
         active=True,
         water_stored=100.0,
         consecutive_stress_days=0,
-        current_phase="Fase Inicial"
+        current_phase="Fase Inicial",
     )
     storage.get_crop_by_id.return_value = crop
     storage.get_user_by_id.side_effect = lambda id: owner if id == "123" else other
@@ -1182,7 +1204,7 @@ def test_create_crop_type_admin_success():
         consecutive_stress_days_limit=5,
         theta_coefficient=0.0023,
         initial_biomass=0.75,
-        potential_performance=50.0
+        potential_performance=50.0,
     )
 
     assert crop_type is not None
@@ -1305,7 +1327,6 @@ def test_create_crop_type_duplicate_name_fails():
         )
 
 
-
 """
 Admin updates an existing crop type successfully.
 """
@@ -1342,7 +1363,6 @@ def test_update_crop_type_admin_success():
     storage.save_crop_type.assert_called_once()
 
 
-
 """
 Cannot update a crop type that has active crops using it.
 """
@@ -1375,7 +1395,7 @@ def test_update_crop_type_with_active_crops_fails():
         active=True,
         water_stored=100.0,
         consecutive_stress_days=0,
-        current_phase="Fase Inicial"
+        current_phase="Fase Inicial",
     )
     storage.get_user_by_id.return_value = admin
     storage.get_crop_type_by_id.return_value = crop_type
@@ -1384,6 +1404,7 @@ def test_update_crop_type_with_active_crops_fails():
     service = CropTypeService(storage, user_service)
     with pytest.raises(BusinessRuleViolationError):
         service.update_crop_type("999", "123", name="Cultivo de Bananas Mejorado")
+
 
 """
 Delete a crop type that has no crops associated.
@@ -1412,7 +1433,6 @@ def test_delete_crop_type_with_no_crops_success():
     service = CropTypeService(storage, user_service)
     service.delete_crop_type("999", "123")
     storage.delete_crop_type.assert_called_once_with("123")
-
 
 
 """
@@ -1447,7 +1467,7 @@ def test_delete_crop_type_with_active_crops_fails():
         active=True,
         water_stored=100.0,
         consecutive_stress_days=0,
-        current_phase="Fase Inicial"
+        current_phase="Fase Inicial",
     )
     storage.get_user_by_id.return_value = admin
     storage.get_crop_type_by_id.return_value = crop_type
@@ -1490,7 +1510,7 @@ def test_delete_crop_type_with_inactive_crops_allowed():
         active=False,
         water_stored=100.0,
         consecutive_stress_days=0,
-        current_phase="Fase Inicial"
+        current_phase="Fase Inicial",
     )
     storage.get_user_by_id.return_value = admin
     storage.get_crop_type_by_id.return_value = crop_type
@@ -1499,6 +1519,7 @@ def test_delete_crop_type_with_inactive_crops_allowed():
     service = CropTypeService(storage, user_service)
     service.delete_crop_type("999", "123")
     storage.delete_crop_type.assert_called_once_with("123")
+
 
 """
 Get all crop types returns a list.
@@ -1577,6 +1598,7 @@ def test_get_crop_type_by_id_success():
     assert result is not None
     assert result.id == "123"
     assert result.name == "Cultivo de Bananas"
+
 
 """
 Get crop type by ID fails when not found.
@@ -1683,7 +1705,7 @@ def test_get_crop_types_with_stats_admin_success():
         active=True,
         water_stored=100.0,
         consecutive_stress_days=0,
-        current_phase="Fase Inicial"
+        current_phase="Fase Inicial",
     )
     crop2 = Crop(
         id="c2",
@@ -1696,7 +1718,7 @@ def test_get_crop_types_with_stats_admin_success():
         active=True,
         water_stored=100.0,
         consecutive_stress_days=0,
-        current_phase="Fase Inicial"
+        current_phase="Fase Inicial",
     )
     crop3 = Crop(
         id="c3",
@@ -1709,7 +1731,7 @@ def test_get_crop_types_with_stats_admin_success():
         active=True,
         water_stored=100.0,
         consecutive_stress_days=0,
-        current_phase="Fase Inicial"
+        current_phase="Fase Inicial",
     )
     storage.get_crops.return_value = [crop1, crop2, crop3]
 
