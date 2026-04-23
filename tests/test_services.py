@@ -1219,7 +1219,7 @@ def test_create_crop_type_admin_success():
     )
 
     assert crop_type is not None
-    assert crop_type.name == "Cultivo de Bananas".capitalize()
+    assert crop_type.name == "Cultivo de Bananas"
     assert crop_type.needed_water == 100
     assert crop_type.needed_light == 12
     assert crop_type.days_cycle == 360

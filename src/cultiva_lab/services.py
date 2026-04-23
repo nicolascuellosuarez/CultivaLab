@@ -667,7 +667,9 @@ class CropService:
 
     def _calculate_stress_days(self, conditions: list, crop_type: CropType) -> int:
         """Counts days where temperature was outside optimal range."""
-        return sum(1 for f in conditions if f < 0.1)
+        lower = crop_type.minimum_temp
+        upper = crop_type.maximum_temp
+        return sum(1 for c in conditions if c.temperature < lower or c.temperature > upper)
 
     def _calculate_performance(self, conditions: list, crop_type: CropType) -> float:
         """Calculates performance ratio (final / potential)."""
