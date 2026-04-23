@@ -24,6 +24,7 @@ Helper for creating a valid crop type.
 def create_valid_crop_type(
     id: str,
     name: str,
+    optimal_temp: float,
     minimum_temp: float,
     maximum_temp: float,
     needed_water: float,
@@ -51,6 +52,7 @@ def create_valid_crop_type(
     return CropType(
         id=id,
         name=name,
+        optimal_temp=optimal_temp,
         minimum_temp=minimum_temp,
         maximum_temp=maximum_temp,
         cold_sensibility=kwargs.get("cold_sensibility", 0.5),
@@ -99,6 +101,7 @@ def test_create_crop_success():
     banana_crop_type = create_valid_crop_type(
         id="123",
         name="Cultivo de Bananas",
+        optimal_temp=27,
         minimum_temp=22.0,
         maximum_temp=32.0,
         needed_water=100.0,
@@ -138,6 +141,7 @@ def test_create_crop_invalid_user_fails():
     crop_type = create_valid_crop_type(
         id="123",
         name="Cultivo de Bananas",
+        optimal_temp=19.0,
         minimum_temp=12.0,
         maximum_temp=26.0,
         needed_water=100.0,
@@ -183,6 +187,7 @@ def test_simulate_day_success():
     banana_crop_type = create_valid_crop_type(
         id="123",
         name="Cultivo de Bananas",
+        optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
         needed_water=100.0,
@@ -233,6 +238,7 @@ def test_simulate_day_crop_inactive_fails():
     banana_crop_type = create_valid_crop_type(
         id="123",
         name="Cultivo de Bananas",
+        optimal_temp=21.0,
         minimum_temp=12.0,
         maximum_temp=26.0,
         needed_water=100.0,
@@ -274,6 +280,7 @@ def test_simulate_day_wrong_owner_fails():
     banana_crop_type = create_valid_crop_type(
         id="123",
         name="Cultivo de Bananas",
+        optimal_temp=21.0,
         minimum_temp=12.0,
         maximum_temp=26.0,
         needed_water=100.0,
@@ -316,6 +323,7 @@ def test_simulate_day_completes_cycle():
     banana_crop_type = create_valid_crop_type(
         id="123",
         name="Cultivo de Bananas",
+        optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
         needed_water=100.0,
@@ -365,6 +373,7 @@ def test_get_crop_statistics_with_data():
     banana_crop_type = create_valid_crop_type(
         id="123",
         name="Cultivo de Bananas",
+        optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
         needed_water=100.0,
@@ -429,6 +438,7 @@ def test_get_crop_statistics_no_conditions():
     banana_crop_type = create_valid_crop_type(
         id="123",
         name="Cultivo de Bananas",
+        optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
         needed_water=100.0,
@@ -1175,6 +1185,7 @@ def test_create_crop_type_admin_success():
     crop_type = service.create_crop_type(
         admin_id="123",
         name="Cultivo de Bananas",
+        optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
         cold_sensibility=0.5,
@@ -1233,6 +1244,7 @@ def test_create_crop_type_non_admin_fails():
         service.create_crop_type(
             admin_id="123",
             name="Cultivo de Bananas",
+            optimal_temp=27.0,
             minimum_temp=22.0,
             maximum_temp=32.0,
             cold_sensibility=0.5,
@@ -1278,6 +1290,7 @@ def test_create_crop_type_duplicate_name_fails():
     existing_crop_type = create_valid_crop_type(
         id="456",
         name="Cultivo de Bananas",
+        optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
         needed_water=100.0,
@@ -1294,6 +1307,7 @@ def test_create_crop_type_duplicate_name_fails():
         service.create_crop_type(
             admin_id="999",
             name="Cultivo de Bananas",
+            optimal_temp=27.0,
             minimum_temp=22.0,
             maximum_temp=32.0,
             cold_sensibility=0.5,
@@ -1339,6 +1353,7 @@ def test_update_crop_type_admin_success():
     crop_type = create_valid_crop_type(
         id="123",
         name="Cultivo de Bananas",
+        optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
         needed_water=100.0,
@@ -1375,6 +1390,7 @@ def test_update_crop_type_with_active_crops_fails():
     crop_type = create_valid_crop_type(
         id="123",
         name="Cultivo de Bananas",
+        optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
         needed_water=100.0,
@@ -1418,6 +1434,7 @@ def test_delete_crop_type_with_no_crops_success():
     crop_type = create_valid_crop_type(
         id="123",
         name="Cultivo de Bananas",
+        optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
         needed_water=100.0,
@@ -1447,6 +1464,7 @@ def test_delete_crop_type_with_active_crops_fails():
     crop_type = create_valid_crop_type(
         id="123",
         name="Cultivo de Bananas",
+        optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
         needed_water=100.0,
@@ -1490,6 +1508,7 @@ def test_delete_crop_type_with_inactive_crops_allowed():
     crop_type = create_valid_crop_type(
         id="123",
         name="Cultivo de Bananas",
+        optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
         needed_water=100.0,
@@ -1532,6 +1551,7 @@ def test_get_all_crop_types_returns_list():
     banana_type = create_valid_crop_type(
         id="123",
         name="Cultivo de Bananas",
+        optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
         needed_water=100.0,
@@ -1543,6 +1563,7 @@ def test_get_all_crop_types_returns_list():
     apple_type = create_valid_crop_type(
         id="456",
         name="Cultivo de Manzanas",
+        optimal_temp=21.0,
         minimum_temp=14.0,
         maximum_temp=28.0,
         needed_water=80.0,
@@ -1554,6 +1575,7 @@ def test_get_all_crop_types_returns_list():
     corn_type = create_valid_crop_type(
         id="789",
         name="Cultivo de Maíz",
+        optimal_temp=19.0,
         minimum_temp=12.0,
         maximum_temp=26.0,
         needed_water=90.0,
@@ -1583,6 +1605,7 @@ def test_get_crop_type_by_id_success():
     banana_type = create_valid_crop_type(
         id="123",
         name="Cultivo de Bananas",
+        optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
         needed_water=100.0,
@@ -1626,6 +1649,7 @@ def test_get_crop_type_by_name_success():
     banana_type = create_valid_crop_type(
         id="123",
         name="Cultivo de Bananas",
+        optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
         needed_water=100.0,
@@ -1672,6 +1696,7 @@ def test_get_crop_types_with_stats_admin_success():
     banana_type = create_valid_crop_type(
         id="123",
         name="Cultivo de Bananas",
+        optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
         needed_water=100.0,
@@ -1683,6 +1708,7 @@ def test_get_crop_types_with_stats_admin_success():
     apple_type = create_valid_crop_type(
         id="456",
         name="Cultivo de Manzanas",
+        optimal_temp=19.0,
         minimum_temp=12.0,
         maximum_temp=26.0,
         needed_water=80.0,

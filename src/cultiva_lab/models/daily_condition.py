@@ -64,8 +64,8 @@ class DailyCondition:
 
         if not isinstance(self.sun_hours, (int, float)):
             raise InvalidInputError("Las horas de sol deben ser numéricas.")
-        if self.sun_hours < 0 or self.sun_hours > 12:
-            raise InvalidInputError("Las horas de sol deben estar entre 0 y 12.")
+        if self.sun_hours < 0 or self.sun_hours > 16:
+            raise InvalidInputError("Las horas de sol deben estar entre 0 y 16.")
 
     def _validate_estimated_biomass(self):
         """

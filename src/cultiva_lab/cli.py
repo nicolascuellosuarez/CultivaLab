@@ -369,13 +369,20 @@ def simular_dia():
     temp = questionary.text("Temperatura del día (°C):", style=custom_style).ask()
     rain = questionary.text("Lluvia (mm):", style=custom_style).ask()
     sun = questionary.text("Horas de sol:", style=custom_style).ask()
+    irrigation = (
+        questionary.text(
+            "Riego hecho a la planta (mm, opcional, Enter para 0):", style=custom_style
+        ).ask()
+        or "0"
+    )
 
     try:
         temp_f = float(temp)
         rain_f = float(rain)
         sun_f = float(sun)
+        irrigation_f = float(irrigation)
         updated_crop = crop_service.simulate_day(
-            crop.id, current_user.id, temp_f, rain_f, sun_f
+            crop.id, current_user.id, temp_f, rain_f, sun_f, irrigation_f
         )
         console.print(
             Panel(
@@ -933,56 +940,379 @@ def listar_crop_types():
     )
     table.add_column("ID", style="cyan")
     table.add_column("Nombre", style="white")
-    table.add_column("Temp ópt", style="white")
-    table.add_column("Agua nec", style="white")
-    table.add_column("Luz nec", style="white")
+    table.add_column("Temp óptima (°C)", style="white")
+    table.add_column("Temp max (°C)", style="white")
+    table.add_column("Agua nec (mm/día)", style="white")
+    table.add_column("Luz nec (horas)", style="white")
     table.add_column("Ciclo (días)", style="white")
-    table.add_column("Biomasa ini", style="white")
-    table.add_column("Potencial", style="white")
+    table.add_column("Biomasa ini (g/m²)", style="white")
+    table.add_column("Potencial (g/m²)", style="white")
+    table.add_column("Activos", style="white")
+
     for t in tipos:
+        # Contar cultivos activos de este tipo
+        cultivos = crop_service.storage.get_crops_by_type(t.id)
+        activos = sum(1 for c in cultivos if c.active)
+
         table.add_row(
             t.id,
             t.name,
             str(t.optimal_temp),
+            str(t.maximum_temp),
             str(t.needed_water),
             str(t.needed_light),
             str(t.days_cycle),
             str(t.initial_biomass),
             str(t.potential_performance),
+            str(activos),
         )
     console.print(table)
 
 
 def crear_crop_type():
-    name = questionary.text("Nombre del tipo:", style=custom_style).ask()
+    """Admin crea un nuevo tipo de cultivo con todos los parámetros."""
+
+    # Datos básicos
+    name = questionary.text(
+        "Nombre del tipo de cultivo (ej. Maíz, Tomate, Banano):", style=custom_style
+    ).ask()
+
     try:
         optimal_temp = float(
-            questionary.text("Temperatura óptima (°C):", style=custom_style).ask()
+            questionary.text(
+                "Temperatura óptima para el crecimiento (°C)", style=custom_style
+            ).ask()
         )
+
+        minimum_temp = float(
+            questionary.text(
+                "Temperatura base mínima para crecimiento (°C):\n"
+                "  Por debajo de este valor, la fotosíntesis se detiene. Ej: Maíz 8°C, Tomate 10°C",
+                style=custom_style,
+            ).ask()
+        )
+
+        maximum_temp = float(
+            questionary.text(
+                "Temperatura máxima letal para crecimiento (°C):\n"
+                "  Por encima de este valor, la fotosíntesis se detiene. Ej: Maíz 40°C, Tomate 35°C",
+                style=custom_style,
+            ).ask()
+        )
+
+        cold_sensibility = float(
+            questionary.text(
+                "Sensibilidad al frío (0-1, mayor = más sensible):\n"
+                "  Controla cuánto aumenta la respiración cuando la temperatura baja del óptimo.\n"
+                "  Ej: Planta tropical (Banano) → 0.7-0.9, Planta templada (Manzana) → 0.3-0.5",
+                style=custom_style,
+            ).ask()
+            or "0.5"
+        )
+
+        heat_sensibility = float(
+            questionary.text(
+                "Sensibilidad al calor (0-1, mayor = más sensible):\n"
+                "  Controla cuánto aumenta la respiración cuando la temperatura sube del óptimo.\n"
+                "  Ej: Planta de clima fresco (Lechuga) → 0.8-1.0, Planta tropical (Banano) → 0.3-0.5",
+                style=custom_style,
+            ).ask()
+            or "0.5"
+        )
+
+        cold_factor = float(
+            questionary.text(
+                "Factor exponencial de respuesta al frío (mayor = respuesta más abrupta):\n"
+                "  Controla qué tan rápido aumenta el estrés cuando la temperatura baja.\n"
+                "  Rango típico: 0.05-0.2. Default 0.1",
+                style=custom_style,
+            ).ask()
+            or "0.1"
+        )
+
+        heat_factor = float(
+            questionary.text(
+                "Factor exponencial de respuesta al calor (mayor = respuesta más abrupta):\n"
+                "  Controla qué tan rápido aumenta el estrés cuando la temperatura sube.\n"
+                "  Rango típico: 0.05-0.2. Default 0.1",
+                style=custom_style,
+            ).ask()
+            or "0.1"
+        )
+
+        temperature_curve_length = float(
+            questionary.text(
+                "Anchura de la curva de temperatura (σ):\n"
+                "  Define qué tan amplio es el rango de temperaturas donde la planta crece bien.\n"
+                "  Valores altos (8-10) = planta tolerante a variaciones térmicas.\n"
+                "  Valores bajos (2-4) = planta muy sensible. Default 5.0",
+                style=custom_style,
+            ).ask()
+            or "5.0"
+        )
+
+        water_wilting = float(
+            questionary.text(
+                "Punto de marchitez permanente (mm):\n"
+                "  Cantidad de agua en el suelo por debajo de la cual la planta ya no puede extraer agua y se marchita.\n"
+                "  Rango típico: 40-80 mm según tipo de suelo",
+                style=custom_style,
+            ).ask()
+            or "60"
+        )
+
+        water_opt_low = float(
+            questionary.text(
+                "Umbral inferior de agua óptima (mm):\n"
+                "  Por debajo de este valor, la planta comienza a sufrir estrés hídrico.\n"
+                "  Debe ser mayor que el punto de marchitez. Rango típico: 70-100 mm",
+                style=custom_style,
+            ).ask()
+            or "80"
+        )
+
         needed_water = float(
-            questionary.text("Agua necesaria (mm/día):", style=custom_style).ask()
+            questionary.text(
+                "Agua necesaria para crecimiento óptimo (mm/día):\n"
+                "  Cantidad de agua que la planta transpira en condiciones ideales.\n"
+                "  Ej: Maíz 5-6 mm/día, Tomate 4-5 mm/día, Banano 5-7 mm/día",
+                style=custom_style,
+            ).ask()
         )
+
+        water_opt_high = float(
+            questionary.text(
+                "Umbral superior de agua óptima (mm):\n"
+                "  Por encima de este valor, el exceso de agua comienza a dañar la planta (anoxia radicular).\n"
+                "  Debe ser mayor que el agua necesaria. Rango típico: 120-160 mm",
+                style=custom_style,
+            ).ask()
+            or "130"
+        )
+
+        water_capacity = float(
+            questionary.text(
+                "Capacidad de campo del suelo (mm):\n"
+                "  Cantidad máxima de agua que el suelo puede retener antes de que se produzca escorrentía o drenaje.\n"
+                "  Rango típico: 150-250 mm según tipo de suelo",
+                style=custom_style,
+            ).ask()
+            or "200"
+        )
+
+        water_sensibility = float(
+            questionary.text(
+                "Sensibilidad al estrés hídrico (mayor = más sensible):\n"
+                "  Controla cuánto aumenta la respiración cuando hay falta o exceso de agua.\n"
+                "  Rango típico: 0.2-1.5. Default 0.3",
+                style=custom_style,
+            ).ask()
+            or "0.3"
+        )
+
+        water_stress_constant = float(
+            questionary.text(
+                "Pendiente de la curva de estrés hídrico (k):\n"
+                "  Controla qué tan abrupta es la caída de la eficiencia cuando el agua se aleja del rango óptimo.\n"
+                "  Valores altos (0.8-1.0) = respuesta muy abrupta. Default 0.4",
+                style=custom_style,
+            ).ask()
+            or "0.4"
+        )
+
         needed_light = float(
-            questionary.text("Luz necesaria (horas/día):", style=custom_style).ask()
+            questionary.text(
+                "Horas de luz óptimas por día:\n"
+                "  Cantidad de luz solar que maximiza la fotosíntesis.\n"
+                "  Ej: Plantas de día corto (fresa) 8-10h, día largo (cebada) 14-16h",
+                style=custom_style,
+            ).ask()
         )
-        days_cycle = int(questionary.text("Días de ciclo:", style=custom_style).ask())
+
+        needed_light_max = float(
+            questionary.text(
+                "Horas de luz máximas antes de fotoinhibición:\n"
+                "  A partir de este valor, el exceso de luz comienza a dañar los cloroplastos.\n"
+                "  Debe ser mayor que las horas óptimas. Default: óptimo + 4 horas",
+                style=custom_style,
+            ).ask()
+            or str(needed_light + 4)
+        )
+
+        light_sensibility = float(
+            questionary.text(
+                "Sensibilidad al exceso de luz (mayor = más sensible):\n"
+                "  Controla cuánto aumenta la respiración cuando hay exceso de luz.\n"
+                "  Rango típico: 0.5-2.0. Default 1.0",
+                style=custom_style,
+            ).ask()
+            or "1.0"
+        )
+
+        light_km = float(
+            questionary.text(
+                "Constante de Michaelis-Menten para luz (K_m):\n"
+                "  Horas de luz necesarias para alcanzar el 50% de la tasa máxima de fotosíntesis.\n"
+                "  Rango típico: 2-6 horas. Default: óptimo * 0.5",
+                style=custom_style,
+            ).ask()
+            or str(needed_light * 0.5)
+        )
+
+        light_sigma = float(
+            questionary.text(
+                "Anchura de la curva de fotoinhibición:\n"
+                "  Controla qué tan rápido cae la eficiencia cuando la luz supera el óptimo.\n"
+                "  Valores bajos (1-2) = caída rápida. Default 2.0",
+                style=custom_style,
+            ).ask()
+            or "2.0"
+        )
+
+        phenological_initial_coefficient = float(
+            questionary.text(
+                "Coeficiente de cultivo - Fase inicial (K_c_ini):\n"
+                "  Demanda de agua en la etapa de establecimiento (primer 15-20% del ciclo).\n"
+                "  Rango típico: 0.3-0.5 (plantas pequeñas, poca transpiración)",
+                style=custom_style,
+            ).ask()
+            or "0.4"
+        )
+
+        phenological_mid_coefficient = float(
+            questionary.text(
+                "Coeficiente de cultivo - Fase media (K_c_mid):\n"
+                "  Demanda de agua en la etapa de máximo crecimiento (40-85% del ciclo).\n"
+                "  Rango típico: 1.0-1.2 (planta completamente desarrollada)",
+                style=custom_style,
+            ).ask()
+            or "1.1"
+        )
+
+        phenological_end_coefficient = float(
+            questionary.text(
+                "Coeficiente de cultivo - Fase final (K_c_end):\n"
+                "  Demanda de agua en la etapa de maduración (último 15% del ciclo).\n"
+                "  Rango típico: 0.5-0.8 (planta senescente)",
+                style=custom_style,
+            ).ask()
+            or "0.6"
+        )
+
+        days_cycle = int(
+            questionary.text(
+                "Duración total del ciclo de cultivo (días):\n"
+                "  Desde la siembra hasta la cosecha.\n"
+                "  Ej: Lechuga 30-60, Tomate 90-120, Maíz 120-150, Banano 300-400",
+                style=custom_style,
+            ).ask()
+        )
+
+        photosyntesis_max_rate = float(
+            questionary.text(
+                "Tasa máxima de fotosíntesis (r_max, por día):\n"
+                "  Capacidad máxima de la planta para producir biomasa en condiciones ideales.\n"
+                "  Rango típico: 0.15-0.35. Default 0.22",
+                style=custom_style,
+            ).ask()
+            or "0.22"
+        )
+
+        breathing_base_rate = float(
+            questionary.text(
+                "Tasa base de respiración de mantenimiento (r_m, por día):\n"
+                "  Energía que la planta consume diariamente para mantenerse viva.\n"
+                "  Normalmente es 10-30% de la tasa máxima de fotosíntesis. Default 0.05",
+                style=custom_style,
+            ).ask()
+            or "0.05"
+        )
+
+        theta = float(
+            questionary.text(
+                "Parámetro de asimetría logística (θ):\n"
+                "  Controla la forma de la curva de crecimiento.\n"
+                "  θ = 1 → crecimiento logístico simétrico.\n"
+                "  θ > 1 → crecimiento más rápido al inicio y más lento al final.\n"
+                "  Rango típico: 1.0-3.0. Default 1.5",
+                style=custom_style,
+            ).ask()
+            or "1.5"
+        )
+
+        consecutive_stress_days_limit = int(
+            questionary.text(
+                "Días consecutivos de estrés severo antes de la muerte:\n"
+                "  Si la planta sufre estrés extremo (factor total < 0.1) durante este número de días seguidos, muere.\n"
+                "  Rango típico: 3-7 días. Default 5",
+                style=custom_style,
+            ).ask()
+            or "5"
+        )
+
+        theta_coefficient = float(
+            questionary.text(
+                "Coeficiente de evapotranspiración de referencia:\n"
+                "  Parámetro del método de Hargreaves para calcular la evaporación potencial.\n"
+                "  Valor estándar: 0.0023 (no cambiar a menos que se tenga conocimiento específico)",
+                style=custom_style,
+            ).ask()
+            or "0.0023"
+        )
+
         initial_biomass = float(
-            questionary.text("Biomasa inicial (g/m²):", style=custom_style).ask()
+            questionary.text(
+                "Biomasa inicial al momento de la siembra (g/m²):\n"
+                "  Masa de la plántula al inicio. Ej: Semilla pequeña 0.1-0.5, plántula 1-5",
+                style=custom_style,
+            ).ask()
         )
-        potential = float(
-            questionary.text("Rendimiento potencial (g/m²):", style=custom_style).ask()
+
+        potential_performance = float(
+            questionary.text(
+                "Rendimiento potencial máximo (g/m²):\n"
+                "  Biomasa máxima que puede alcanzar el cultivo en condiciones perfectas.\n"
+                "  Ej: Lechuga 200-300, Tomate 500-800, Maíz 1000-1500, Banano 2000-3000",
+                style=custom_style,
+            ).ask()
         )
 
         nuevo = crop_type_service.create_crop_type(
-            current_user.id,
-            name,
-            optimal_temp,
-            needed_water,
-            needed_light,
-            days_cycle,
-            initial_biomass,
-            potential,
+            admin_id=current_user.id,
+            name=name,
+            optimal_temp=optimal_temp,
+            minimum_temp=minimum_temp,
+            maximum_temp=maximum_temp,
+            cold_sensibility=cold_sensibility,
+            heat_sensibility=heat_sensibility,
+            cold_factor=cold_factor,
+            heat_factor=heat_factor,
+            temperature_curve_length=temperature_curve_length,
+            water_wilting=water_wilting,
+            water_opt_low=water_opt_low,
+            needed_water=needed_water,
+            water_opt_high=water_opt_high,
+            water_capacity=water_capacity,
+            water_sensibility=water_sensibility,
+            water_stress_constant=water_stress_constant,
+            needed_light=needed_light,
+            needed_light_max=needed_light_max,
+            light_sensibility=light_sensibility,
+            light_km=light_km,
+            light_sigma=light_sigma,
+            phenological_initial_coefficient=phenological_initial_coefficient,
+            phenological_mid_coefficient=phenological_mid_coefficient,
+            phenological_end_coefficient=phenological_end_coefficient,
+            days_cycle=days_cycle,
+            photosyntesis_max_rate=photosyntesis_max_rate,
+            breathing_base_rate=breathing_base_rate,
+            theta=theta,
+            consecutive_stress_days_limit=consecutive_stress_days_limit,
+            theta_coefficient=theta_coefficient,
+            initial_biomass=initial_biomass,
+            potential_performance=potential_performance,
         )
+
         console.print(
             Panel(
                 f"Tipo '{nuevo.name}' creado con ID {nuevo.id}",
@@ -1025,20 +1355,226 @@ def _recolectar_cambios_crop_type(tipo):
     """Solicita al usuario los nuevos valores y retorna un diccionario con los cambios."""
     cambios = {}
 
-    _preguntar_campo(cambios, "name", "Nombre", tipo.name, str)
+    _preguntar_campo(cambios, "name", "Nombre del cultivo", tipo.name, str)
+
     _preguntar_campo(
-        cambios, "optimal_temp", "Temperatura óptima", tipo.optimal_temp, float
+        cambios,
+        "optimal_temp",
+        "Temperatura óptima para crecimiento (°C)",
+        tipo.optimal_temp,
+        float,
     )
     _preguntar_campo(
-        cambios, "needed_water", "Agua necesaria", tipo.needed_water, float
+        cambios,
+        "minimum_temp",
+        "Temperatura mínima para crecimiento (°C)",
+        tipo.minimum_temp,
+        float,
     )
-    _preguntar_campo(cambios, "needed_light", "Luz necesaria", tipo.needed_light, float)
-    _preguntar_campo(cambios, "days_cycle", "Ciclo en días", tipo.days_cycle, int)
     _preguntar_campo(
-        cambios, "initial_biomass", "Biomasa inicial", tipo.initial_biomass, float
+        cambios,
+        "maximum_temp",
+        "Temperatura máxima letal (°C)",
+        tipo.maximum_temp,
+        float,
+    )
+
+    _preguntar_campo(
+        cambios,
+        "cold_sensibility",
+        "Sensibilidad al frío (0-1)",
+        tipo.cold_sensibility,
+        float,
     )
     _preguntar_campo(
-        cambios, "potential_performance", "Potencial", tipo.potential_performance, float
+        cambios,
+        "heat_sensibility",
+        "Sensibilidad al calor (0-1)",
+        tipo.heat_sensibility,
+        float,
+    )
+    _preguntar_campo(
+        cambios,
+        "cold_factor",
+        "Factor exponencial de respuesta al frío",
+        tipo.cold_factor,
+        float,
+    )
+    _preguntar_campo(
+        cambios,
+        "heat_factor",
+        "Factor exponencial de respuesta al calor",
+        tipo.heat_factor,
+        float,
+    )
+    _preguntar_campo(
+        cambios,
+        "temperature_curve_length",
+        "Anchura de la curva de temperatura (σ)",
+        tipo.temperature_curve_length,
+        float,
+    )
+
+    _preguntar_campo(
+        cambios,
+        "water_wilting",
+        "Punto de marchitez permanente (mm)",
+        tipo.water_wilting,
+        float,
+    )
+    _preguntar_campo(
+        cambios,
+        "water_opt_low",
+        "Umbral inferior de agua óptima (mm)",
+        tipo.water_opt_low,
+        float,
+    )
+    _preguntar_campo(
+        cambios,
+        "needed_water",
+        "Agua necesaria para crecimiento óptimo (mm/día)",
+        tipo.needed_water,
+        float,
+    )
+    _preguntar_campo(
+        cambios,
+        "water_opt_high",
+        "Umbral superior de agua óptima (mm)",
+        tipo.water_opt_high,
+        float,
+    )
+    _preguntar_campo(
+        cambios,
+        "water_capacity",
+        "Capacidad de campo del suelo (mm)",
+        tipo.water_capacity,
+        float,
+    )
+    _preguntar_campo(
+        cambios,
+        "water_sensibility",
+        "Sensibilidad al estrés hídrico",
+        tipo.water_sensibility,
+        float,
+    )
+    _preguntar_campo(
+        cambios,
+        "water_stress_constant",
+        "Pendiente de curva de estrés hídrico (k)",
+        tipo.water_stress_constant,
+        float,
+    )
+
+    _preguntar_campo(
+        cambios,
+        "needed_light",
+        "Horas de luz óptimas por día",
+        tipo.needed_light,
+        float,
+    )
+    _preguntar_campo(
+        cambios,
+        "needed_light_max",
+        "Horas de luz máximas antes de fotoinhibición",
+        tipo.needed_light_max,
+        float,
+    )
+    _preguntar_campo(
+        cambios,
+        "light_sensibility",
+        "Sensibilidad al exceso de luz",
+        tipo.light_sensibility,
+        float,
+    )
+    _preguntar_campo(
+        cambios,
+        "light_km",
+        "Constante de Michaelis-Menten (K_m) para luz",
+        tipo.light_km,
+        float,
+    )
+    _preguntar_campo(
+        cambios,
+        "light_sigma",
+        "Anchura de curva de fotoinhibición (σ)",
+        tipo.light_sigma,
+        float,
+    )
+
+    _preguntar_campo(
+        cambios,
+        "phenological_initial_coefficient",
+        "Coeficiente de cultivo - Fase inicial (K_c_ini)",
+        tipo.phenological_initial_coefficient,
+        float,
+    )
+    _preguntar_campo(
+        cambios,
+        "phenological_mid_coefficient",
+        "Coeficiente de cultivo - Fase media (K_c_mid)",
+        tipo.phenological_mid_coefficient,
+        float,
+    )
+    _preguntar_campo(
+        cambios,
+        "phenological_end_coefficient",
+        "Coeficiente de cultivo - Fase final (K_c_end)",
+        tipo.phenological_end_coefficient,
+        float,
+    )
+
+    _preguntar_campo(
+        cambios,
+        "days_cycle",
+        "Duración total del ciclo de cultivo (días)",
+        tipo.days_cycle,
+        int,
+    )
+    _preguntar_campo(
+        cambios,
+        "photosyntesis_max_rate",
+        "Tasa máxima de fotosíntesis (r_max, por día)",
+        tipo.photosyntesis_max_rate,
+        float,
+    )
+    _preguntar_campo(
+        cambios,
+        "breathing_base_rate",
+        "Tasa base de respiración (r_m, por día)",
+        tipo.breathing_base_rate,
+        float,
+    )
+    _preguntar_campo(
+        cambios, "theta", "Parámetro de asimetría logística (θ)", tipo.theta, float
+    )
+    _preguntar_campo(
+        cambios,
+        "consecutive_stress_days_limit",
+        "Días consecutivos de estrés severo antes de la muerte",
+        tipo.consecutive_stress_days_limit,
+        int,
+    )
+    _preguntar_campo(
+        cambios,
+        "theta_coefficient",
+        "Coeficiente de evapotranspiración (Hargreaves)",
+        tipo.theta_coefficient,
+        float,
+    )
+
+    _preguntar_campo(
+        cambios,
+        "initial_biomass",
+        "Biomasa inicial al sembrar (g/m²)",
+        tipo.initial_biomass,
+        float,
+    )
+    _preguntar_campo(
+        cambios,
+        "potential_performance",
+        "Rendimiento potencial máximo (g/m²)",
+        tipo.potential_performance,
+        float,
     )
 
     return cambios

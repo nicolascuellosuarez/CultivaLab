@@ -12,6 +12,7 @@ methods implementations from a Protocol.
 def create_valid_crop_type(
     id: str,
     name: str,
+    optimal_temp: float,
     minimum_temp: float,
     maximum_temp: float,
     needed_water: float,
@@ -39,6 +40,7 @@ def create_valid_crop_type(
     return CropType(
         id=id,
         name=name,
+        optimal_temp=optimal_temp,
         minimum_temp=minimum_temp,
         maximum_temp=maximum_temp,
         cold_sensibility=kwargs.get("cold_sensibility", 0.5),
@@ -210,6 +212,7 @@ def test_save_and_get_crops(tmp_path):
     banana_crop_type = create_valid_crop_type(
         id="123",
         name="Cultivo de Bananas",
+        optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
         needed_water=100.0,
@@ -257,6 +260,7 @@ def test_save_crop_updates_existing_instead_of_duplicate(tmp_path):
     banana_crop_type = create_valid_crop_type(
         id="123",
         name="Cultivo de Bananas",
+        optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
         needed_water=100.0,
@@ -319,6 +323,7 @@ def test_delete_crop_removes_from_storage(tmp_path):
     banana_crop_type = create_valid_crop_type(
         id="123",
         name="Cultivo de Bananas",
+        optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
         needed_water=100.0,
@@ -385,6 +390,7 @@ def test_get_crop_by_id_works_and_returns_none_if_not_found(tmp_path):
     banana_crop_type = create_valid_crop_type(
         id="123",
         name="Cultivo de Bananas",
+        optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
         needed_water=100.0,
@@ -434,6 +440,7 @@ def test_get_crops_by_user_returns_only_that_user_crops(tmp_path):
     banana_crop_type = create_valid_crop_type(
         id="123",
         name="Cultivo de Bananas",
+        optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
         needed_water=100.0,
@@ -495,6 +502,7 @@ def test_get_crops_by_type_returns_only_crops_of_that_type(tmp_path):
     banana_crop_type = create_valid_crop_type(
         id="123",
         name="Cultivo de Bananas",
+        optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
         needed_water=100.0,
@@ -508,6 +516,7 @@ def test_get_crops_by_type_returns_only_crops_of_that_type(tmp_path):
     apple_crop_type = create_valid_crop_type(
         id="1234",
         name="Cultivo de Manzanas",
+        optimal_temp=21.0,
         minimum_temp=14.0,
         maximum_temp=28.0,
         needed_water=80.0,
@@ -573,6 +582,7 @@ def test_get_active_crops_only_returns_active_crops(tmp_path):
     banana_crop_type = create_valid_crop_type(
         id="123",
         name="Cultivo de Bananas",
+        optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
         needed_water=100.0,
@@ -648,6 +658,7 @@ def test_save_and_get_crop_types(tmp_path):
     banana_crop_type = create_valid_crop_type(
         id="123",
         name="Cultivo de Bananas",
+        optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
         needed_water=100.0,
@@ -676,6 +687,7 @@ def test_save_crop_type_updates_instead_of_duplicate(tmp_path):
     banana_crop_type = create_valid_crop_type(
         id="123",
         name="Cultivo de Bananas",
+        optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
         needed_water=100.0,
@@ -689,6 +701,7 @@ def test_save_crop_type_updates_instead_of_duplicate(tmp_path):
     new_crop_type = create_valid_crop_type(
         id="123",
         name="Cultivo de Bananas",
+        optimal_temp=28.0,
         minimum_temp=23.0,
         maximum_temp=33.0,
         needed_water=100.0,
@@ -716,6 +729,7 @@ def test_delete_crop_type_removes_from_storage(tmp_path):
     banana_crop_type = create_valid_crop_type(
         id="123",
         name="Cultivo de Bananas",
+        optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
         needed_water=100.0,
@@ -729,6 +743,7 @@ def test_delete_crop_type_removes_from_storage(tmp_path):
     apple_crop_type = create_valid_crop_type(
         id="1234",
         name="Cultivo de Manzanas",
+        optimal_temp=21.0,
         minimum_temp=14.0,
         maximum_temp=28.0,
         needed_water=80.0,
@@ -761,6 +776,7 @@ def test_get_crop_type_by_id_works_and_returns_none_if_not_found(tmp_path):
     banana_crop_type = create_valid_crop_type(
         id="123",
         name="Cultivo de Bananas",
+        optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
         needed_water=100.0,
@@ -788,6 +804,7 @@ def test_get_crop_type_by_name_works_and_returns_none_if_not_found(tmp_path):
     banana_crop_type = create_valid_crop_type(
         id="123",
         name="Cultivo de Bananas",
+        optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
         needed_water=100.0,
@@ -824,6 +841,7 @@ def test_storage_maintains_data_integrity_after_multiple_ops(tmp_path):
     banana_crop_type = create_valid_crop_type(
         id="123",
         name="Cultivo de Bananas",
+        optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
         needed_water=100.0,

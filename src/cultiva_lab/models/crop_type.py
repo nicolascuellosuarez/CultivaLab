@@ -11,6 +11,8 @@ class CropType:
 
     id: str
     name: str
+    optimal_temp: float
+    # Optimal temperature in °C
     minimum_temp: float
     # Minimum base temperature in °C
     maximum_temp: float
@@ -117,6 +119,22 @@ class CropType:
                 "El nombre del tipo de cultivo debe ser un texto no vacío."
             )
 
+    def _validate_optimal_temp(self):
+        """
+        Validates if the optimal temperature is valid.
+        """
+
+        if not isinstance(self.optimal_temp, (int, float)):
+            raise InvalidInputError(
+                "La temperatura óptima de la planta no esta en un tipo válido."
+            )
+        if (
+            self.minimum_temp
+            and self.maximum_temp
+            and not (self.minimum_temp < self.optimal_temp < self.maximum_temp)
+        ):
+            raise InvalidInputError("La temperatura óptima no está en un rango válido")
+
     def _validate_minimum_temp(self):
         """
         Validates that the minimum optimal temperature is in the right type
@@ -126,7 +144,11 @@ class CropType:
             raise InvalidInputError(
                 "La mínima temperatura óptima no está en un tipo válido."
             )
-        if self.maximum_temp and self.minimum_temp >= self.maximum_temp:
+        if (
+            self.optimal_temp
+            and self.maximum_temp
+            and not (self.minimum_temp < self.optimal_temp < self.maximum_temp)
+        ):
             raise InvalidInputError(
                 "La mínima temperatura óptima no puede ser mayor o igual a la mayor temperatura óptima."
             )
@@ -144,7 +166,11 @@ class CropType:
             raise InvalidInputError(
                 "La máxima temperatura óptima no está en un tipo válido."
             )
-        if self.minimum_temp and self.minimum_temp >= self.maximum_temp:
+        if (
+            self.minimum_temp
+            and self.optimal_temp
+            and not (self.minimum_temp < self.optimal_temp < self.maximum_temp)
+        ):
             raise InvalidInputError(
                 "La mínima temperatura óptima no puede ser mayor o igual a la mayor temperatura óptima."
             )
@@ -238,13 +264,11 @@ class CropType:
             )
         if (
             self.water_opt_low,
-            self.needed_water,
             self.water_opt_high,
             self.water_capacity,
         ) and not (
             self.water_wilting
             < self.water_opt_low
-            < self.needed_water
             < self.water_opt_high
             < self.water_capacity
         ):
@@ -265,13 +289,11 @@ class CropType:
             )
         if (
             self.water_wilting,
-            self.needed_water,
             self.water_opt_high,
             self.water_capacity,
         ) and not (
             self.water_wilting
             < self.water_opt_low
-            < self.needed_water
             < self.water_opt_high
             < self.water_capacity
         ):
@@ -286,19 +308,6 @@ class CropType:
             raise InvalidInputError("El agua necesaria debe ser un número.")
         if self.needed_water <= 0:
             raise InvalidInputError("El agua necesaria debe ser mayor a cero.")
-        if (
-            self.water_wilting,
-            self.water_opt_low,
-            self.water_opt_high,
-            self.water_capacity,
-        ) and not (
-            self.water_wilting
-            < self.water_opt_low
-            < self.needed_water
-            < self.water_opt_high
-            < self.water_capacity
-        ):
-            raise InvalidInputError("Los valores de niveles de agua no son válidos.")
 
     def _validate_water_opt_high(self):
         """
@@ -316,12 +325,10 @@ class CropType:
         if (
             self.water_wilting,
             self.water_opt_low,
-            self.needed_water,
             self.water_capacity,
         ) and not (
             self.water_wilting
             < self.water_opt_low
-            < self.needed_water
             < self.water_opt_high
             < self.water_capacity
         ):
@@ -343,12 +350,10 @@ class CropType:
         if (
             self.water_wilting,
             self.water_opt_low,
-            self.needed_water,
             self.water_opt_high,
         ) and not (
             self.water_wilting
             < self.water_opt_low
-            < self.needed_water
             < self.water_opt_high
             < self.water_capacity
         ):

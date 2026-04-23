@@ -34,30 +34,19 @@ class CropService:
         self, crop_type: CropType, temperature: float
     ) -> float:
         """
-        Method created to calculate thermal factor of the photosynthesis
-        part of the model.
+        Gaussian function for thermal effect on photosynthesis.
+        Peak at optimal_temp, decreases as temperature deviates.
         """
 
-        if temperature < crop_type.minimum_temp:
-            f_T = math.exp(
-                -((temperature - crop_type.minimum_temp) ** 2)
-                / (2 * (crop_type.temperature_curve_length) ** 2)
-            )
-        elif crop_type.minimum_temp <= temperature <= crop_type.maximum_temp:
-            f_T = 1
-        elif temperature > crop_type.maximum_temp:
-            f_T = math.exp(
-                -((temperature - crop_type.maximum_temp) ** 2)
-                / (2 * (crop_type.temperature_curve_length) ** 2)
-            )
-        return f_T
+        sigma = crop_type.temperature_curve_length
+        return math.exp(-((temperature - crop_type.optimal_temp) ** 2) / (2 * sigma**2))
 
     def _calculate_water_factor_production(
         self, crop_type: CropType, water_stored: float
     ) -> float:
         """
-        Method created to calculate the water factor of the photosynthesis
-        part of the model.
+        Water stress factor for photosynthesis.
+        Penalizes both deficit and excess of water.
         """
 
         f_W = (
@@ -74,10 +63,10 @@ class CropService:
             / (
                 1
                 + math.exp(
-                    -crop_type.water_stress_constant
+                    crop_type.water_stress_constant
                     * (water_stored - crop_type.water_opt_high)
                 )
-            )
+            )  # FIX: signo positivo
         )
         return f_W
 
@@ -85,32 +74,37 @@ class CropService:
         self, crop_type: CropType, sun_hours: float
     ) -> float:
         """
-        Method created to calculate the light factor of the photosynthesis
-        part of the model.
+        Light stress factor for photosynthesis.
+        Michaelis-Menten for low light, Gaussian for excess.
         """
 
+        normalization = crop_type.needed_light / (
+            crop_type.needed_light + crop_type.light_km
+        )
+
         if sun_hours <= crop_type.needed_light:
-            f_L = sun_hours / (sun_hours + crop_type.light_km)
+            f_L_raw = sun_hours / (sun_hours + crop_type.light_km)
+            f_L = f_L_raw / normalization if normalization > 0 else 0.0
         elif crop_type.needed_light < sun_hours <= crop_type.needed_light_max:
             f_L = math.exp(
                 -((sun_hours - crop_type.needed_light) ** 2)
                 / (2 * (crop_type.light_sigma**2))
             )
-        elif sun_hours > crop_type.needed_light_max:
+        else:
             f_L = math.exp(
                 -((crop_type.needed_light_max - crop_type.needed_light) ** 2)
                 / (2 * (crop_type.light_sigma**2))
             )
-        return f_L
+
+        return min(f_L, 1.0)
 
     def _calculate_breathing_thermal_factor(
         self, crop_type: CropType, temperature: float
     ) -> float:
         """
-        Method created to calculate the thermal factor of the breathing
-        part of the model.
+        Thermal effect on maintenance respiration.
+        Increases exponentially outside optimal range.
         """
-
         if temperature < crop_type.minimum_temp:
             h_T = 1 + crop_type.cold_factor * math.exp(
                 crop_type.cold_sensibility * (crop_type.minimum_temp - temperature)
@@ -119,151 +113,128 @@ class CropService:
             h_T = 1 + crop_type.heat_factor * math.exp(
                 crop_type.heat_sensibility * (temperature - crop_type.maximum_temp)
             )
-        elif crop_type.minimum_temp <= temperature <= crop_type.maximum_temp:
+        else:
             h_T = 1
         return h_T
-
-    def _calculate_breathing_water_factor(
-        self, crop_type: CropType, f_W: float
-    ) -> float:
-        """
-        Method created to calculate the water factor of breathing
-        part of the model.
-        """
-
-        h_W = 1 + crop_type.water_sensibility * (1 - f_W)
-        return h_W
-
-    def _calculate_breathing_light_factor(
-        self, crop_type: CropType, f_L: float
-    ) -> float:
-        """
-        Method created to calculate the light factor of breathing part
-        of the model.
-        """
-
-        h_L = 1 + crop_type.light_sensibility * (1 - f_L)
-        return h_L
 
     def _calculate_logistic_growth_term(
         self, crop_type: CropType, biomass: float
     ) -> float:
         """
-        Method created to calculate the logistic growth term
-        based on the phenological phase of the crop.
+        Logistic term for carrying capacity.
         """
-
-        logistic_growth_term = (
-            1 - (biomass / crop_type.potential_performance) ** crop_type.theta
-        )
-        return logistic_growth_term
+        K = crop_type.potential_performance
+        if K <= 0:
+            return 1.0
+        return 1 - (biomass / K) ** crop_type.theta
 
     def _calculate_photosynthesis(
         self,
         crop_type: CropType,
         biomass: float,
-        logistic_growth_term: float,
+        logistic_term: float,
         f_T: float,
         f_W: float,
         f_L: float,
     ) -> float:
         """
-        Method created to calculate the photosynthesis
-        of a crop in a day.
+        Net photosynthesis after environmental stress.
+        El término logístico se aplica aquí y SOLO aquí (ver FIX #3).
         """
-
-        R = (
-            crop_type.photosyntesis_max_rate
-            * biomass
-            * logistic_growth_term
-            * f_T
-            * f_W
-            * f_L
+        return (
+            crop_type.photosyntesis_max_rate * biomass * logistic_term * f_T * f_W * f_L
         )
-        return R
 
-    def _calculate_breathing_expense(
-        self, crop_type: CropType, biomass: float, h_T: float, h_W: float, h_L: float
+    def _calculate_maintenance_respiration(
+        self, crop_type: CropType, biomass: float, temperature: float
     ) -> float:
         """
-        Method created to calculate the breathing expense
-        of a crop in a day.
+        Maintenance respiration - depends on biomass and temperature only.
         """
+        h_T = self._calculate_breathing_thermal_factor(crop_type, temperature)
+        return crop_type.breathing_base_rate * biomass * h_T
 
-        B = crop_type.breathing_base_rate * biomass * h_T * h_W * h_L
-        return B
+    def _calculate_growth_respiration_coefficient(
+        self, crop_type: CropType, biomass: float
+    ) -> float:
+        """
+        Growth respiration coefficient (dynamic).
+        Young plants have lower coefficient (more efficient).
+        Mature plants have higher coefficient (more structural cost).
+        """
+        K = crop_type.potential_performance
+        if K <= 0:
+            return 0.2
+        ratio = min(1.0, biomass / K)
+        # Rango de 0.15 (planta joven) a 0.45 (planta madura)
+        return 0.15 + 0.3 * ratio
 
     def _calculate_net_growth(
-        self, photosynthesis: float, breathing_expense: float
+        self,
+        crop_type: CropType,
+        biomass: float,
+        photosynthesis: float,
+        temperature: float,
     ) -> float:
         """
-        Method created to calculate the total growth of a crop
-        in a day in biomass terms.
+        Net growth after growth respiration and maintenance respiration.
         """
 
-        dB_dt = photosynthesis - breathing_expense
-        return dB_dt
+        g_R = self._calculate_growth_respiration_coefficient(crop_type, biomass)
+        growth = photosynthesis * (1.0 - g_R)  # FIX: sin logistic_term aquí
+        maintenance = self._calculate_maintenance_respiration(
+            crop_type, biomass, temperature
+        )
+        return growth - maintenance
 
     def _calculate_evapotranspiration_reference(
         self, crop_type: CropType, temperature: float
     ) -> float:
         """
-        Method created to calculate the evapotranspiration reference
-        using the Hargreaves method.
+        Reference evapotranspiration using Hargreaves method.
         """
-
         delta_temp = max(crop_type.maximum_temp - crop_type.minimum_temp, 0.1)
-        evapotranspiration_reference = (
-            0.0023 * (temperature + 17.8) * math.sqrt(delta_temp)
-        )
-
-        return evapotranspiration_reference
+        return 0.0023 * (temperature + 17.8) * math.sqrt(delta_temp)
 
     def _calculate_crop_coefficient_phase(
         self, crop_type: CropType, current_day: int
     ) -> float:
         """
-        Method created to calculate the coefficient phase
-        of a crop.
+        Crop coefficient based on phenological phase.
         """
-
         ro = current_day / crop_type.days_cycle
         if ro <= 0.15:
-            crop_coefficient_phase = crop_type.phenological_initial_coefficient
+            return crop_type.phenological_initial_coefficient
         elif 0.15 < ro < 0.40:
-            crop_coefficient_phase = crop_type.phenological_initial_coefficient + (
+            return crop_type.phenological_initial_coefficient + (
                 (
                     crop_type.phenological_mid_coefficient
                     - crop_type.phenological_initial_coefficient
                 )
-                * ((ro - 0.15) / (0.25))
+                * ((ro - 0.15) / 0.25)
             )
         elif 0.40 <= ro <= 0.85:
-            crop_coefficient_phase = crop_type.phenological_mid_coefficient
-        elif 0.85 < ro <= 1.0:
-            crop_coefficient_phase = crop_type.phenological_mid_coefficient + (
+            return crop_type.phenological_mid_coefficient
+        else:
+            return crop_type.phenological_mid_coefficient + (
                 (
                     crop_type.phenological_end_coefficient
                     - crop_type.phenological_mid_coefficient
                 )
-                * ((ro - 0.85) / (0.15))
+                * ((ro - 0.85) / 0.15)
             )
-        return crop_coefficient_phase
 
     def _calculate_evapotranspiration(
         self,
         crop_type: CropType,
-        crop_coeficient_phase: float,
+        crop_coefficient_phase: float,
         evapotranspiration_reference: float,
         f_W: float,
     ) -> float:
         """
-        Method created to calculate the evapotranspiration factor for
-        calc of water available in floor.
+        Actual evapotranspiration.
         """
-
-        evapotranspiration = crop_coeficient_phase * evapotranspiration_reference * f_W
-        return evapotranspiration
+        return crop_coefficient_phase * evapotranspiration_reference * f_W
 
     def _update_water_balance(
         self,
@@ -275,13 +246,12 @@ class CropService:
     ) -> tuple[float, float]:
         """
         Updates soil water balance and calculates drainage.
-        Returns a tuple containing (new_water_stored, drainage).
+        Returns (new_water_stored, drainage).
         """
-
         water_temp = crop.water_stored + rain + irrigation - evapotranspiration
         drainage = max(0.0, water_temp - crop_type.water_capacity)
         new_water_stored = min(water_temp, crop_type.water_capacity)
-        return (new_water_stored, drainage)
+        return new_water_stored, drainage
 
     def _check_mortality(
         self,
@@ -295,15 +265,14 @@ class CropService:
     ) -> bool:
         """
         Checks if the plant should die due to extreme or prolonged stress.
-        Returns True if the crop dies, False otherwise.
         """
-
         f_total = f_T * f_W * f_L
 
         if f_total < 0.1:
             crop.consecutive_stress_days += 1
         else:
             crop.consecutive_stress_days = max(0, crop.consecutive_stress_days - 1)
+
         if crop.consecutive_stress_days >= crop_type.consecutive_stress_days_limit:
             return True
         if water_stored <= 0 and crop.consecutive_stress_days > 3:
@@ -320,9 +289,8 @@ class CropService:
         irrigation: float = 0.0,
     ) -> Crop:
         """
-        Simulates one day of growth for a crop using the mechanistic growth model.
+        Simulates one day of growth for a crop.
         """
-
         self._validate_environmental_inputs(temperature, rain, sun_hours, irrigation)
 
         crop = self._get_and_validate_crop(crop_id, user_id)
@@ -331,14 +299,49 @@ class CropService:
         if not crop.active:
             raise InvalidInputError("The crop is already harvested or dead.")
 
+        # FIX #2: Si water_stored es 0 (valor por defecto al crear el cultivo),
+        # inicializarlo al centro del rango óptimo para evitar estrés hídrico
+        # artificial en el primer día de simulación.
+        if crop.water_stored == 0:
+            crop.water_stored = (crop_type.water_opt_low + crop_type.water_opt_high) / 2
+
+        # Environmental factors
         f_T = self._calculate_production_thermal_factor(crop_type, temperature)
         f_W = self._calculate_water_factor_production(crop_type, crop.water_stored)
         f_L = self._calculate_light_production_factor(crop_type, sun_hours)
 
-        h_T = self._calculate_breathing_thermal_factor(crop_type, temperature)
-        h_W = self._calculate_breathing_water_factor(crop_type, f_W)
-        h_L = self._calculate_breathing_light_factor(crop_type, f_L)
+        # Current biomass
+        current_biomass = (
+            crop.conditions[-1].estimated_biomass
+            if crop.conditions
+            else crop_type.initial_biomass
+        )
 
+        # Photosynthesis (logistic term se aplica aquí y solo aquí)
+        logistic_term = self._calculate_logistic_growth_term(crop_type, current_biomass)
+        photosynthesis = self._calculate_photosynthesis(
+            crop_type, current_biomass, logistic_term, f_T, f_W, f_L
+        )
+
+        # Net growth
+        net_growth = self._calculate_net_growth(
+            crop_type, current_biomass, photosynthesis, temperature
+        )
+        new_biomass = max(0.0, current_biomass + net_growth)
+
+        # Water balance
+        et0 = self._calculate_evapotranspiration_reference(crop_type, temperature)
+        kc = self._calculate_crop_coefficient_phase(crop_type, len(crop.conditions) + 1)
+        et = self._calculate_evapotranspiration(crop_type, kc, et0, f_W)
+        new_water_stored, drainage = self._update_water_balance(
+            crop, crop_type, rain, irrigation, et
+        )
+
+        # Harvest
+        if new_biomass >= 0.95 * crop_type.potential_performance:
+            crop.active = False
+
+        # Mortality
         if self._check_mortality(
             crop, crop_type, f_T, f_W, f_L, temperature, crop.water_stored
         ):
@@ -346,34 +349,7 @@ class CropService:
             self.storage.save_crop(crop)
             raise InvalidInputError("The plant has died due to extreme conditions.")
 
-        current_biomass = (
-            crop.conditions[-1].estimated_biomass
-            if crop.conditions
-            else crop_type.initial_biomass
-        )
-
-        logistic_term = self._calculate_logistic_growth_term(crop_type, current_biomass)
-        photosynthesis = self._calculate_photosynthesis(
-            crop_type, current_biomass, logistic_term, f_T, f_W, f_L
-        )
-        respiration = self._calculate_breathing_expense(
-            crop_type, current_biomass, h_T, h_W, h_L
-        )
-        net_growth = self._calculate_net_growth(photosynthesis, respiration)
-
-        new_biomass = max(0.0, current_biomass + net_growth)
-
-        et0 = self._calculate_evapotranspiration_reference(crop_type, temperature)
-        kc = self._calculate_crop_coefficient_phase(crop_type, len(crop.conditions) + 1)
-        et = self._calculate_evapotranspiration(crop_type, kc, et0, f_W)
-
-        new_water_stored, drainage = self._update_water_balance(
-            crop, crop_type, rain, irrigation, et
-        )
-
-        if new_biomass >= 0.95 * crop_type.potential_performance:
-            crop.active = False
-
+        # Save daily record
         new_condition = DailyCondition(
             day=len(crop.conditions) + 1,
             temperature=temperature,
@@ -390,6 +366,17 @@ class CropService:
             crop.active = False
 
         self.storage.save_crop(crop)
+
+        print(f"--- DÍA {len(crop.conditions) + 1} ---")
+        print(f"  water_stored      : {crop.water_stored:.4f}")
+        print(f"  current_biomass   : {current_biomass:.4f}")
+        print(f"  f_T               : {f_T:.6f}")
+        print(f"  f_W               : {f_W:.6f}")
+        print(f"  f_L               : {f_L:.6f}")
+        print(f"  logistic_term     : {logistic_term:.6f}")
+        print(f"  photosynthesis    : {photosynthesis:.6f}")
+        print(f"  net_growth        : {net_growth:.6f}")
+        print(f"  new_biomass       : {new_biomass:.4f}")
         return crop
 
     def get_crop_by_id(self, crop_id: str, requesting_user_id: str) -> Crop:
@@ -433,8 +420,8 @@ class CropService:
             raise InvalidInputError("Valor de lluvia inválido (no puede ser negativo).")
         if irrigation < 0:
             raise InvalidInputError("Valor de riego inválido (no puede ser negativo).")
-        if sun_hours < 0 or sun_hours > 12:
-            raise InvalidInputError("Las horas de sol deben estar entre 0 y 12.")
+        if sun_hours < 0 or sun_hours > 16:
+            raise InvalidInputError("Las horas de sol deben estar entre 0 y 16.")
 
     def _get_and_validate_crop(self, crop_id: str, user_id: str) -> Crop:
         """
@@ -492,7 +479,7 @@ class CropService:
             last_sim_date=start_date,
             conditions=[],
             active=True,
-            water_stored=0.0,
+            water_stored=(crop_type.water_opt_low + crop_type.water_opt_high) / 2,
             consecutive_stress_days=0,
             current_phase="Fase Inicial",
         )
@@ -680,12 +667,7 @@ class CropService:
 
     def _calculate_stress_days(self, conditions: list, crop_type: CropType) -> int:
         """Counts days where temperature was outside optimal range."""
-        lower = crop_type.minimum_temp
-        upper = crop_type.maximum_temp
-
-        return sum(
-            1 for c in conditions if c.temperature < lower or c.temperature > upper
-        )
+        return sum(1 for f in conditions if f < 0.1)
 
     def _calculate_performance(self, conditions: list, crop_type: CropType) -> float:
         """Calculates performance ratio (final / potential)."""
@@ -1131,7 +1113,7 @@ class CropTypeService:
 
         if (not name) or not (name.strip()):
             raise InvalidInputError("El nombre no puede estar vacío.")
-        return name.strip().capitalize()
+        return name.strip()
 
     def _validate_unique_name(self, name: str):
         """
@@ -1145,6 +1127,7 @@ class CropTypeService:
     def _create_crop_type_instance(
         self,
         name: str,
+        optimal_temp: float,
         minimum_temp: float,
         maximum_temp: float,
         cold_sensibility: float,
@@ -1181,6 +1164,7 @@ class CropTypeService:
         return CropType(
             id=str(uuid.uuid4()),
             name=name,
+            optimal_temp=optimal_temp,
             minimum_temp=minimum_temp,
             maximum_temp=maximum_temp,
             cold_sensibility=cold_sensibility,
@@ -1217,6 +1201,7 @@ class CropTypeService:
         self,
         admin_id: str,
         name: str,
+        optimal_temp: float,
         minimum_temp: float,
         maximum_temp: float,
         cold_sensibility: float,
@@ -1271,6 +1256,7 @@ class CropTypeService:
 
         new_crop_type = self._create_crop_type_instance(
             name=name,
+            optimal_temp=optimal_temp,
             minimum_temp=minimum_temp,
             maximum_temp=maximum_temp,
             cold_sensibility=cold_sensibility,
@@ -1425,10 +1411,16 @@ class CropTypeService:
 
         # Then, validate cross-field consistency
         # Temperature consistency
-        if hasattr(crop_type, "minimum_temp") and hasattr(crop_type, "maximum_temp"):
-            if crop_type.minimum_temp >= crop_type.maximum_temp:
+        if (
+            hasattr(crop_type, "minimum_temp")
+            and hasattr(crop_type, "maximum_temp")
+            and hasattr(crop_type, "optimal_temp")
+        ):
+            if not (
+                crop_type.minimum_temp < crop_type.optimal_temp < crop_type.maximum_temp
+            ):
                 raise InvalidInputError(
-                    "La temperatura mínima debe ser menor a la máxima."
+                    "Las temperaturas deben estár en un buen orden."
                 )
 
         # Water levels consistency (if all are present)
@@ -1443,12 +1435,11 @@ class CropTypeService:
             if not (
                 crop_type.water_wilting
                 < crop_type.water_opt_low
-                < crop_type.needed_water
                 < crop_type.water_opt_high
                 < crop_type.water_capacity
             ):
                 raise InvalidInputError(
-                    "Los niveles de agua deben cumplir: water_wilting < water_opt_low < needed_water < water_opt_high < water_capacity"
+                    "Los niveles de agua deben cumplir: water_wilting < water_opt_low < water_opt_high < water_capacity"
                 )
 
         # Light consistency
