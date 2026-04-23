@@ -8,17 +8,20 @@ key: str = os.environ.get("SUPABASE_KEY")
 
 supabase: Client = create_client(url, key)
 
-supabase.table("users").insert({
-    "id": "123e4567-e89b-12d3-a456-426614174000",
-    "username": "agricultor1",
-    "password_hash": "hashed_password",
-    "role": "USER"
-}).execute()
 
-result = supabase.table("users").select("*").execute()
-print(result.data)
+def check_data():
+    response = supabase.table("users").select("*").execute()
+    print(response.data)
 
 
+supabase.table("users").insert(
+    {
+        "id": "123e4567-e89b-12d3-a456-426614174000",
+        "username": "agricultor1",
+        "password_hash": "hashed_password",
+        "role": "USER",
+    }
+).execute()
 
 
 if __name__ == "__main__":

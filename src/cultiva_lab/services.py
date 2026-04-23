@@ -669,7 +669,9 @@ class CropService:
         """Counts days where temperature was outside optimal range."""
         lower = crop_type.minimum_temp
         upper = crop_type.maximum_temp
-        return sum(1 for c in conditions if c.temperature < lower or c.temperature > upper)
+        return sum(
+            1 for c in conditions if c.temperature < lower or c.temperature > upper
+        )
 
     def _calculate_performance(self, conditions: list, crop_type: CropType) -> float:
         """Calculates performance ratio (final / potential)."""
