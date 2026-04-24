@@ -66,7 +66,7 @@ class CropService:
                     crop_type.water_stress_constant
                     * (water_stored - crop_type.water_opt_high)
                 )
-            )  # FIX: signo positivo
+            )
         )
         return f_W
 
@@ -139,7 +139,7 @@ class CropService:
     ) -> float:
         """
         Net photosynthesis after environmental stress.
-        El término logístico se aplica aquí y SOLO aquí (ver FIX #3).
+        El término logístico se aplica aquí y SOLO aquí
         """
         return (
             crop_type.photosyntesis_max_rate * biomass * logistic_term * f_T * f_W * f_L
@@ -163,9 +163,7 @@ class CropService:
         Mature plants have higher coefficient (more structural cost).
         """
         K = crop_type.potential_performance
-        if K <= 0:
-            return 0.2
-        ratio = min(1.0, biomass / K)
+        ratio = biomass / K
         # Rango de 0.15 (planta joven) a 0.45 (planta madura)
         return 0.15 + 0.3 * ratio
 
@@ -248,7 +246,7 @@ class CropService:
         Updates soil water balance and calculates drainage.
         Returns (new_water_stored, drainage).
         """
-        water_temp = crop.water_stored + rain + irrigation - evapotranspiration
+        water_temp = crop_type.water_stored + rain + irrigation - evapotranspiration
         drainage = max(0.0, water_temp - crop_type.water_capacity)
         new_water_stored = min(water_temp, crop_type.water_capacity)
         return new_water_stored, drainage
@@ -299,15 +297,9 @@ class CropService:
         if not crop.active:
             raise InvalidInputError("The crop is already harvested or dead.")
 
-        # FIX #2: Si water_stored es 0 (valor por defecto al crear el cultivo),
-        # inicializarlo al centro del rango óptimo para evitar estrés hídrico
-        # artificial en el primer día de simulación.
-        if crop.water_stored == 0:
-            crop.water_stored = (crop_type.water_opt_low + crop_type.water_opt_high) / 2
-
         # Environmental factors
         f_T = self._calculate_production_thermal_factor(crop_type, temperature)
-        f_W = self._calculate_water_factor_production(crop_type, crop.water_stored)
+        f_W = self._calculate_water_factor_production(crop_type, crop_type.water_stored)
         f_L = self._calculate_light_production_factor(crop_type, sun_hours)
 
         # Current biomass
@@ -343,7 +335,7 @@ class CropService:
 
         # Mortality
         if self._check_mortality(
-            crop, crop_type, f_T, f_W, f_L, temperature, crop.water_stored
+            crop, crop_type, f_T, f_W, f_L, temperature, crop_type.water_stored
         ):
             crop.active = False
             self.storage.save_crop(crop)
@@ -360,23 +352,13 @@ class CropService:
 
         crop.conditions.append(new_condition)
         crop.last_sim_date += timedelta(days=1)
-        crop.water_stored = new_water_stored
+        crop_type.water_stored = new_water_stored
 
         if len(crop.conditions) >= crop_type.days_cycle:
             crop.active = False
 
         self.storage.save_crop(crop)
 
-        print(f"--- DÍA {len(crop.conditions) + 1} ---")
-        print(f"  water_stored      : {crop.water_stored:.4f}")
-        print(f"  current_biomass   : {current_biomass:.4f}")
-        print(f"  f_T               : {f_T:.6f}")
-        print(f"  f_W               : {f_W:.6f}")
-        print(f"  f_L               : {f_L:.6f}")
-        print(f"  logistic_term     : {logistic_term:.6f}")
-        print(f"  photosynthesis    : {photosynthesis:.6f}")
-        print(f"  net_growth        : {net_growth:.6f}")
-        print(f"  new_biomass       : {new_biomass:.4f}")
         return crop
 
     def get_crop_by_id(self, crop_id: str, requesting_user_id: str) -> Crop:
@@ -479,7 +461,6 @@ class CropService:
             last_sim_date=start_date,
             conditions=[],
             active=True,
-            water_stored=(crop_type.water_opt_low + crop_type.water_opt_high) / 2,
             consecutive_stress_days=0,
             current_phase="Fase Inicial",
         )

@@ -40,6 +40,7 @@ def create_valid_crop_type(
     """
     water_wilting = kwargs.get("water_wilting", 30.0)
     water_opt_low = kwargs.get("water_opt_low", 60.0)
+    water_stored = kwargs.get("water_stored", 90)
     water_opt_high = kwargs.get("water_opt_high", 150.0)
     water_capacity = kwargs.get("water_capacity", 200.0)
     # Asegurar orden correcto
@@ -62,6 +63,7 @@ def create_valid_crop_type(
         temperature_curve_length=kwargs.get("temperature_curve_length", 5.0),
         water_wilting=water_wilting,
         water_opt_low=water_opt_low,
+        water_stored=water_stored,
         needed_water=needed_water,
         water_opt_high=water_opt_high,
         water_capacity=water_capacity,
@@ -104,6 +106,7 @@ def test_create_crop_success():
         optimal_temp=27,
         minimum_temp=22.0,
         maximum_temp=32.0,
+        water_stored=98.0,
         needed_water=100.0,
         needed_light=12.0,
         days_cycle=360,
@@ -144,6 +147,7 @@ def test_create_crop_invalid_user_fails():
         optimal_temp=19.0,
         minimum_temp=12.0,
         maximum_temp=26.0,
+        water_stored=98.0,
         needed_water=100.0,
         needed_light=8.0,
         days_cycle=180,
@@ -190,6 +194,7 @@ def test_simulate_day_success():
         optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
+        water_stored=98.0,
         needed_water=100.0,
         needed_light=12.0,
         days_cycle=360,
@@ -241,6 +246,7 @@ def test_simulate_day_crop_inactive_fails():
         optimal_temp=21.0,
         minimum_temp=12.0,
         maximum_temp=26.0,
+        water_stored=98.0,
         needed_water=100.0,
         needed_light=8.0,
         days_cycle=180,
@@ -1270,6 +1276,7 @@ def test_create_crop_type_non_admin_fails():
             days_cycle=360,
             photosyntesis_max_rate=0.22,
             breathing_base_rate=0.05,
+            growth_breathing_coefficient=0.11,
             theta=1.5,
             consecutive_stress_days_limit=5,
             theta_coefficient=0.0023,

@@ -27,6 +27,8 @@ class CropType:
     # Temperature's curve length
     water_wilting: float
     water_opt_low: float
+    water_stored: float
+    # Water stored in the floor (mm).
     needed_water: float
     water_opt_high: float
     water_capacity: float
@@ -53,6 +55,8 @@ class CropType:
     photosyntesis_max_rate: float
     breathing_base_rate: float
     # Rates of photosynthesis and breathing
+    growth_breathing_coefficient: float
+    # Rates of photosynthesis and breathing
     theta: float
     # Logistic assymetry factor
     consecutive_stress_days_limit: int
@@ -77,6 +81,7 @@ class CropType:
         self._validate_temperature_curve_length()
         self._validate_water_wilting()
         self._validate_water_opt_low()
+        self._validate_water_stored()
         self._validate_needed_water()
         self._validate_water_opt_high()
         self._validate_water_capacity()
@@ -93,6 +98,7 @@ class CropType:
         self._validate_days_cycle()
         self._validate_photosyntesis_max_rate()
         self._validate_breathing_base_rate()
+        self._validate_growth_breathing_coefficient()
         self._validate_theta()
         self._validate_consecutive_stress_days_limit()
         self._validate_theta_coefficient()
@@ -298,6 +304,20 @@ class CropType:
             < self.water_capacity
         ):
             raise InvalidInputError("Los valores de niveles de agua no son válidos.")
+        
+    def _validate_water_stored(self):
+        """
+        Validates if water stored data is in the right type.
+        """
+
+        if not isinstance(self.water_stored, float):
+            raise InvalidInputError(
+                "El agua almacenada en el suelo no está en un tipo válido."
+            )
+        if self.water_stored < 0:
+            raise InvalidInputError(
+                "El agua almacenada no puede tener valores negativos."
+            )
 
     def _validate_needed_water(self):
         """
@@ -565,6 +585,18 @@ class CropType:
             raise InvalidInputError(
                 "La tasa base de respiración no puede ser menor o igual a 0."
             )
+        
+    def _validate_growth_breathing_coefficient(self):
+        """
+        Method created to validate if growth breathing coefficient of a crop
+        is valid.
+        """
+
+        if not isinstance(self.growth_breathing_coefficient, (int, float)):
+            raise InvalidInputError("El coeficiente de respiración de crecimiento no está en un tipo adecuado.")
+        if self.growth_breathing_coefficient <= 0:
+            raise InvalidInputError("El coeficiente de respiración de crecimiento no puede ser menor o igual a 0.")
+
 
     def _validate_theta(self):
         """

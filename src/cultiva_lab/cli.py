@@ -1071,6 +1071,15 @@ def crear_crop_type():
             or "80"
         )
 
+        water_stored = float(
+            questionary.text(
+                "Agua almacenada en el suelo de la planta (mm):\n"
+                "  De preferencia, inicializarla en un rango óptimo.\n"
+                "  Ej: Banano 95 mm",
+                style=custom_style,
+            ).ask()
+        )
+
         needed_water = float(
             questionary.text(
                 "Agua necesaria para crecimiento óptimo (mm/día):\n"
@@ -1228,6 +1237,16 @@ def crear_crop_type():
             or "0.05"
         )
 
+        growth_breathing_coefficient = float(
+            questionary.text(
+                "Tasa base de respiración de mantenimiento (r_m, por día):\n"
+                "  Energía que la planta consume diariamente para mantenerse viva.\n"
+                "  Normalmente es 10-30% de la tasa máxima de fotosíntesis. Default 0.05",
+                style=custom_style,
+            ).ask()
+            or "0.05"
+        )
+
         theta = float(
             questionary.text(
                 "Parámetro de asimetría logística (θ):\n"
@@ -1290,6 +1309,7 @@ def crear_crop_type():
             temperature_curve_length=temperature_curve_length,
             water_wilting=water_wilting,
             water_opt_low=water_opt_low,
+            water_stored=water_stored,
             needed_water=needed_water,
             water_opt_high=water_opt_high,
             water_capacity=water_capacity,
@@ -1306,6 +1326,7 @@ def crear_crop_type():
             days_cycle=days_cycle,
             photosyntesis_max_rate=photosyntesis_max_rate,
             breathing_base_rate=breathing_base_rate,
+            growth_breathing_coefficient=growth_breathing_coefficient,
             theta=theta,
             consecutive_stress_days_limit=consecutive_stress_days_limit,
             theta_coefficient=theta_coefficient,
@@ -1431,6 +1452,13 @@ def _recolectar_cambios_crop_type(tipo):
     )
     _preguntar_campo(
         cambios,
+        "water_stored"
+        "Agua en el suelo de la planta (mm)",
+        tipo.water_stored,
+        float,
+    )
+    _preguntar_campo(
+        cambios,
         "needed_water",
         "Agua necesaria para crecimiento óptimo (mm/día)",
         tipo.needed_water,
@@ -1542,6 +1570,13 @@ def _recolectar_cambios_crop_type(tipo):
         "breathing_base_rate",
         "Tasa base de respiración (r_m, por día)",
         tipo.breathing_base_rate,
+        float,
+    )
+    _preguntar_campo(
+        cambios,
+        "growth_breathing_coefficient",
+        "Coeficiente de respiración de crecimiento",
+        tipo.growth_breathing_coefficient,
         float,
     )
     _preguntar_campo(
