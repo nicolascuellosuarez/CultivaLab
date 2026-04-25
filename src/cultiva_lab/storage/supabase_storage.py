@@ -28,43 +28,57 @@ crop_types = [
     ("Frijol Voluble", 22.0, 12.0, 30.0, 4.0, 7.0, 90, 0.25, 0.009, 15.0, 350.0),
 ]
 
-for name, opt_temp, min_temp, max_temp, water, light, days, photo, breath, init_biomass, potential in crop_types:
-    supabase.table("crop_types").insert({
-        "id": str(uuid.uuid4()),
-        "name": name,
-        "optimal_temp": opt_temp,
-        "minimum_temp": min_temp,
-        "maximum_temp": max_temp,
-        "cold_sensibility": 0.5,
-        "heat_sensibility": 0.5,
-        "cold_factor": 0.1,
-        "heat_factor": 0.1,
-        "temperature_curve_length": 5.0,
-        "water_wilting": 60.0,
-        "water_opt_low": 70.0,
-        "needed_water": water,
-        "water_opt_high": 100.0,
-        "water_capacity": 150.0,
-        "water_sensibility": 1.5,
-        "water_stress_constant": 0.7,
-        "needed_light": light,
-        "needed_light_max": 9.0,
-        "light_sensibility": 1.2,
-        "light_km": 3.0,
-        "light_sigma": 2.0,
-        "phenological_initial_coefficient": 0.3,
-        "phenological_mid_coefficient": 1.0,
-        "phenological_end_coefficient": 0.6,
-        "days_cycle": days,
-        "photosyntesis_max_rate": photo,
-        "breathing_base_rate": breath,
-        "theta": 1.8,
-        "consecutive_stress_days_limit": 5,
-        "theta_coefficient": 0.0023,
-        "initial_biomass": init_biomass,
-        "potential_performance": potential,
-        "created_at": datetime.now().isoformat(),
-    }).execute()
+for (
+    name,
+    opt_temp,
+    min_temp,
+    max_temp,
+    water,
+    light,
+    days,
+    photo,
+    breath,
+    init_biomass,
+    potential,
+) in crop_types:
+    supabase.table("crop_types").insert(
+        {
+            "id": str(uuid.uuid4()),
+            "name": name,
+            "optimal_temp": opt_temp,
+            "minimum_temp": min_temp,
+            "maximum_temp": max_temp,
+            "cold_sensibility": 0.5,
+            "heat_sensibility": 0.5,
+            "cold_factor": 0.1,
+            "heat_factor": 0.1,
+            "temperature_curve_length": 5.0,
+            "water_wilting": 60.0,
+            "water_opt_low": 70.0,
+            "needed_water": water,
+            "water_opt_high": 100.0,
+            "water_capacity": 150.0,
+            "water_sensibility": 1.5,
+            "water_stress_constant": 0.7,
+            "needed_light": light,
+            "needed_light_max": 9.0,
+            "light_sensibility": 1.2,
+            "light_km": 3.0,
+            "light_sigma": 2.0,
+            "phenological_initial_coefficient": 0.3,
+            "phenological_mid_coefficient": 1.0,
+            "phenological_end_coefficient": 0.6,
+            "days_cycle": days,
+            "photosyntesis_max_rate": photo,
+            "breathing_base_rate": breath,
+            "theta": 1.8,
+            "consecutive_stress_days_limit": 5,
+            "theta_coefficient": 0.0023,
+            "initial_biomass": init_biomass,
+            "potential_performance": potential,
+            "created_at": datetime.now().isoformat(),
+        }
+    ).execute()
 
 """
 Insert 12 users into users table.
@@ -85,13 +99,15 @@ users = [
 ]
 
 for username, pwd_hash, role in users:
-    supabase.table("users").insert({
-        "id": str(uuid.uuid4()),
-        "username": username,
-        "password_hash": pwd_hash,
-        "role": role,
-        "created_at": datetime.now().isoformat(),
-    }).execute()
+    supabase.table("users").insert(
+        {
+            "id": str(uuid.uuid4()),
+            "username": username,
+            "password_hash": pwd_hash,
+            "role": role,
+            "created_at": datetime.now().isoformat(),
+        }
+    ).execute()
 
 """
 Get crop_type_ids and user_ids for foreign key references.
@@ -113,7 +129,14 @@ crops = [
     ("Mi Café Finca La Paz", "agricultor1", "Café Arábica", 85.0, 0, "Fase Inicial"),
     ("Maíz Parcela Norte", "agricultor2", "Maíz Dulce", 100.0, 0, "Fase Inicial"),
     ("Tomates Invernadero", "agricultor3", "Tomate Cherry", 70.0, 0, "Fase Inicial"),
-    ("Fresas Experimentales", "investigador1", "Fresa Monterey", 60.0, 0, "Fase Inicial"),
+    (
+        "Fresas Experimentales",
+        "investigador1",
+        "Fresa Monterey",
+        60.0,
+        0,
+        "Fase Inicial",
+    ),
     ("Palma Zona Sur", "productor1", "Palma Africana", 120.0, 0, "Fase Inicial"),
     ("Cacao Sombra", "agricultor1", "Cacao Criollo", 90.0, 0, "Fase Inicial"),
     ("Limones Orgánicos", "productor2", "Limón Persa", 80.0, 0, "Fase Inicial"),
@@ -125,19 +148,21 @@ crops = [
 ]
 
 for name, username, crop_type_name, water_stored, stress_days, phase in crops:
-    supabase.table("crops").insert({
-        "id": str(uuid.uuid4()),
-        "name": name,
-        "user_id": user_ids[username],
-        "crop_type_id": crop_type_ids[crop_type_name],
-        "start_date": datetime.now().isoformat(),
-        "last_sim_date": datetime.now().isoformat(),
-        "active": True,
-        "water_stored": water_stored,
-        "consecutive_stress_days": stress_days,
-        "current_phase": phase,
-        "created_at": datetime.now().isoformat(),
-    }).execute()
+    supabase.table("crops").insert(
+        {
+            "id": str(uuid.uuid4()),
+            "name": name,
+            "user_id": user_ids[username],
+            "crop_type_id": crop_type_ids[crop_type_name],
+            "start_date": datetime.now().isoformat(),
+            "last_sim_date": datetime.now().isoformat(),
+            "active": True,
+            "water_stored": water_stored,
+            "consecutive_stress_days": stress_days,
+            "current_phase": phase,
+            "created_at": datetime.now().isoformat(),
+        }
+    ).execute()
 
 """
 Get crop_ids for daily conditions.
@@ -153,27 +178,29 @@ Insert 12 daily conditions for each crop into daily_conditions table.
 
 for crop_name, crop_id in crop_ids.items():
     for day in range(1, 13):
-        supabase.table("daily_conditions").insert({
-            "id": str(uuid.uuid4()),
-            "crop_id": crop_id,
-            "day": day,
-            "temperature": 21.0 + (day * 0.1),
-            "rain": 2.5 + (day * 0.2),
-            "sun_hours": 6.0,
-            "estimated_biomass": 50.0 + (day * 8.5),
-            "created_at": datetime.now().isoformat(),
-        }).execute()
+        supabase.table("daily_conditions").insert(
+            {
+                "id": str(uuid.uuid4()),
+                "crop_id": crop_id,
+                "day": day,
+                "temperature": 21.0 + (day * 0.1),
+                "rain": 2.5 + (day * 0.2),
+                "sun_hours": 6.0,
+                "estimated_biomass": 50.0 + (day * 8.5),
+                "created_at": datetime.now().isoformat(),
+            }
+        ).execute()
 
 """
 Verification: Count records in each table.
 """
 
 print("Verification:")
-result = supabase.table('crop_types').select('*', count='exact').execute()
+result = supabase.table("crop_types").select("*", count="exact").execute()
 print(f"Crop types: {result.count}")
-result = supabase.table('users').select('*', count = 'exact').execute()
+result = supabase.table("users").select("*", count="exact").execute()
 print(f"Users: {result.count}")
-result = supabase.table('crops').select('*', count = 'exact').execute()
+result = supabase.table("crops").select("*", count="exact").execute()
 print(f"Crops: {result.count}")
-result = supabase.table('daily_conditions').select('*', count = 'exact').execute()
+result = supabase.table("daily_conditions").select("*", count="exact").execute()
 print(f"Daily Conditions: {result.count}")

@@ -63,6 +63,7 @@ class CropType:
     # Limit counter of consecutive stress days
     theta_coefficient: float
     # Water transpiration coefficient
+    activation_energy: float
     initial_biomass: float
     # Initial biomass level in g / (m ^ 2)
     potential_performance: float
@@ -102,6 +103,7 @@ class CropType:
         self._validate_theta()
         self._validate_consecutive_stress_days_limit()
         self._validate_theta_coefficient()
+        self._validate_activation_energy()
         self._validate_initial_biomass()
         self._validate_potential_performance()
 
@@ -304,7 +306,7 @@ class CropType:
             < self.water_capacity
         ):
             raise InvalidInputError("Los valores de niveles de agua no son válidos.")
-        
+
     def _validate_water_stored(self):
         """
         Validates if water stored data is in the right type.
@@ -585,7 +587,7 @@ class CropType:
             raise InvalidInputError(
                 "La tasa base de respiración no puede ser menor o igual a 0."
             )
-        
+
     def _validate_growth_breathing_coefficient(self):
         """
         Method created to validate if growth breathing coefficient of a crop
@@ -593,10 +595,13 @@ class CropType:
         """
 
         if not isinstance(self.growth_breathing_coefficient, (int, float)):
-            raise InvalidInputError("El coeficiente de respiración de crecimiento no está en un tipo adecuado.")
+            raise InvalidInputError(
+                "El coeficiente de respiración de crecimiento no está en un tipo adecuado."
+            )
         if self.growth_breathing_coefficient <= 0:
-            raise InvalidInputError("El coeficiente de respiración de crecimiento no puede ser menor o igual a 0.")
-
+            raise InvalidInputError(
+                "El coeficiente de respiración de crecimiento no puede ser menor o igual a 0."
+            )
 
     def _validate_theta(self):
         """
@@ -640,6 +645,21 @@ class CropType:
                 "El coeficiente de transpiracion del agua no puede ser menor o igual a 0."
             )
 
+    def _validate_activation_energy(self):
+        """
+        Method created to validate if the energy for metabolic activation
+        is valid
+        """
+
+        if not isinstance(self.activation_energy, (int, float)):
+            raise InvalidInputError(
+                "El valor de acticación energética no está en un tipo válido."
+            )
+        if self.activation_energy <= 0:
+            raise InvalidInputError(
+                "El valor de activación energética no está en un tipo válido."
+            )
+
     def _validate_initial_biomass(self):
         """
         Validates that initial biomass is a positive number.
@@ -659,3 +679,7 @@ class CropType:
             raise InvalidInputError("El rendimiento potencial debe ser un número.")
         if self.potential_performance <= 0:
             raise InvalidInputError("El rendimiento potencial debe ser mayor a cero.")
+        if self.potential_performance <= self.initial_biomass:
+            raise InvalidInputError(
+                "El rendimiento potencial no puede ser menor a la biomasa inicial."
+            )

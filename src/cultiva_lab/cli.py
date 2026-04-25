@@ -1074,8 +1074,8 @@ def crear_crop_type():
         water_stored = float(
             questionary.text(
                 "Agua almacenada en el suelo de la planta (mm):\n"
-                "  De preferencia, inicializarla en un rango óptimo.\n"
-                "  Ej: Banano 95 mm",
+                "  De preferencia para crecimiento, inicializarla en un rango óptimo.\n"
+                "  Ej: Banano 95 mm, Manzana 105mm",
                 style=custom_style,
             ).ask()
         )
@@ -1239,9 +1239,8 @@ def crear_crop_type():
 
         growth_breathing_coefficient = float(
             questionary.text(
-                "Tasa base de respiración de mantenimiento (r_m, por día):\n"
-                "  Energía que la planta consume diariamente para mantenerse viva.\n"
-                "  Normalmente es 10-30% de la tasa máxima de fotosíntesis. Default 0.05",
+                "Tasa base de respiración de crecimiento:\n"
+                "  Energía que la planta consume diariamente para crecer.",
                 style=custom_style,
             ).ask()
             or "0.05"
@@ -1277,6 +1276,14 @@ def crear_crop_type():
                 style=custom_style,
             ).ask()
             or "0.0023"
+        )
+
+        activation_energy = float(
+            questionary.text(
+                "Energía de activación metabólica de la planta (J/mol):\n"
+                "  Valores entre 40 - 100 kJ/mol",
+                style=custom_style,
+            ).ask()
         )
 
         initial_biomass = float(
@@ -1330,6 +1337,7 @@ def crear_crop_type():
             theta=theta,
             consecutive_stress_days_limit=consecutive_stress_days_limit,
             theta_coefficient=theta_coefficient,
+            activation_energy=activation_energy,
             initial_biomass=initial_biomass,
             potential_performance=potential_performance,
         )
@@ -1452,7 +1460,7 @@ def _recolectar_cambios_crop_type(tipo):
     )
     _preguntar_campo(
         cambios,
-        "water_stored"
+        "water_stored",
         "Agua en el suelo de la planta (mm)",
         tipo.water_stored,
         float,
@@ -1599,11 +1607,20 @@ def _recolectar_cambios_crop_type(tipo):
 
     _preguntar_campo(
         cambios,
+        "activation_energy",
+        "Energía de activación de la planta.",
+        tipo.activation_energy,
+        float,
+    )
+
+    _preguntar_campo(
+        cambios,
         "initial_biomass",
         "Biomasa inicial al sembrar (g/m²)",
         tipo.initial_biomass,
         float,
     )
+
     _preguntar_campo(
         cambios,
         "potential_performance",

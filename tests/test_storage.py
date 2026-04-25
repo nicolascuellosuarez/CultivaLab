@@ -15,9 +15,11 @@ def create_valid_crop_type(
     optimal_temp: float,
     minimum_temp: float,
     maximum_temp: float,
+    water_stored: float,
     needed_water: float,
     needed_light: float,
     days_cycle: int,
+    activation_energy: float,
     initial_biomass: float,
     potential_performance: float,
     **kwargs,
@@ -28,11 +30,18 @@ def create_valid_crop_type(
     """
     water_wilting = kwargs.get("water_wilting", 30.0)
     water_opt_low = kwargs.get("water_opt_low", 60.0)
+    water_stored = (
+        kwargs.get(
+            "water_stored",
+            98.0,
+        ),
+    )
     water_opt_high = kwargs.get("water_opt_high", 150.0)
     water_capacity = kwargs.get("water_capacity", 200.0)
     # Asegurar orden correcto
     water_wilting = min(water_wilting, water_opt_low - 1)
     water_opt_low = max(water_opt_low, water_wilting + 1)
+    water_stored = 98.0
     needed_water = max(needed_water, water_opt_low + 1)
     water_opt_high = max(water_opt_high, needed_water + 1)
     water_capacity = max(water_capacity, water_opt_high + 1)
@@ -50,6 +59,7 @@ def create_valid_crop_type(
         temperature_curve_length=kwargs.get("temperature_curve_length", 5.0),
         water_wilting=water_wilting,
         water_opt_low=water_opt_low,
+        water_stored=water_stored,
         needed_water=needed_water,
         water_opt_high=water_opt_high,
         water_capacity=water_capacity,
@@ -68,9 +78,11 @@ def create_valid_crop_type(
         days_cycle=days_cycle,
         photosyntesis_max_rate=kwargs.get("photosyntesis_max_rate", 0.22),
         breathing_base_rate=kwargs.get("breathing_base_rate", 0.05),
+        growth_breathing_coefficient=kwargs.get("growth_breathing_coefficient", 0.11),
         theta=kwargs.get("theta", 1.5),
         consecutive_stress_days_limit=kwargs.get("consecutive_stress_days_limit", 5),
         theta_coefficient=kwargs.get("theta_coefficient", 0.0023),
+        activation_energy=kwargs.get("activation_energy", 50000),
         initial_biomass=initial_biomass,
         potential_performance=potential_performance,
     )
@@ -215,9 +227,11 @@ def test_save_and_get_crops(tmp_path):
         optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
+        water_stored=98.0,
         needed_water=100.0,
         needed_light=12.0,
         days_cycle=360,
+        activation_energy=50000,
         initial_biomass=0.75,
         potential_performance=50.0,
     )
@@ -233,7 +247,6 @@ def test_save_and_get_crops(tmp_path):
         last_sim_date=now,
         conditions=[],
         active=True,
-        water_stored=0.0,
         consecutive_stress_days=0,
         current_phase="Fase Inicial",
     )
@@ -263,9 +276,11 @@ def test_save_crop_updates_existing_instead_of_duplicate(tmp_path):
         optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
+        water_stored=98.0,
         needed_water=100.0,
         needed_light=12.0,
         days_cycle=360,
+        activation_energy=50000,
         initial_biomass=0.75,
         potential_performance=50.0,
     )
@@ -281,7 +296,6 @@ def test_save_crop_updates_existing_instead_of_duplicate(tmp_path):
         last_sim_date=now,
         conditions=[],
         active=True,
-        water_stored=0.0,
         consecutive_stress_days=0,
         current_phase="Fase Inicial",
     )
@@ -296,7 +310,6 @@ def test_save_crop_updates_existing_instead_of_duplicate(tmp_path):
         last_sim_date=now,
         conditions=[],
         active=True,
-        water_stored=0.0,
         consecutive_stress_days=0,
         current_phase="Fase Inicial",
     )
@@ -326,9 +339,11 @@ def test_delete_crop_removes_from_storage(tmp_path):
         optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
+        water_stored=98.0,
         needed_water=100.0,
         needed_light=12.0,
         days_cycle=360,
+        activation_energy=50000,
         initial_biomass=0.75,
         potential_performance=50.0,
     )
@@ -344,7 +359,6 @@ def test_delete_crop_removes_from_storage(tmp_path):
         last_sim_date=now,
         conditions=[],
         active=True,
-        water_stored=0.0,
         consecutive_stress_days=0,
         current_phase="Fase Inicial",
     )
@@ -359,7 +373,6 @@ def test_delete_crop_removes_from_storage(tmp_path):
         last_sim_date=now,
         conditions=[],
         active=True,
-        water_stored=0.0,
         consecutive_stress_days=0,
         current_phase="Fase Inicial",
     )
@@ -393,9 +406,11 @@ def test_get_crop_by_id_works_and_returns_none_if_not_found(tmp_path):
         optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
+        water_stored=98.0,
         needed_water=100.0,
         needed_light=12.0,
         days_cycle=360,
+        activation_energy=50000,
         initial_biomass=0.75,
         potential_performance=50.0,
     )
@@ -411,7 +426,6 @@ def test_get_crop_by_id_works_and_returns_none_if_not_found(tmp_path):
         last_sim_date=now,
         conditions=[],
         active=True,
-        water_stored=0.0,
         consecutive_stress_days=0,
         current_phase="Fase Inicial",
     )
@@ -443,9 +457,11 @@ def test_get_crops_by_user_returns_only_that_user_crops(tmp_path):
         optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
+        water_stored=98.0,
         needed_water=100.0,
         needed_light=12.0,
         days_cycle=360,
+        activation_energy=50000,
         initial_biomass=0.75,
         potential_performance=50.0,
     )
@@ -461,7 +477,6 @@ def test_get_crops_by_user_returns_only_that_user_crops(tmp_path):
         last_sim_date=now,
         conditions=[],
         active=True,
-        water_stored=0.0,
         consecutive_stress_days=0,
         current_phase="Fase Inicial",
     )
@@ -476,7 +491,6 @@ def test_get_crops_by_user_returns_only_that_user_crops(tmp_path):
         last_sim_date=now,
         conditions=[],
         active=True,
-        water_stored=0.0,
         consecutive_stress_days=0,
         current_phase="Fase Inicial",
     )
@@ -505,9 +519,11 @@ def test_get_crops_by_type_returns_only_crops_of_that_type(tmp_path):
         optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
+        water_stored=98.0,
         needed_water=100.0,
         needed_light=12.0,
         days_cycle=360,
+        activation_energy=50000,
         initial_biomass=0.75,
         potential_performance=50.0,
     )
@@ -519,9 +535,11 @@ def test_get_crops_by_type_returns_only_crops_of_that_type(tmp_path):
         optimal_temp=21.0,
         minimum_temp=14.0,
         maximum_temp=28.0,
+        water_stored=98.0,
         needed_water=80.0,
         needed_light=9.0,
         days_cycle=200,
+        activation_energy=50000,
         initial_biomass=0.65,
         potential_performance=45.0,
     )
@@ -537,7 +555,6 @@ def test_get_crops_by_type_returns_only_crops_of_that_type(tmp_path):
         last_sim_date=now,
         conditions=[],
         active=True,
-        water_stored=0.0,
         consecutive_stress_days=0,
         current_phase="Fase Inicial",
     )
@@ -552,7 +569,6 @@ def test_get_crops_by_type_returns_only_crops_of_that_type(tmp_path):
         last_sim_date=now,
         conditions=[],
         active=True,
-        water_stored=0.0,
         consecutive_stress_days=0,
         current_phase="Fase Inicial",
     )
@@ -585,9 +601,11 @@ def test_get_active_crops_only_returns_active_crops(tmp_path):
         optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
+        water_stored=98.0,
         needed_water=100.0,
         needed_light=12.0,
         days_cycle=360,
+        activation_energy=50000,
         initial_biomass=0.75,
         potential_performance=50.0,
     )
@@ -603,7 +621,6 @@ def test_get_active_crops_only_returns_active_crops(tmp_path):
         last_sim_date=now,
         conditions=[],
         active=False,
-        water_stored=0.0,
         consecutive_stress_days=0,
         current_phase="Fase Inicial",
     )
@@ -618,7 +635,6 @@ def test_get_active_crops_only_returns_active_crops(tmp_path):
         last_sim_date=now,
         conditions=[],
         active=True,
-        water_stored=0.0,
         consecutive_stress_days=0,
         current_phase="Fase Inicial",
     )
@@ -633,7 +649,6 @@ def test_get_active_crops_only_returns_active_crops(tmp_path):
         last_sim_date=now,
         conditions=[],
         active=True,
-        water_stored=0.0,
         consecutive_stress_days=0,
         current_phase="Fase Inicial",
     )
@@ -661,9 +676,11 @@ def test_save_and_get_crop_types(tmp_path):
         optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
+        water_stored=98.0,
         needed_water=100.0,
         needed_light=12.0,
         days_cycle=360,
+        activation_energy=50000,
         initial_biomass=0.75,
         potential_performance=50.0,
     )
@@ -690,9 +707,11 @@ def test_save_crop_type_updates_instead_of_duplicate(tmp_path):
         optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
+        water_stored=98.0,
         needed_water=100.0,
         needed_light=12.0,
         days_cycle=360,
+        activation_energy=50000,
         initial_biomass=0.75,
         potential_performance=50.0,
     )
@@ -704,9 +723,11 @@ def test_save_crop_type_updates_instead_of_duplicate(tmp_path):
         optimal_temp=28.0,
         minimum_temp=23.0,
         maximum_temp=33.0,
+        water_stored=98.0,
         needed_water=100.0,
         needed_light=12.0,
         days_cycle=360,
+        activation_energy=50000,
         initial_biomass=0.75,
         potential_performance=50.0,
     )
@@ -732,9 +753,11 @@ def test_delete_crop_type_removes_from_storage(tmp_path):
         optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
+        water_stored=98.0,
         needed_water=100.0,
         needed_light=12.0,
         days_cycle=360,
+        activation_energy=50000,
         initial_biomass=0.75,
         potential_performance=50.0,
     )
@@ -746,9 +769,11 @@ def test_delete_crop_type_removes_from_storage(tmp_path):
         optimal_temp=21.0,
         minimum_temp=14.0,
         maximum_temp=28.0,
+        water_stored=98.0,
         needed_water=80.0,
         needed_light=9.0,
         days_cycle=200,
+        activation_energy=50000,
         initial_biomass=0.65,
         potential_performance=45.0,
     )
@@ -779,9 +804,11 @@ def test_get_crop_type_by_id_works_and_returns_none_if_not_found(tmp_path):
         optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
+        water_stored=98.0,
         needed_water=100.0,
         needed_light=12.0,
         days_cycle=360,
+        activation_energy=50000,
         initial_biomass=0.75,
         potential_performance=50.0,
     )
@@ -807,9 +834,11 @@ def test_get_crop_type_by_name_works_and_returns_none_if_not_found(tmp_path):
         optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
+        water_stored=98.0,
         needed_water=100.0,
         needed_light=12.0,
         days_cycle=360,
+        activation_energy=50000,
         initial_biomass=0.75,
         potential_performance=50.0,
     )
@@ -844,9 +873,11 @@ def test_storage_maintains_data_integrity_after_multiple_ops(tmp_path):
         optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
+        water_stored=98.0,
         needed_water=100.0,
         needed_light=12.0,
         days_cycle=360,
+        activation_energy=50000,
         initial_biomass=0.75,
         potential_performance=50.0,
     )

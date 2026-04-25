@@ -145,27 +145,51 @@ class CropService:
             crop_type.photosyntesis_max_rate * biomass * logistic_term * f_T * f_W * f_L
         )
 
-    def _calculate_maintenance_respiration(
-        self, crop_type: CropType, biomass: float, temperature: float
+    def _renew_manteinance_base_rate(self, crop_type: CropType, biomass: float) -> None:
+        m_o = crop_type.breathing_base_rate
+        K = crop_type.potential_performance
+        crop_type.breathing_base_rate = m_o * (1 / (1 + (biomass / K)))
+
+    def _renew_production_base_rate(self, crop_type: CropType, biomass: float) -> None:
+        c_o = crop_type.growth_breathing_coefficient
+        K = crop_type.potential_performance
+        crop_type.growth_breathing_coefficient = c_o * (1 - (biomass / K))
+
+    def _calculate_production_respiration_part(
+        self, crop_type: CropType, photosynthesis: float
     ) -> float:
         """
         Maintenance respiration - depends on biomass and temperature only.
         """
-        h_T = self._calculate_breathing_thermal_factor(crop_type, temperature)
-        return crop_type.breathing_base_rate * biomass * h_T
+        return crop_type.growth_breathing_coefficient * photosynthesis
 
-    def _calculate_growth_respiration_coefficient(
-        self, crop_type: CropType, biomass: float
+    def _calculate_manteinance_respiration_part(
+        self, crop_type: CropType, biomass: float, temperature: float
+    ) -> float:
+        temperature_in_kelvin = 273.15 + temperature
+        optimal_temperature_in_kelvin = 273.15 + crop_type.optimal_temp
+        E_a = crop_type.activation_energy
+
+        manteinance_respiration_part = (
+            crop_type.breathing_base_rate
+            * biomass
+            * math.exp(
+                (E_a / 8.314)
+                * ((1 / optimal_temperature_in_kelvin) - (1 / temperature_in_kelvin))
+            )
+        )
+        return manteinance_respiration_part
+
+    def _calculate_respiration(
+        self, production_respiration_part: float, manteinance_respiration_part: float
     ) -> float:
         """
-        Growth respiration coefficient (dynamic).
+        Growth respiration coefficient.
         Young plants have lower coefficient (more efficient).
         Mature plants have higher coefficient (more structural cost).
         """
-        K = crop_type.potential_performance
-        ratio = biomass / K
-        # Rango de 0.15 (planta joven) a 0.45 (planta madura)
-        return 0.15 + 0.3 * ratio
+        respiration = production_respiration_part + manteinance_respiration_part
+        return respiration
 
     def _calculate_net_growth(
         self,
@@ -178,12 +202,17 @@ class CropService:
         Net growth after growth respiration and maintenance respiration.
         """
 
-        g_R = self._calculate_growth_respiration_coefficient(crop_type, biomass)
-        growth = photosynthesis * (1.0 - g_R)  # FIX: sin logistic_term aquí
-        maintenance = self._calculate_maintenance_respiration(
+        production_respiration_part = self._calculate_production_respiration_part(
+            crop_type, biomass
+        )
+        manteinance_respiration_part = self._calculate_manteinance_respiration_part(
             crop_type, biomass, temperature
         )
-        return growth - maintenance
+        respiration = self._calculate_respiration(
+            production_respiration_part, manteinance_respiration_part
+        )
+
+        return photosynthesis - respiration
 
     def _calculate_evapotranspiration_reference(
         self, crop_type: CropType, temperature: float
@@ -295,7 +324,7 @@ class CropService:
         crop_type = self._get_crop_type(crop.crop_type_id)
 
         if not crop.active:
-            raise InvalidInputError("The crop is already harvested or dead.")
+            raise InvalidInputError("El cultivo ya fue cosechado o está muerto.")
 
         # Environmental factors
         f_T = self._calculate_production_thermal_factor(crop_type, temperature)
@@ -309,7 +338,7 @@ class CropService:
             else crop_type.initial_biomass
         )
 
-        # Photosynthesis (logistic term se aplica aquí y solo aquí)
+        # Photosynthesis
         logistic_term = self._calculate_logistic_growth_term(crop_type, current_biomass)
         photosynthesis = self._calculate_photosynthesis(
             crop_type, current_biomass, logistic_term, f_T, f_W, f_L
@@ -1122,6 +1151,7 @@ class CropTypeService:
         temperature_curve_length: float,
         water_wilting: float,
         water_opt_low: float,
+        water_stored: float,
         needed_water: float,
         water_opt_high: float,
         water_capacity: float,
@@ -1138,9 +1168,11 @@ class CropTypeService:
         days_cycle: int,
         photosyntesis_max_rate: float,
         breathing_base_rate: float,
+        growth_breathing_coefficient: float,
         theta: float,
         consecutive_stress_days_limit: int,
         theta_coefficient: float,
+        activation_energy: float,
         initial_biomass: float,
         potential_performance: float,
     ) -> CropType:
@@ -1159,6 +1191,7 @@ class CropTypeService:
             temperature_curve_length=temperature_curve_length,
             water_wilting=water_wilting,
             water_opt_low=water_opt_low,
+            water_stored=water_stored,
             needed_water=needed_water,
             water_opt_high=water_opt_high,
             water_capacity=water_capacity,
@@ -1175,9 +1208,11 @@ class CropTypeService:
             days_cycle=days_cycle,
             photosyntesis_max_rate=photosyntesis_max_rate,
             breathing_base_rate=breathing_base_rate,
+            growth_breathing_coefficient=growth_breathing_coefficient,
             theta=theta,
             consecutive_stress_days_limit=consecutive_stress_days_limit,
             theta_coefficient=theta_coefficient,
+            activation_energy=activation_energy,
             initial_biomass=initial_biomass,
             potential_performance=potential_performance,
         )
@@ -1196,6 +1231,7 @@ class CropTypeService:
         temperature_curve_length: float,
         water_wilting: float,
         water_opt_low: float,
+        water_stored: float,
         needed_water: float,
         water_opt_high: float,
         water_capacity: float,
@@ -1212,9 +1248,11 @@ class CropTypeService:
         days_cycle: int,
         photosyntesis_max_rate: float,
         breathing_base_rate: float,
+        growth_breathing_coefficient: float,
         theta: float,
         consecutive_stress_days_limit: int,
         theta_coefficient: float,
+        activation_energy: float,
         initial_biomass: float,
         potential_performance: float,
     ) -> CropType:
@@ -1251,6 +1289,7 @@ class CropTypeService:
             temperature_curve_length=temperature_curve_length,
             water_wilting=water_wilting,
             water_opt_low=water_opt_low,
+            water_stored=water_stored,
             needed_water=needed_water,
             water_opt_high=water_opt_high,
             water_capacity=water_capacity,
@@ -1267,9 +1306,11 @@ class CropTypeService:
             days_cycle=days_cycle,
             photosyntesis_max_rate=photosyntesis_max_rate,
             breathing_base_rate=breathing_base_rate,
+            growth_breathing_coefficient=growth_breathing_coefficient,
             theta=theta,
             consecutive_stress_days_limit=consecutive_stress_days_limit,
             theta_coefficient=theta_coefficient,
+            activation_energy=activation_energy,
             initial_biomass=initial_biomass,
             potential_performance=potential_performance,
         )
@@ -1544,6 +1585,7 @@ class CropTypeService:
             "temperature_curve_length": self._validate_positive_number_field,
             "water_wilting": self._validate_positive_number_field,
             "water_opt_low": self._validate_positive_number_field,
+            "water_stored": self._validate_positive_number_field,
             "needed_water": self._validate_positive_number_field,
             "water_opt_high": self._validate_positive_number_field,
             "water_capacity": self._validate_positive_number_field,
@@ -1560,9 +1602,11 @@ class CropTypeService:
             "days_cycle": self._validate_positive_integer_field,
             "photosyntesis_max_rate": self._validate_positive_number_field,
             "breathing_base_rate": self._validate_positive_number_field,
+            "growth_breathing_coefficient": self._validate_positive_number_field,
             "theta": self._validate_positive_number_field,
             "consecutive_stress_days_limit": self._validate_positive_integer_field,
             "theta_coefficient": self._validate_positive_number_field,
+            "activation_energy": self._validate_positive_integer_field,
             "initial_biomass": self._validate_positive_number_field,
             "potential_performance": self._validate_positive_number_field,
         }
