@@ -276,6 +276,9 @@ def crear_cultivo():
     fecha_str = questionary.text(
         "Fecha de inicio (YYYY-MM-DD) o Enter para hoy:", style=custom_style
     ).ask()
+    agua_almacenada = questionary.text(
+        "Agua almacenada del cultivo (o enter para 75ml):", style=custom_style
+    ).ask()
     if fecha_str:
         try:
             start_date = datetime.strptime(fecha_str, "%Y-%m-%d")
@@ -292,7 +295,7 @@ def crear_cultivo():
 
     try:
         crop = crop_service.create_crop(
-            nombre, crop_type.id, current_user.id, start_date
+            nombre, crop_type.id, agua_almacenada, current_user.id, start_date
         )
         console.print(
             Panel(
@@ -1071,15 +1074,6 @@ def crear_crop_type():
             or "80"
         )
 
-        water_stored = float(
-            questionary.text(
-                "Agua almacenada en el suelo de la planta (mm):\n"
-                "  De preferencia para crecimiento, inicializarla en un rango óptimo.\n"
-                "  Ej: Banano 95 mm, Manzana 105mm",
-                style=custom_style,
-            ).ask()
-        )
-
         needed_water = float(
             questionary.text(
                 "Agua necesaria para crecimiento óptimo (mm/día):\n"
@@ -1316,7 +1310,6 @@ def crear_crop_type():
             temperature_curve_length=temperature_curve_length,
             water_wilting=water_wilting,
             water_opt_low=water_opt_low,
-            water_stored=water_stored,
             needed_water=needed_water,
             water_opt_high=water_opt_high,
             water_capacity=water_capacity,
@@ -1456,13 +1449,6 @@ def _recolectar_cambios_crop_type(tipo):
         "water_opt_low",
         "Umbral inferior de agua óptima (mm)",
         tipo.water_opt_low,
-        float,
-    )
-    _preguntar_campo(
-        cambios,
-        "water_stored",
-        "Agua en el suelo de la planta (mm)",
-        tipo.water_stored,
         float,
     )
     _preguntar_campo(
