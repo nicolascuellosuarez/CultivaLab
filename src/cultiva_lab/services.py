@@ -275,7 +275,7 @@ class CropService:
         Updates soil water balance and calculates drainage.
         Returns (new_water_stored, drainage).
         """
-        water_temp = crop_type.water_stored + rain + irrigation - evapotranspiration
+        water_temp = crop.water_stored + rain + irrigation - evapotranspiration
         drainage = max(0.0, water_temp - crop_type.water_capacity)
         new_water_stored = min(water_temp, crop_type.water_capacity)
         return new_water_stored, drainage
@@ -302,7 +302,7 @@ class CropService:
 
         if crop.consecutive_stress_days >= crop_type.consecutive_stress_days_limit:
             return True
-        if water_stored <= 0 and crop.consecutive_stress_days > 3:
+        if crop.water_stored <= 0 and crop.consecutive_stress_days > 3:
             return True
         return False
 
@@ -328,7 +328,7 @@ class CropService:
 
         # Environmental factors
         f_T = self._calculate_production_thermal_factor(crop_type, temperature)
-        f_W = self._calculate_water_factor_production(crop_type, crop_type.water_stored)
+        f_W = self._calculate_water_factor_production(crop_type, crop.water_stored)
         f_L = self._calculate_light_production_factor(crop_type, sun_hours)
 
         # Current biomass
@@ -364,7 +364,7 @@ class CropService:
 
         # Mortality
         if self._check_mortality(
-            crop, crop_type, f_T, f_W, f_L, temperature, crop_type.water_stored
+            crop, crop_type, f_T, f_W, f_L, temperature, crop.water_stored
         ):
             crop.active = False
             self.storage.save_crop(crop)
@@ -381,7 +381,7 @@ class CropService:
 
         crop.conditions.append(new_condition)
         crop.last_sim_date += timedelta(days=1)
-        crop_type.water_stored = new_water_stored
+        crop.water_stored = new_water_stored
 
         if len(crop.conditions) >= crop_type.days_cycle:
             crop.active = False
@@ -462,7 +462,12 @@ class CropService:
         return crop_type
 
     def create_crop(
-        self, name: str, crop_type_id: str, user_id: str, start_date: datetime
+        self,
+        name: str,
+        crop_type_id: str,
+        water_stored: float,
+        user_id: str,
+        start_date: datetime,
     ) -> Crop:
         """
         Method created to allow a user to make new crops.
@@ -487,6 +492,7 @@ class CropService:
             user_id=user_id,
             crop_type_id=crop_type_id,
             start_date=start_date,
+            water_stored=water_stored,
             last_sim_date=start_date,
             conditions=[],
             active=True,
@@ -1151,7 +1157,6 @@ class CropTypeService:
         temperature_curve_length: float,
         water_wilting: float,
         water_opt_low: float,
-        water_stored: float,
         needed_water: float,
         water_opt_high: float,
         water_capacity: float,
@@ -1191,7 +1196,6 @@ class CropTypeService:
             temperature_curve_length=temperature_curve_length,
             water_wilting=water_wilting,
             water_opt_low=water_opt_low,
-            water_stored=water_stored,
             needed_water=needed_water,
             water_opt_high=water_opt_high,
             water_capacity=water_capacity,
@@ -1231,7 +1235,6 @@ class CropTypeService:
         temperature_curve_length: float,
         water_wilting: float,
         water_opt_low: float,
-        water_stored: float,
         needed_water: float,
         water_opt_high: float,
         water_capacity: float,
@@ -1289,7 +1292,6 @@ class CropTypeService:
             temperature_curve_length=temperature_curve_length,
             water_wilting=water_wilting,
             water_opt_low=water_opt_low,
-            water_stored=water_stored,
             needed_water=needed_water,
             water_opt_high=water_opt_high,
             water_capacity=water_capacity,

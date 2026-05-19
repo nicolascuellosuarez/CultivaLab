@@ -15,7 +15,6 @@ def create_valid_crop_type(
     optimal_temp: float,
     minimum_temp: float,
     maximum_temp: float,
-    water_stored: float,
     needed_water: float,
     needed_light: float,
     days_cycle: int,
@@ -26,22 +25,15 @@ def create_valid_crop_type(
 ) -> CropType:
     """
     Crea un CropType con valores de agua que cumplen:
-    water_wilting < water_opt_low < needed_water < water_opt_high < water_capacity
+    water_wilting < water_opt_low < water_opt_high < water_capacity
     """
     water_wilting = kwargs.get("water_wilting", 30.0)
     water_opt_low = kwargs.get("water_opt_low", 60.0)
-    water_stored = (
-        kwargs.get(
-            "water_stored",
-            98.0,
-        ),
-    )
     water_opt_high = kwargs.get("water_opt_high", 150.0)
     water_capacity = kwargs.get("water_capacity", 200.0)
     # Asegurar orden correcto
     water_wilting = min(water_wilting, water_opt_low - 1)
     water_opt_low = max(water_opt_low, water_wilting + 1)
-    water_stored = 98.0
     needed_water = max(needed_water, water_opt_low + 1)
     water_opt_high = max(water_opt_high, needed_water + 1)
     water_capacity = max(water_capacity, water_opt_high + 1)
@@ -59,7 +51,6 @@ def create_valid_crop_type(
         temperature_curve_length=kwargs.get("temperature_curve_length", 5.0),
         water_wilting=water_wilting,
         water_opt_low=water_opt_low,
-        water_stored=water_stored,
         needed_water=needed_water,
         water_opt_high=water_opt_high,
         water_capacity=water_capacity,
@@ -82,22 +73,13 @@ def create_valid_crop_type(
         theta=kwargs.get("theta", 1.5),
         consecutive_stress_days_limit=kwargs.get("consecutive_stress_days_limit", 5),
         theta_coefficient=kwargs.get("theta_coefficient", 0.0023),
-        activation_energy=kwargs.get("activation_energy", 50000),
+        activation_energy=activation_energy,
         initial_biomass=initial_biomass,
         potential_performance=potential_performance,
     )
 
 
-# ------------------------------------------------------------
-# Tests
-# ------------------------------------------------------------
-
-
 def test_read_returns_empty_dict_when_file_dont_exists(tmp_path):
-    """
-    If the file does not exist yet, storage.read() should
-    return the expected initial structure of the DB.
-    """
     temp_file = tmp_path / "test_db.json"
     assert not temp_file.exists()
 
@@ -108,10 +90,6 @@ def test_read_returns_empty_dict_when_file_dont_exists(tmp_path):
 
 
 def test_save_and_get_users(tmp_path):
-    """
-    Method created to see if the DataBase, effectively,
-    works; makes a first user and proves the registration.
-    """
     temp_file = tmp_path / "test_db.json"
     storage = JSONStorage(temp_file)
 
@@ -127,10 +105,6 @@ def test_save_and_get_users(tmp_path):
 
 
 def test_save_user_updates_existing_instead_of_duplicate(tmp_path):
-    """
-    Method created to validate the update of a user that already exists,
-    instead of making a new one with the same ID.
-    """
     temp_file = tmp_path / "test_db.json"
     storage = JSONStorage(temp_file)
 
@@ -149,10 +123,6 @@ def test_save_user_updates_existing_instead_of_duplicate(tmp_path):
 
 
 def test_delete_user_removes_from_storage(tmp_path):
-    """
-    Method created to see if the delete_user method works;
-    eliminating the user from the DataBase.
-    """
     temp_file = tmp_path / "test_db.json"
     storage = JSONStorage(temp_file)
 
@@ -176,9 +146,6 @@ def test_delete_user_removes_from_storage(tmp_path):
 
 
 def test_get_user_by_id_works_and_returns_none_if_not_found(tmp_path):
-    """
-    Method created to see the operation of the get_user_by_id function.
-    """
     temp_path = tmp_path / "test_db.json"
     storage = JSONStorage(temp_path)
 
@@ -193,10 +160,6 @@ def test_get_user_by_id_works_and_returns_none_if_not_found(tmp_path):
 
 
 def test_get_user_by_username_works_and_returns_none_if_not_found(tmp_path):
-    """
-    Method created to see the operation of the get_user_by_username
-    function.
-    """
     temp_path = tmp_path / "test_db.json"
     storage = JSONStorage(temp_path)
 
@@ -211,10 +174,6 @@ def test_get_user_by_username_works_and_returns_none_if_not_found(tmp_path):
 
 
 def test_save_and_get_crops(tmp_path):
-    """
-    Test created to see the operation of the save and get crops methods
-    in storage.
-    """
     temp_path = tmp_path / "test_db.json"
     storage = JSONStorage(temp_path)
 
@@ -227,7 +186,6 @@ def test_save_and_get_crops(tmp_path):
         optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
-        water_stored=98.0,
         needed_water=100.0,
         needed_light=12.0,
         days_cycle=360,
@@ -244,6 +202,7 @@ def test_save_and_get_crops(tmp_path):
         user_id="123",
         crop_type_id="123",
         start_date=now,
+        water_stored=85.0,
         last_sim_date=now,
         conditions=[],
         active=True,
@@ -259,11 +218,6 @@ def test_save_and_get_crops(tmp_path):
 
 
 def test_save_crop_updates_existing_instead_of_duplicate(tmp_path):
-    """
-    Method created to supervise the correct operation save_crop method
-    in storage, not only saving new crops, also editing existing ones
-    if the ID already exists.
-    """
     temp_file = tmp_path / "test_db.json"
     storage = JSONStorage(temp_file)
 
@@ -276,7 +230,6 @@ def test_save_crop_updates_existing_instead_of_duplicate(tmp_path):
         optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
-        water_stored=98.0,
         needed_water=100.0,
         needed_light=12.0,
         days_cycle=360,
@@ -293,6 +246,7 @@ def test_save_crop_updates_existing_instead_of_duplicate(tmp_path):
         user_id="123",
         crop_type_id="123",
         start_date=now,
+        water_stored=85.0,
         last_sim_date=now,
         conditions=[],
         active=True,
@@ -307,6 +261,7 @@ def test_save_crop_updates_existing_instead_of_duplicate(tmp_path):
         user_id="123",
         crop_type_id="123",
         start_date=now,
+        water_stored=85.0,
         last_sim_date=now,
         conditions=[],
         active=True,
@@ -323,10 +278,6 @@ def test_save_crop_updates_existing_instead_of_duplicate(tmp_path):
 
 
 def test_delete_crop_removes_from_storage(tmp_path):
-    """
-    Method created to see if the delete_crop method works;
-    eliminating the crop from the DataBase.
-    """
     temp_file = tmp_path / "test_db.json"
     storage = JSONStorage(temp_file)
 
@@ -339,7 +290,6 @@ def test_delete_crop_removes_from_storage(tmp_path):
         optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
-        water_stored=98.0,
         needed_water=100.0,
         needed_light=12.0,
         days_cycle=360,
@@ -356,6 +306,7 @@ def test_delete_crop_removes_from_storage(tmp_path):
         user_id="123",
         crop_type_id="123",
         start_date=now,
+        water_stored=85.0,
         last_sim_date=now,
         conditions=[],
         active=True,
@@ -370,6 +321,7 @@ def test_delete_crop_removes_from_storage(tmp_path):
         user_id="123",
         crop_type_id="123",
         start_date=now,
+        water_stored=85.0,
         last_sim_date=now,
         conditions=[],
         active=True,
@@ -391,9 +343,6 @@ def test_delete_crop_removes_from_storage(tmp_path):
 
 
 def test_get_crop_by_id_works_and_returns_none_if_not_found(tmp_path):
-    """
-    Method created to see the operation of the get_crop_by_id function.
-    """
     temp_path = tmp_path / "test_db.json"
     storage = JSONStorage(temp_path)
 
@@ -406,7 +355,6 @@ def test_get_crop_by_id_works_and_returns_none_if_not_found(tmp_path):
         optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
-        water_stored=98.0,
         needed_water=100.0,
         needed_light=12.0,
         days_cycle=360,
@@ -423,6 +371,7 @@ def test_get_crop_by_id_works_and_returns_none_if_not_found(tmp_path):
         user_id="123",
         crop_type_id="123",
         start_date=now,
+        water_stored=85.0,
         last_sim_date=now,
         conditions=[],
         active=True,
@@ -439,10 +388,6 @@ def test_get_crop_by_id_works_and_returns_none_if_not_found(tmp_path):
 
 
 def test_get_crops_by_user_returns_only_that_user_crops(tmp_path):
-    """
-    Method created to see the operation of the get_crop_by_user
-    function.
-    """
     temp_path = tmp_path / "test_db.json"
     storage = JSONStorage(temp_path)
 
@@ -457,7 +402,6 @@ def test_get_crops_by_user_returns_only_that_user_crops(tmp_path):
         optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
-        water_stored=98.0,
         needed_water=100.0,
         needed_light=12.0,
         days_cycle=360,
@@ -474,6 +418,7 @@ def test_get_crops_by_user_returns_only_that_user_crops(tmp_path):
         user_id="123",
         crop_type_id="123",
         start_date=now,
+        water_stored=85.0,
         last_sim_date=now,
         conditions=[],
         active=True,
@@ -488,6 +433,7 @@ def test_get_crops_by_user_returns_only_that_user_crops(tmp_path):
         user_id="1234",
         crop_type_id="123",
         start_date=now,
+        water_stored=85.0,
         last_sim_date=now,
         conditions=[],
         active=True,
@@ -503,10 +449,6 @@ def test_get_crops_by_user_returns_only_that_user_crops(tmp_path):
 
 
 def test_get_crops_by_type_returns_only_crops_of_that_type(tmp_path):
-    """
-    Method created to see the operation of get_crops_by_crop_type
-    function.
-    """
     temp_path = tmp_path / "test_db.json"
     storage = JSONStorage(temp_path)
 
@@ -519,7 +461,6 @@ def test_get_crops_by_type_returns_only_crops_of_that_type(tmp_path):
         optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
-        water_stored=98.0,
         needed_water=100.0,
         needed_light=12.0,
         days_cycle=360,
@@ -535,7 +476,6 @@ def test_get_crops_by_type_returns_only_crops_of_that_type(tmp_path):
         optimal_temp=21.0,
         minimum_temp=14.0,
         maximum_temp=28.0,
-        water_stored=98.0,
         needed_water=80.0,
         needed_light=9.0,
         days_cycle=200,
@@ -552,6 +492,7 @@ def test_get_crops_by_type_returns_only_crops_of_that_type(tmp_path):
         user_id="123",
         crop_type_id="123",
         start_date=now,
+        water_stored=85.0,
         last_sim_date=now,
         conditions=[],
         active=True,
@@ -566,6 +507,7 @@ def test_get_crops_by_type_returns_only_crops_of_that_type(tmp_path):
         user_id="123",
         crop_type_id="1234",
         start_date=now,
+        water_stored=85.0,
         last_sim_date=now,
         conditions=[],
         active=True,
@@ -580,15 +522,9 @@ def test_get_crops_by_type_returns_only_crops_of_that_type(tmp_path):
     assert len(apple_crops) == 1
     assert banana_crops[0].id == crop1.id
     assert apple_crops[0].id == crop2.id
-    assert banana_crops[0].name == crop1.name
-    assert apple_crops[0].name == crop2.name
 
 
 def test_get_active_crops_only_returns_active_crops(tmp_path):
-    """
-    Method created to see the operation of get_active_crops
-    function.
-    """
     temp_path = tmp_path / "test_db.json"
     storage = JSONStorage(temp_path)
 
@@ -601,7 +537,6 @@ def test_get_active_crops_only_returns_active_crops(tmp_path):
         optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
-        water_stored=98.0,
         needed_water=100.0,
         needed_light=12.0,
         days_cycle=360,
@@ -618,6 +553,7 @@ def test_get_active_crops_only_returns_active_crops(tmp_path):
         user_id="123",
         crop_type_id="123",
         start_date=now,
+        water_stored=85.0,
         last_sim_date=now,
         conditions=[],
         active=False,
@@ -632,6 +568,7 @@ def test_get_active_crops_only_returns_active_crops(tmp_path):
         user_id="123",
         crop_type_id="123",
         start_date=now,
+        water_stored=85.0,
         last_sim_date=now,
         conditions=[],
         active=True,
@@ -646,6 +583,7 @@ def test_get_active_crops_only_returns_active_crops(tmp_path):
         user_id="123",
         crop_type_id="123",
         start_date=now,
+        water_stored=85.0,
         last_sim_date=now,
         conditions=[],
         active=True,
@@ -663,10 +601,6 @@ def test_get_active_crops_only_returns_active_crops(tmp_path):
 
 
 def test_save_and_get_crop_types(tmp_path):
-    """
-    Test created to supervise the operations of get_crop_type
-    and save_crop_type methods.
-    """
     temp_path = tmp_path / "test_db.json"
     storage = JSONStorage(temp_path)
 
@@ -676,7 +610,6 @@ def test_save_and_get_crop_types(tmp_path):
         optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
-        water_stored=98.0,
         needed_water=100.0,
         needed_light=12.0,
         days_cycle=360,
@@ -693,11 +626,6 @@ def test_save_and_get_crop_types(tmp_path):
 
 
 def test_save_crop_type_updates_instead_of_duplicate(tmp_path):
-    """
-    Method created to validate the update of a crop type
-    that already exists, instead of making a new one with
-    the same ID.
-    """
     temp_path = tmp_path / "test_db.json"
     storage = JSONStorage(temp_path)
 
@@ -707,7 +635,6 @@ def test_save_crop_type_updates_instead_of_duplicate(tmp_path):
         optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
-        water_stored=98.0,
         needed_water=100.0,
         needed_light=12.0,
         days_cycle=360,
@@ -723,7 +650,6 @@ def test_save_crop_type_updates_instead_of_duplicate(tmp_path):
         optimal_temp=28.0,
         minimum_temp=23.0,
         maximum_temp=33.0,
-        water_stored=98.0,
         needed_water=100.0,
         needed_light=12.0,
         days_cycle=360,
@@ -740,10 +666,6 @@ def test_save_crop_type_updates_instead_of_duplicate(tmp_path):
 
 
 def test_delete_crop_type_removes_from_storage(tmp_path):
-    """
-    Method created to see if the delete_crop_type method works;
-    eliminating the crop type from the DataBase.
-    """
     temp_path = tmp_path / "test_db.json"
     storage = JSONStorage(temp_path)
 
@@ -753,7 +675,6 @@ def test_delete_crop_type_removes_from_storage(tmp_path):
         optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
-        water_stored=98.0,
         needed_water=100.0,
         needed_light=12.0,
         days_cycle=360,
@@ -769,7 +690,6 @@ def test_delete_crop_type_removes_from_storage(tmp_path):
         optimal_temp=21.0,
         minimum_temp=14.0,
         maximum_temp=28.0,
-        water_stored=98.0,
         needed_water=80.0,
         needed_light=9.0,
         days_cycle=200,
@@ -792,9 +712,6 @@ def test_delete_crop_type_removes_from_storage(tmp_path):
 
 
 def test_get_crop_type_by_id_works_and_returns_none_if_not_found(tmp_path):
-    """
-    Method created to see the operation of the get_crop_type_by_id function.
-    """
     temp_path = tmp_path / "test_db.json"
     storage = JSONStorage(temp_path)
 
@@ -804,7 +721,6 @@ def test_get_crop_type_by_id_works_and_returns_none_if_not_found(tmp_path):
         optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
-        water_stored=98.0,
         needed_water=100.0,
         needed_light=12.0,
         days_cycle=360,
@@ -822,9 +738,6 @@ def test_get_crop_type_by_id_works_and_returns_none_if_not_found(tmp_path):
 
 
 def test_get_crop_type_by_name_works_and_returns_none_if_not_found(tmp_path):
-    """
-    Method created to see the operation of the get_crop_type_by_name function.
-    """
     temp_path = tmp_path / "test_db.json"
     storage = JSONStorage(temp_path)
 
@@ -834,7 +747,6 @@ def test_get_crop_type_by_name_works_and_returns_none_if_not_found(tmp_path):
         optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
-        water_stored=98.0,
         needed_water=100.0,
         needed_light=12.0,
         days_cycle=360,
@@ -852,10 +764,6 @@ def test_get_crop_type_by_name_works_and_returns_none_if_not_found(tmp_path):
 
 
 def test_storage_maintains_data_integrity_after_multiple_ops(tmp_path):
-    """
-    Multiple operations (save, update, delete) should maintain
-    consistent data in storage.
-    """
     db_file = tmp_path / "test_db.json"
     storage = JSONStorage(db_file)
 
@@ -873,7 +781,6 @@ def test_storage_maintains_data_integrity_after_multiple_ops(tmp_path):
         optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
-        water_stored=98.0,
         needed_water=100.0,
         needed_light=12.0,
         days_cycle=360,

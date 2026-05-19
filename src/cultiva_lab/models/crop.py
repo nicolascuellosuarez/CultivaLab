@@ -15,6 +15,7 @@ class Crop:
     user_id: str
     crop_type_id: str
     start_date: datetime
+    water_stored: float
     last_sim_date: datetime
     conditions: list[DailyCondition]
     # List that will be filled
@@ -35,6 +36,7 @@ class Crop:
         self._validate_crop_type_id()
         self._validate_dates()
         self._validate_conditions()
+        self._validate_water_stored()
         self._validate_consecutive_stress_days()
         self._validate_current_phase()
         self._validate_active()
@@ -84,6 +86,20 @@ class Crop:
 
         if not isinstance(self.conditions, list):
             raise InvalidInputError("Las condiciones deben estár en una lista.")
+
+    def _validate_water_stored(self):
+        """
+        Validates if water stored data is in the right type.
+        """
+
+        if not isinstance(self.water_stored, float):
+            raise InvalidInputError(
+                "El agua almacenada en el suelo no está en un tipo válido."
+            )
+        if self.water_stored < 0:
+            raise InvalidInputError(
+                "El agua almacenada no puede tener valores negativos."
+            )
 
     def _validate_consecutive_stress_days(self):
         """

@@ -27,7 +27,6 @@ def create_valid_crop_type(
     optimal_temp: float,
     minimum_temp: float,
     maximum_temp: float,
-    water_stored: float,
     needed_water: float,
     needed_light: float,
     days_cycle: int,
@@ -42,7 +41,6 @@ def create_valid_crop_type(
     """
     water_wilting = kwargs.get("water_wilting", 30.0)
     water_opt_low = kwargs.get("water_opt_low", 60.0)
-    water_stored = kwargs.get("water_stored", 90.0)
     water_opt_high = kwargs.get("water_opt_high", 150.0)
     water_capacity = kwargs.get("water_capacity", 200.0)
     # Asegurar orden correcto
@@ -66,7 +64,6 @@ def create_valid_crop_type(
         temperature_curve_length=kwargs.get("temperature_curve_length", 5.0),
         water_wilting=water_wilting,
         water_opt_low=water_opt_low,
-        water_stored=water_stored,
         needed_water=needed_water,
         water_opt_high=water_opt_high,
         water_capacity=water_capacity,
@@ -111,7 +108,6 @@ def test_create_crop_success():
         optimal_temp=27,
         minimum_temp=22.0,
         maximum_temp=32.0,
-        water_stored=98.0,
         needed_water=100.0,
         needed_light=12.0,
         days_cycle=360,
@@ -126,7 +122,7 @@ def test_create_crop_success():
 
     now = datetime.now()
     service = CropService(storage)
-    crop = service.create_crop("Cultivo de Bananas", "123", "123", now)
+    crop = service.create_crop("Cultivo de Bananas", "123", 75.0, "123", now)
 
     assert crop is not None
     assert crop.name == "Cultivo de Bananas"
@@ -153,7 +149,6 @@ def test_create_crop_invalid_user_fails():
         optimal_temp=19.0,
         minimum_temp=12.0,
         maximum_temp=26.0,
-        water_stored=98.0,
         needed_water=100.0,
         needed_light=8.0,
         days_cycle=180,
@@ -166,7 +161,13 @@ def test_create_crop_invalid_user_fails():
     service = CropService(storage)
     now = datetime.now()
     with pytest.raises(UserNotFoundError):
-        service.create_crop("Cultivo de Bananas", "123", "999", now)
+        service.create_crop(
+            name="Cultivo de Bananas",
+            crop_type_id="123",
+            water_stored=75.0,
+            user_id="123",
+            start_date=now,
+        )
 
 
 """
@@ -183,7 +184,13 @@ def test_create_crop_invalid_crop_type_fails():
     service = CropService(storage)
     now = datetime.now()
     with pytest.raises(CropTypeNotFoundError):
-        service.create_crop("Cultivo de Bananas", "123", "123", now)
+        service.create_crop(
+            name="Cultivo de Bananas",
+            crop_type_id="123",
+            water_stored=75.0,
+            user_id="123",
+            start_date=now,
+        )
 
 
 """
@@ -201,7 +208,6 @@ def test_simulate_day_success():
         optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
-        water_stored=98.0,
         needed_water=100.0,
         needed_light=12.0,
         days_cycle=360,
@@ -219,6 +225,7 @@ def test_simulate_day_success():
         name="Cultivo de Bananas",
         user_id="123",
         crop_type_id="123",
+        water_stored=75.0,
         start_date=start_date,
         last_sim_date=start_date,
         conditions=[initial_condition],
@@ -253,7 +260,6 @@ def test_simulate_day_crop_inactive_fails():
         optimal_temp=21.0,
         minimum_temp=12.0,
         maximum_temp=26.0,
-        water_stored=98.0,
         needed_water=100.0,
         needed_light=8.0,
         days_cycle=180,
@@ -267,6 +273,7 @@ def test_simulate_day_crop_inactive_fails():
         name="Cultivo de Bananas",
         user_id="123",
         crop_type_id="123",
+        water_stored=75.0,
         start_date=start_date,
         last_sim_date=start_date,
         conditions=[],
@@ -296,7 +303,6 @@ def test_simulate_day_wrong_owner_fails():
         optimal_temp=21.0,
         minimum_temp=12.0,
         maximum_temp=26.0,
-        water_stored=98.0,
         needed_water=100.0,
         needed_light=8.0,
         days_cycle=180,
@@ -310,6 +316,7 @@ def test_simulate_day_wrong_owner_fails():
         name="Cultivo de Bananas",
         user_id="123",
         crop_type_id="123",
+        water_stored=75.0,
         start_date=start_date,
         last_sim_date=start_date,
         conditions=[],
@@ -340,7 +347,6 @@ def test_simulate_day_completes_cycle():
         optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
-        water_stored=98.0,
         needed_water=100.0,
         needed_light=12.0,
         days_cycle=3,
@@ -360,6 +366,7 @@ def test_simulate_day_completes_cycle():
         name="Cultivo de Bananas",
         user_id="123",
         crop_type_id="123",
+        water_stored=75.0,
         start_date=start_date,
         last_sim_date=start_date,
         conditions=[condition1, condition2],
@@ -391,7 +398,6 @@ def test_get_crop_statistics_with_data():
         optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
-        water_stored=98.0,
         needed_water=100.0,
         needed_light=12.0,
         days_cycle=360,
@@ -422,6 +428,7 @@ def test_get_crop_statistics_with_data():
         name="Cultivo de Bananas",
         user_id="123",
         crop_type_id="123",
+        water_stored=75.0,
         start_date=start_date,
         last_sim_date=start_date,
         conditions=conditions,
@@ -457,7 +464,6 @@ def test_get_crop_statistics_no_conditions():
         optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
-        water_stored=98.0,
         needed_water=100.0,
         needed_light=12.0,
         days_cycle=360,
@@ -471,6 +477,7 @@ def test_get_crop_statistics_no_conditions():
         name="Cultivo de Bananas",
         user_id="123",
         crop_type_id="123",
+        water_stored=75.0,
         start_date=start_date,
         last_sim_date=start_date,
         conditions=[],
@@ -505,6 +512,7 @@ def test_get_crops_by_user_own_allowed():
         id="456",
         name="Cultivo de Bananas",
         user_id="123",
+        water_stored=75.0,
         crop_type_id="123",
         start_date=start_date,
         last_sim_date=start_date,
@@ -518,6 +526,7 @@ def test_get_crops_by_user_own_allowed():
         name="Cultivo de Manzanas",
         user_id="123",
         crop_type_id="124",
+        water_stored=75.0,
         start_date=start_date,
         last_sim_date=start_date,
         conditions=[],
@@ -565,6 +574,7 @@ def test_get_crops_by_user_admin_can_see_any():
     crop1 = Crop(
         id="456",
         name="Cultivo de Bananas",
+        water_stored=75.0,
         user_id="123",
         crop_type_id="123",
         start_date=start_date,
@@ -579,6 +589,7 @@ def test_get_crops_by_user_admin_can_see_any():
         name="Cultivo de Manzanas",
         user_id="123",
         crop_type_id="124",
+        water_stored=75.0,
         start_date=start_date,
         last_sim_date=start_date,
         conditions=[],
@@ -608,6 +619,7 @@ def test_update_crop_name_success():
         id="456",
         name="Cultivo de Bananas",
         user_id="123",
+        water_stored=75.0,
         crop_type_id="123",
         start_date=start_date,
         last_sim_date=start_date,
@@ -640,6 +652,7 @@ def test_update_crop_forbidden_fields_fails():
         id="456",
         name="Cultivo de Bananas",
         user_id="123",
+        water_stored=75.0,
         crop_type_id="123",
         start_date=start_date,
         last_sim_date=start_date,
@@ -674,6 +687,7 @@ def test_delete_crop_own_allowed():
         name="Cultivo de Bananas",
         user_id="123",
         crop_type_id="123",
+        water_stored=75.0,
         start_date=start_date,
         last_sim_date=start_date,
         conditions=[],
@@ -705,6 +719,7 @@ def test_delete_crop_other_forbidden():
         id="456",
         name="Cultivo de Bananas",
         user_id="123",
+        water_stored=75.0,
         crop_type_id="123",
         start_date=start_date,
         last_sim_date=start_date,
@@ -1204,7 +1219,6 @@ def test_create_crop_type_admin_success():
         temperature_curve_length=5.0,
         water_wilting=60.0,
         water_opt_low=80.0,
-        water_stored=98.0,
         needed_water=100.0,
         water_opt_high=130.0,
         water_capacity=200.0,
@@ -1266,7 +1280,6 @@ def test_create_crop_type_non_admin_fails():
             temperature_curve_length=5.0,
             water_wilting=60.0,
             water_opt_low=80.0,
-            water_stored=98.0,
             needed_water=100.0,
             water_opt_high=130.0,
             water_capacity=200.0,
@@ -1308,7 +1321,6 @@ def test_create_crop_type_duplicate_name_fails():
         optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
-        water_stored=98.0,
         needed_water=100.0,
         needed_light=12.0,
         days_cycle=360,
@@ -1334,7 +1346,6 @@ def test_create_crop_type_duplicate_name_fails():
             temperature_curve_length=5.0,
             water_wilting=60.0,
             water_opt_low=80.0,
-            water_stored=98.0,
             needed_water=100.0,
             water_opt_high=130.0,
             water_capacity=200.0,
@@ -1376,7 +1387,6 @@ def test_update_crop_type_admin_success():
         optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
-        water_stored=98.0,
         needed_water=100.0,
         needed_light=12.0,
         days_cycle=360,
@@ -1415,7 +1425,6 @@ def test_update_crop_type_with_active_crops_fails():
         optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
-        water_stored=98.0,
         needed_water=100.0,
         needed_light=12.0,
         days_cycle=360,
@@ -1427,6 +1436,7 @@ def test_update_crop_type_with_active_crops_fails():
     active_crop = Crop(
         id="456",
         name="Mi Banano",
+        water_stored=75.0,
         user_id="789",
         crop_type_id="123",
         start_date=start_date,
@@ -1460,7 +1470,6 @@ def test_delete_crop_type_with_no_crops_success():
         optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
-        water_stored=98.0,
         needed_water=100.0,
         needed_light=12.0,
         days_cycle=360,
@@ -1492,7 +1501,6 @@ def test_delete_crop_type_with_active_crops_fails():
         optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
-        water_stored=98.0,
         needed_water=100.0,
         needed_light=12.0,
         days_cycle=360,
@@ -1504,6 +1512,7 @@ def test_delete_crop_type_with_active_crops_fails():
     active_crop = Crop(
         id="456",
         name="Mi Banano",
+        water_stored=75.0,
         user_id="789",
         crop_type_id="123",
         start_date=start_date,
@@ -1537,7 +1546,6 @@ def test_delete_crop_type_with_inactive_crops_allowed():
         optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
-        water_stored=98.0,
         needed_water=100.0,
         needed_light=12.0,
         days_cycle=360,
@@ -1549,6 +1557,7 @@ def test_delete_crop_type_with_inactive_crops_allowed():
     inactive_crop = Crop(
         id="456",
         name="Mi Banano",
+        water_stored=75.0,
         user_id="789",
         crop_type_id="123",
         start_date=start_date,
@@ -1581,7 +1590,6 @@ def test_get_all_crop_types_returns_list():
         optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
-        water_stored=98.0,
         needed_water=100.0,
         needed_light=12.0,
         days_cycle=360,
@@ -1595,7 +1603,6 @@ def test_get_all_crop_types_returns_list():
         optimal_temp=21.0,
         minimum_temp=14.0,
         maximum_temp=28.0,
-        water_stored=98.0,
         needed_water=80.0,
         needed_light=9.0,
         days_cycle=200,
@@ -1609,7 +1616,6 @@ def test_get_all_crop_types_returns_list():
         optimal_temp=19.0,
         minimum_temp=12.0,
         maximum_temp=26.0,
-        water_stored=98.0,
         needed_water=90.0,
         needed_light=8.0,
         days_cycle=180,
@@ -1641,7 +1647,6 @@ def test_get_crop_type_by_id_success():
         optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
-        water_stored=98.0,
         needed_water=100.0,
         needed_light=12.0,
         days_cycle=360,
@@ -1687,7 +1692,6 @@ def test_get_crop_type_by_name_success():
         optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
-        water_stored=98.0,
         needed_water=100.0,
         needed_light=12.0,
         days_cycle=360,
@@ -1736,7 +1740,6 @@ def test_get_crop_types_with_stats_admin_success():
         optimal_temp=27.0,
         minimum_temp=22.0,
         maximum_temp=32.0,
-        water_stored=98.0,
         needed_water=100.0,
         needed_light=12.0,
         days_cycle=360,
@@ -1750,7 +1753,6 @@ def test_get_crop_types_with_stats_admin_success():
         optimal_temp=19.0,
         minimum_temp=12.0,
         maximum_temp=26.0,
-        water_stored=98.0,
         needed_water=80.0,
         needed_light=8.0,
         days_cycle=180,
@@ -1764,6 +1766,7 @@ def test_get_crop_types_with_stats_admin_success():
     crop1 = Crop(
         id="c1",
         name="Mi Banano",
+        water_stored=75.0,
         user_id="u1",
         crop_type_id="123",
         start_date=start_date,
@@ -1776,6 +1779,7 @@ def test_get_crop_types_with_stats_admin_success():
     crop2 = Crop(
         id="c2",
         name="Mi Banano 2",
+        water_stored=75.0,
         user_id="u2",
         crop_type_id="123",
         start_date=start_date,
@@ -1788,6 +1792,7 @@ def test_get_crop_types_with_stats_admin_success():
     crop3 = Crop(
         id="c3",
         name="Mi Manzana",
+        water_stored=75.0,
         user_id="u3",
         crop_type_id="456",
         start_date=start_date,

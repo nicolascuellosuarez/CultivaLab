@@ -372,7 +372,7 @@ class SupabaseStorage:
                 ),
                 conditions=[],  # Se cargan por separado
                 active=row["active"],
-                water_stored=0.0,  # No está en la tabla
+                water_stored=row["water_stored"],
                 consecutive_stress_days=row.get("consecutive_stress_days", 0),
                 current_phase=row.get("current_phase", "Fase Inicial"),
             )
@@ -402,7 +402,7 @@ class SupabaseStorage:
             ),
             conditions=[],  # Se cargan por separado
             active=row["active"],
-            water_stored=0.0,  # No está en la tabla
+            water_stored=row["water_stored"],  # No está en la tabla
             consecutive_stress_days=row.get("consecutive_stress_days", 0),
             current_phase=row.get("current_phase", "Fase Inicial"),
         )
@@ -433,7 +433,7 @@ class SupabaseStorage:
                 ),
                 conditions=[],  # Se cargan por separado
                 active=row["active"],
-                water_stored=0.0,  # No está en la tabla
+                water_stored=row["water_stored"],  # No está en la tabla
                 consecutive_stress_days=row.get("consecutive_stress_days", 0),
                 current_phase=row.get("current_phase", "Fase Inicial"),
             )
@@ -469,7 +469,7 @@ class SupabaseStorage:
                 ),
                 conditions=[],  # Se cargan por separado
                 active=row["active"],
-                water_stored=0.0,  # No está en la tabla
+                water_stored=row["water_stored"],  # No está en la tabla
                 consecutive_stress_days=row.get("consecutive_stress_days", 0),
                 current_phase=row.get("current_phase", "Fase Inicial"),
             )
@@ -500,7 +500,7 @@ class SupabaseStorage:
                 ),
                 conditions=[],  # Se cargan por separado
                 active=row["active"],
-                water_stored=0.0,  # No está en la tabla
+                water_stored=row["water_stored"],
                 consecutive_stress_days=row.get("consecutive_stress_days", 0),
                 current_phase=row.get("current_phase", "Fase Inicial"),
             )
@@ -524,6 +524,7 @@ class SupabaseStorage:
             "active": crop.active,
             "consecutive_stress_days": crop.consecutive_stress_days,
             "current_phase": crop.current_phase,
+            "water_stored": crop.water_stored,
         }
 
         self.client.table("crops").upsert(data).execute()
