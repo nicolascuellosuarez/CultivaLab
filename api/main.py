@@ -6,10 +6,10 @@ App initializer from original class FastAPI
 """
 
 app = FastAPI(
-    title= "CultivaLab API",
-    description= "API para una app con el objetivo de "
+    title="CultivaLab API",
+    description="API para una app con el objetivo de "
     "modelar y simular el crecimiento de cultivos",
-    version= "1.0.0"
+    version="1.0.0",
 )
 
 """
