@@ -45,10 +45,6 @@ class SupabaseStorage:
 
         response = self.client.table("users").select("*").execute()
         users = []
-        crops_response = (
-            self.client.table("crops").select("id").eq("user_id", user.id).execute()
-        )
-        crop_ids = [crop["id"] for crop in crops_response.data]
 
         for row in response.data:
             user = User(
@@ -56,7 +52,7 @@ class SupabaseStorage:
                 username=row["username"],
                 password_hash=row["password_hash"],
                 role=UserRole(row["role"]),
-                crop_ids=crop_ids,
+                crop_ids= [],
             )
             users.append(user)
 
@@ -85,7 +81,7 @@ class SupabaseStorage:
             crop_ids=crop_ids,
         )
 
-    def get_user_by_username(self, username: str, user_id: str) -> User | None:
+    def get_user_by_username(self, username: str) -> User | None:
         """
         Method get_user_by_username() created to get the information of an user from the
         DataBase from its username using the PostgreSQL syntax.
@@ -98,16 +94,12 @@ class SupabaseStorage:
             return None
 
         row = response.data[0]
-        crops_response = (
-            self.client.table("crops").select("id").eq("user_id", user_id).execute()
-        )
-        crop_ids = [crop["id"] for crop in crops_response.data]
         return User(
             id=row["id"],
             username=row["username"],
             password_hash=row["password_hash"],
             role=UserRole(row["role"]),
-            crop_ids=crop_ids,
+            crop_ids= [],
         )
 
     def save_user(self, user: User) -> None:
@@ -576,3 +568,12 @@ class SupabaseStorage:
             "estimated_biomass": condition.estimated_biomass,
         }
         self.client.table("daily_conditions").upsert(data).execute()
+
+        def clear_all_data(self) -> None:
+            """
+            Deletes all registers in DataBase.
+            """
+            self.client.table("daily_conditions").delete().neq("id", "00000000-0000-0000-0000-000000000000").execute()
+            self.client.table("crops").delete().neq("id", "00000000-0000-0000-0000-000000000000").execute()
+            self.client.table("users").delete().neq("id", "00000000-0000-0000-0000-000000000000").execute()
+            self.client.table("crop_types").delete().neq("id", "00000000-0000-0000-0000-000000000000").execute()

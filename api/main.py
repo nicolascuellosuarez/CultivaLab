@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from api.routers import auth
+from api.routers import auth, users, crop_types
 
 """
 App initializer from original class FastAPI
@@ -36,3 +36,4 @@ def health():
     return {"Status": "Ok"}
 
 app.include_router(auth.router)
+app.include_router(users.router)

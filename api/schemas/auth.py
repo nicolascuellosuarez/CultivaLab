@@ -13,6 +13,8 @@ class RegisterRequest(BaseModel):
 
 class RegisterAdminRequest(BaseModel):
     admin_key: str = Field(..., description="Master Key for Admin Sign - In")
+    username: str = Field(..., min_length=4, max_length=30)
+    password: str = Field(..., min_length=8)
 
 
 class LoginResponse(BaseModel):

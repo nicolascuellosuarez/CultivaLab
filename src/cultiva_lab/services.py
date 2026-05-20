@@ -405,6 +405,7 @@ class CropService:
             and requesting_user.role.value != UserRole.ADMIN.value
         ):
             raise ResourceOwnershipError("No puedes acceder a este cultivo.")
+        
         return crop
 
     def _validate_environmental_inputs(
@@ -847,6 +848,8 @@ class UserService:
         ) and requesting_user.role.value != UserRole.ADMIN.value:
             raise ResourceOwnershipError("No puedes acceder a esta información.")
 
+        crop_ids = self.storage.get_crops_by_user(user.id)
+        user.crop_ids = crop_ids
         return user
 
     def get_user_by_username(self, username: str, requesting_user_id: str):
@@ -870,6 +873,8 @@ class UserService:
         ) and requesting_user.role.value != UserRole.ADMIN.value:
             raise ResourceOwnershipError("No puedes acceder a esta información.")
 
+        crop_ids = self.storage.get_crops_by_user(requesting_user_id)
+        user.crop_ids = crop_ids
         return user
 
     def get_all_users(self, requesting_user_id: str) -> list[User]:
