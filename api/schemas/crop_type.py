@@ -6,6 +6,7 @@ class CropTypeResponse(BaseModel):
     Response for the request of a CropType's data.
     """
     
+    id: str
     name: str 
     optimal_temp: float
     minimum_temp: float
@@ -30,6 +31,7 @@ class CropTypeResponse(BaseModel):
     days_cycle: int
     photosyntesis_max_rate: float
     breathing_base_rate: float
+    growth_breathing_coefficient: float  
     consecutive_stress_days_limit: int
     activation_energy: float
     initial_biomass: float

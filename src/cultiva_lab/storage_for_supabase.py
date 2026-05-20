@@ -171,6 +171,7 @@ class SupabaseStorage:
                 days_cycle=row["days_cycle"],
                 photosyntesis_max_rate=row["photosyntesis_max_rate"],
                 breathing_base_rate=row["breathing_base_rate"],
+                growth_breathing_coefficient=row["growth_breathing_coefficient"],
                 theta=row.get("theta", 1.8),
                 consecutive_stress_days_limit=row.get(
                     "consecutive_stress_days_limit", 5
@@ -226,6 +227,7 @@ class SupabaseStorage:
             days_cycle=row["days_cycle"],
             photosyntesis_max_rate=row["photosyntesis_max_rate"],
             breathing_base_rate=row["breathing_base_rate"],
+            growth_breathing_coefficient=row.get("growth_breathing_coefficient", 0.15),
             theta=row.get("theta", 1.8),
             consecutive_stress_days_limit=row.get("consecutive_stress_days_limit", 5),
             theta_coefficient=row.get("theta_coefficient", 0.0023),
@@ -281,6 +283,7 @@ class SupabaseStorage:
             days_cycle=row["days_cycle"],
             photosyntesis_max_rate=row["photosyntesis_max_rate"],
             breathing_base_rate=row["breathing_base_rate"],
+            growth_breathing_coefficient=row.get("growth_breathing_coefficient", 0.15),
             theta=row.get("theta", 1.8),
             consecutive_stress_days_limit=row.get("consecutive_stress_days_limit", 5),
             theta_coefficient=row.get("theta_coefficient", 0.0023),
@@ -325,6 +328,7 @@ class SupabaseStorage:
             "photosyntesis_max_rate": crop_type.photosyntesis_max_rate,
             "breathing_base_rate": crop_type.breathing_base_rate,
             "theta": crop_type.theta,
+            "growth_breathing_coefficient": crop_type.growth_breathing_coefficient,
             "consecutive_stress_days_limit": crop_type.consecutive_stress_days_limit,
             "theta_coefficient": crop_type.theta_coefficient,
             "initial_biomass": crop_type.initial_biomass,
