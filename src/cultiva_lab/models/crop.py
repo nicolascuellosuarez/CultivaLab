@@ -92,7 +92,7 @@ class Crop:
         Validates if water stored data is in the right type.
         """
 
-        if not isinstance(self.water_stored, float):
+        if not isinstance(self.water_stored, (int, float)):
             raise InvalidInputError(
                 "El agua almacenada en el suelo no está en un tipo válido."
             )

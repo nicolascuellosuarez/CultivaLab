@@ -387,6 +387,7 @@ class CropService:
             crop.active = False
 
         self.storage.save_crop(crop)
+        self.storage.save_daily_condition(crop.id, new_condition)
 
         return crop
 

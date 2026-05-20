@@ -387,6 +387,19 @@ class SupabaseStorage:
             return None
 
         row = response.data[0]
+
+        conditions_response = self.client.table("daily_conditions").select("*").eq("crop_id", crop_id).order("day").execute()
+        conditions = [
+            DailyCondition(
+                day=cond["day"],
+                temperature=cond["temperature"],
+                rain=cond["rain"],
+                sun_hours=cond["sun_hours"],
+                estimated_biomass=cond["estimated_biomass"]
+            )
+            for cond in conditions_response.data
+        ]
+
         crop = Crop(
             id=row["id"],
             name=row["name"],
@@ -396,7 +409,7 @@ class SupabaseStorage:
             last_sim_date=datetime.fromisoformat(
                 row["last_sim_date"].replace("Z", "+00:00")
             ),
-            conditions=[],  # Se cargan por separado
+            conditions=conditions,  # Se cargan por separado
             active=row["active"],
             water_stored=row["water_stored"],  # No está en la tabla
             consecutive_stress_days=row.get("consecutive_stress_days", 0),
@@ -416,6 +429,18 @@ class SupabaseStorage:
         crops = []
 
         for row in response.data:
+            conditions_response = self.client.table("daily_conditions").select("*").eq("user_id", user_id).order("day").execute()
+            conditions = [
+                DailyCondition(
+                    day=cond["day"],
+                    temperature=cond["temperature"],
+                    rain=cond["rain"],
+                    sun_hours=cond["sun_hours"],
+                    estimated_biomass=cond["estimated_biomass"]
+                )
+                for cond in conditions_response.data
+            ]
+
             crop = Crop(
                 id=row["id"],
                 name=row["name"],
@@ -427,9 +452,9 @@ class SupabaseStorage:
                 last_sim_date=datetime.fromisoformat(
                     row["last_sim_date"].replace("Z", "+00:00")
                 ),
-                conditions=[],  # Se cargan por separado
+                conditions=conditions, 
                 active=row["active"],
-                water_stored=row["water_stored"],  # No está en la tabla
+                water_stored=row["water_stored"], 
                 consecutive_stress_days=row.get("consecutive_stress_days", 0),
                 current_phase=row.get("current_phase", "Fase Inicial"),
             )
@@ -452,6 +477,18 @@ class SupabaseStorage:
         crops = []
 
         for row in response.data:
+            conditions_response = self.client.table("daily_conditions").select("*").eq("crop_type_id", crop_type_id).order("day").execute()
+            conditions = [
+                DailyCondition(
+                    day=cond["day"],
+                    temperature=cond["temperature"],
+                    rain=cond["rain"],
+                    sun_hours=cond["sun_hours"],
+                    estimated_biomass=cond["estimated_biomass"]
+                )
+                for cond in conditions_response.data
+            ]
+
             crop = Crop(
                 id=row["id"],
                 name=row["name"],
@@ -463,7 +500,7 @@ class SupabaseStorage:
                 last_sim_date=datetime.fromisoformat(
                     row["last_sim_date"].replace("Z", "+00:00")
                 ),
-                conditions=[],  # Se cargan por separado
+                conditions=conditions,  # Se cargan por separado
                 active=row["active"],
                 water_stored=row["water_stored"],  # No está en la tabla
                 consecutive_stress_days=row.get("consecutive_stress_days", 0),
@@ -475,32 +512,39 @@ class SupabaseStorage:
 
     def get_active_crops(self) -> list[Crop]:
         """
-        Mehtod get_active_crops() created to get the data of a Crop by its
-        activeness.
+        Method get_active_crops() created to get the data of active crops.
         """
 
         response = self.client.table("crops").select("*").eq("active", True).execute()
         crops = []
 
         for row in response.data:
+            # Cargar condiciones para este crop específico
+            conditions_response = self.client.table("daily_conditions").select("*").eq("crop_id", row["id"]).order("day").execute()
+            conditions = [
+                DailyCondition(
+                    day=cond["day"],
+                    temperature=cond["temperature"],
+                    rain=cond["rain"],
+                    sun_hours=cond["sun_hours"],
+                    estimated_biomass=cond["estimated_biomass"]
+                )
+                for cond in conditions_response.data
+            ]
+
             crop = Crop(
                 id=row["id"],
                 name=row["name"],
                 user_id=row["user_id"],
                 crop_type_id=row["crop_type_id"],
-                start_date=datetime.fromisoformat(
-                    row["start_date"].replace("Z", "+00:00")
-                ),
-                last_sim_date=datetime.fromisoformat(
-                    row["last_sim_date"].replace("Z", "+00:00")
-                ),
-                conditions=[],  # Se cargan por separado
+                start_date=datetime.fromisoformat(row["start_date"].replace("Z", "+00:00")),
+                last_sim_date=datetime.fromisoformat(row["last_sim_date"].replace("Z", "+00:00")),
+                conditions=conditions,  # ← ahora sí, condiciones de este crop
                 active=row["active"],
-                water_stored=row["water_stored"],
+                water_stored=float(row.get("water_stored", 0.0)),
                 consecutive_stress_days=row.get("consecutive_stress_days", 0),
                 current_phase=row.get("current_phase", "Fase Inicial"),
             )
-
             crops.append(crop)
 
         return crops
