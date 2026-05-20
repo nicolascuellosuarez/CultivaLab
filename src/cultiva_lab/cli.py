@@ -279,6 +279,21 @@ def crear_cultivo():
     agua_almacenada = questionary.text(
         "Agua almacenada del cultivo (o enter para 75ml):", style=custom_style
     ).ask()
+
+    if agua_almacenada:
+        try:
+            agua_almacenada = float(agua_almacenada)
+        except ValueError:
+            console.print(
+                Panel(
+                    "El agua almacenada debe ser numérica.",
+                    style=f"bold {MARRON}",
+                )
+            )
+            return
+    else:
+        agua_almacenada = 75.0
+        
     if fecha_str:
         try:
             start_date = datetime.strptime(fecha_str, "%Y-%m-%d")

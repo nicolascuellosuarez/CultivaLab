@@ -203,7 +203,7 @@ class CropService:
         """
 
         production_respiration_part = self._calculate_production_respiration_part(
-            crop_type, biomass
+            crop_type, photosynthesis
         )
         manteinance_respiration_part = self._calculate_manteinance_respiration_part(
             crop_type, biomass, temperature
@@ -387,8 +387,6 @@ class CropService:
             crop.active = False
 
         self.storage.save_crop(crop)
-        self.storage.save_daily_condition(crop.id, new_condition)
-
         return crop
 
     def get_crop_by_id(self, crop_id: str, requesting_user_id: str) -> Crop:
