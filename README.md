@@ -1,4 +1,3 @@
-```markdown
 # CultivaLab
 
 Laboratorio Virtual para Simulación y Análisis de Cultivos
