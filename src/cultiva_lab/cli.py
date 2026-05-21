@@ -293,7 +293,7 @@ def crear_cultivo():
             return
     else:
         agua_almacenada = 75.0
-        
+
     if fecha_str:
         try:
             start_date = datetime.strptime(fecha_str, "%Y-%m-%d")

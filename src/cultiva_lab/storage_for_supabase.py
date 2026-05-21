@@ -1,11 +1,9 @@
 import os
 from datetime import datetime
-from typing import List, Optional
 from dotenv import load_dotenv
 from supabase import create_client, Client
 
 from .models import User, UserRole, Crop, CropType, DailyCondition
-from .exceptions import InvalidInputError
 
 load_dotenv()
 
@@ -52,7 +50,7 @@ class SupabaseStorage:
                 username=row["username"],
                 password_hash=row["password_hash"],
                 role=UserRole(row["role"]),
-                crop_ids= [],
+                crop_ids=[],
             )
             users.append(user)
 
@@ -99,7 +97,7 @@ class SupabaseStorage:
             username=row["username"],
             password_hash=row["password_hash"],
             role=UserRole(row["role"]),
-            crop_ids= [],
+            crop_ids=[],
         )
 
     def save_user(self, user: User) -> None:
@@ -388,14 +386,20 @@ class SupabaseStorage:
 
         row = response.data[0]
 
-        conditions_response = self.client.table("daily_conditions").select("*").eq("crop_id", crop_id).order("day").execute()
+        conditions_response = (
+            self.client.table("daily_conditions")
+            .select("*")
+            .eq("crop_id", crop_id)
+            .order("day")
+            .execute()
+        )
         conditions = [
             DailyCondition(
                 day=cond["day"],
                 temperature=cond["temperature"],
                 rain=cond["rain"],
                 sun_hours=cond["sun_hours"],
-                estimated_biomass=cond["estimated_biomass"]
+                estimated_biomass=cond["estimated_biomass"],
             )
             for cond in conditions_response.data
         ]
@@ -429,14 +433,20 @@ class SupabaseStorage:
         crops = []
 
         for row in response.data:
-            conditions_response = self.client.table("daily_conditions").select("*").eq("user_id", user_id).order("day").execute()
+            conditions_response = (
+                self.client.table("daily_conditions")
+                .select("*")
+                .eq("user_id", user_id)
+                .order("day")
+                .execute()
+            )
             conditions = [
                 DailyCondition(
                     day=cond["day"],
                     temperature=cond["temperature"],
                     rain=cond["rain"],
                     sun_hours=cond["sun_hours"],
-                    estimated_biomass=cond["estimated_biomass"]
+                    estimated_biomass=cond["estimated_biomass"],
                 )
                 for cond in conditions_response.data
             ]
@@ -452,9 +462,9 @@ class SupabaseStorage:
                 last_sim_date=datetime.fromisoformat(
                     row["last_sim_date"].replace("Z", "+00:00")
                 ),
-                conditions=conditions, 
+                conditions=conditions,
                 active=row["active"],
-                water_stored=row["water_stored"], 
+                water_stored=row["water_stored"],
                 consecutive_stress_days=row.get("consecutive_stress_days", 0),
                 current_phase=row.get("current_phase", "Fase Inicial"),
             )
@@ -477,14 +487,20 @@ class SupabaseStorage:
         crops = []
 
         for row in response.data:
-            conditions_response = self.client.table("daily_conditions").select("*").eq("crop_type_id", crop_type_id).order("day").execute()
+            conditions_response = (
+                self.client.table("daily_conditions")
+                .select("*")
+                .eq("crop_type_id", crop_type_id)
+                .order("day")
+                .execute()
+            )
             conditions = [
                 DailyCondition(
                     day=cond["day"],
                     temperature=cond["temperature"],
                     rain=cond["rain"],
                     sun_hours=cond["sun_hours"],
-                    estimated_biomass=cond["estimated_biomass"]
+                    estimated_biomass=cond["estimated_biomass"],
                 )
                 for cond in conditions_response.data
             ]
@@ -520,14 +536,20 @@ class SupabaseStorage:
 
         for row in response.data:
             # Cargar condiciones para este crop específico
-            conditions_response = self.client.table("daily_conditions").select("*").eq("crop_id", row["id"]).order("day").execute()
+            conditions_response = (
+                self.client.table("daily_conditions")
+                .select("*")
+                .eq("crop_id", row["id"])
+                .order("day")
+                .execute()
+            )
             conditions = [
                 DailyCondition(
                     day=cond["day"],
                     temperature=cond["temperature"],
                     rain=cond["rain"],
                     sun_hours=cond["sun_hours"],
-                    estimated_biomass=cond["estimated_biomass"]
+                    estimated_biomass=cond["estimated_biomass"],
                 )
                 for cond in conditions_response.data
             ]
@@ -537,8 +559,12 @@ class SupabaseStorage:
                 name=row["name"],
                 user_id=row["user_id"],
                 crop_type_id=row["crop_type_id"],
-                start_date=datetime.fromisoformat(row["start_date"].replace("Z", "+00:00")),
-                last_sim_date=datetime.fromisoformat(row["last_sim_date"].replace("Z", "+00:00")),
+                start_date=datetime.fromisoformat(
+                    row["start_date"].replace("Z", "+00:00")
+                ),
+                last_sim_date=datetime.fromisoformat(
+                    row["last_sim_date"].replace("Z", "+00:00")
+                ),
                 conditions=conditions,  # ← ahora sí, condiciones de este crop
                 active=row["active"],
                 water_stored=float(row.get("water_stored", 0.0)),
@@ -621,7 +647,15 @@ class SupabaseStorage:
             """
             Deletes all registers in DataBase.
             """
-            self.client.table("daily_conditions").delete().neq("id", "00000000-0000-0000-0000-000000000000").execute()
-            self.client.table("crops").delete().neq("id", "00000000-0000-0000-0000-000000000000").execute()
-            self.client.table("users").delete().neq("id", "00000000-0000-0000-0000-000000000000").execute()
-            self.client.table("crop_types").delete().neq("id", "00000000-0000-0000-0000-000000000000").execute()
+            self.client.table("daily_conditions").delete().neq(
+                "id", "00000000-0000-0000-0000-000000000000"
+            ).execute()
+            self.client.table("crops").delete().neq(
+                "id", "00000000-0000-0000-0000-000000000000"
+            ).execute()
+            self.client.table("users").delete().neq(
+                "id", "00000000-0000-0000-0000-000000000000"
+            ).execute()
+            self.client.table("crop_types").delete().neq(
+                "id", "00000000-0000-0000-0000-000000000000"
+            ).execute()

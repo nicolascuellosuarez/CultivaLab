@@ -1,6 +1,7 @@
 from pydantic import BaseModel, Field
 from datetime import datetime
-from typing import Optional, List
+from typing import Optional
+
 
 class DailyConditionResponse(BaseModel):
     day: int
@@ -8,6 +9,7 @@ class DailyConditionResponse(BaseModel):
     rain: float
     sun_hours: float
     estimated_biomass: float
+
 
 class CropResponse(BaseModel):
     id: str
@@ -20,14 +22,17 @@ class CropResponse(BaseModel):
     consecutive_stress_days: int
     current_phase: str
 
+
 class CropCreateRequest(BaseModel):
     name: str = Field(..., min_length=1)
     crop_type_id: str
     water_stored: float = Field(..., ge=0)
 
+
 class CropUpdateRequest(BaseModel):
     name: Optional[str] = None
     active: Optional[bool] = None
+
 
 class CropStatisticsResponse(BaseModel):
     average_temperature: float

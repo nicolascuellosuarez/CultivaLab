@@ -404,7 +404,7 @@ class CropService:
             and requesting_user.role.value != UserRole.ADMIN.value
         ):
             raise ResourceOwnershipError("No puedes acceder a este cultivo.")
-        
+
         return crop
 
     def _validate_environmental_inputs(

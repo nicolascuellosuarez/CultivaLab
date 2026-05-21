@@ -1,13 +1,14 @@
 from pydantic import BaseModel, Field
 from typing import Optional
 
+
 class CropTypeResponse(BaseModel):
     """
     Response for the request of a CropType's data.
     """
-    
+
     id: str
-    name: str 
+    name: str
     optimal_temp: float
     minimum_temp: float
     maximum_temp: float
@@ -31,11 +32,12 @@ class CropTypeResponse(BaseModel):
     days_cycle: int
     photosyntesis_max_rate: float
     breathing_base_rate: float
-    growth_breathing_coefficient: float  
+    growth_breathing_coefficient: float
     consecutive_stress_days_limit: int
     activation_energy: float
     initial_biomass: float
     potential_performance: float
+
 
 class CropTypeCreateRequest(BaseModel):
     """
@@ -77,6 +79,7 @@ class CropTypeCreateRequest(BaseModel):
     activation_energy: float
     initial_biomass: float
     potential_performance: float
+
 
 class CropTypeUpdateRequest(BaseModel):
     """
