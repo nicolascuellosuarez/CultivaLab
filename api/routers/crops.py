@@ -15,7 +15,7 @@ from ..schemas.crop import (
     DailyConditionResponse,
     CropStatisticsResponse,
 )
-from ..dependencies import get_current_user, get_crop_service
+from ..dependencies import get_current_user, get_crop_service, get_current_admin_user
 
 router = APIRouter(prefix="/crops", tags=["Crops"])
 
@@ -193,4 +193,39 @@ def get_crop_statistics(
         stats = crop_service.get_crop_statistics(crop_id, current_user["id"])
         return CropStatisticsResponse(**stats)
     except (CropNotFoundError, ResourceOwnershipError) as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+
+@router.get("/admin/all", response_model=list[CropResponse])
+def get_all_crops_admin(
+    current_user: dict = Depends(get_current_admin_user),
+    crop_service=Depends(get_crop_service),
+):
+    crops = crop_service.storage.get_crops()
+    return [CropResponse(...) for c in crops]
+
+
+@router.get("/user/{user_id}", response_model=List[CropResponse])
+def get_crops_by_user_id(
+    user_id: str,
+    current_user: dict = Depends(get_current_admin_user),
+    crop_service=Depends(get_crop_service),
+):
+    try:
+        crops = crop_service.get_crops_by_user(user_id, current_user["id"])
+        return [
+            CropResponse(
+                id=c.id,
+                name=c.name,
+                crop_type_id=c.crop_type_id,
+                start_date=c.start_date,
+                last_sim_date=c.last_sim_date,
+                active=c.active,
+                water_stored=c.water_stored,
+                consecutive_stress_days=c.consecutive_stress_days,
+                current_phase=c.current_phase,
+            )
+            for c in crops
+        ]
+    except UserNotFoundError as e:
         raise HTTPException(status_code=404, detail=str(e))

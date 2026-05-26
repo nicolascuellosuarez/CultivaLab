@@ -77,3 +77,13 @@ def get_all_users(
     return [
         UserResponse(id=u.id, username=u.username, role=u.role.value) for u in users
     ]
+
+
+@router.delete("/admin/users/{user/id}")
+def delete_user_by_admin(
+    user_id: str,
+    current_user: dict = Depends(get_current_admin_user),
+    user_service=Depends(get_user_service),
+):
+    get_user_service.delete_user(user_id, current_user["id"])
+    return {"message": "User Deleted"}
