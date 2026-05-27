@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --cultiva-green: #5fa11b;
+  --cultiva-dark: #0a0a0a;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  background-color: var(--cultiva-dark);
+  color: #ffffff;
+}
+
+.cultiva-input::placeholder {
+  color: rgba(255, 255, 255, 0.25);
+  opacity: 1;
+}
