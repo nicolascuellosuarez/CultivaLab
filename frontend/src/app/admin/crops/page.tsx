@@ -1,25 +1,109 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { ConfirmModal } from "@/components/dashboard/ConfirmModal";
 import { DashboardCard } from "@/components/dashboard/DashboardCard";
 import { PageHeader } from "@/components/dashboard/PageHeader";
-import { MOCK_ADMIN_USERS, MOCK_CROPS } from "@/lib/mock-data";
+import { getCrops, getUsers, getCropTypes, deleteCrop } from "@/lib/api";
 import { adminRoutes } from "@/lib/routes";
 
+type User = {
+  id: string;
+  username: string;
+  role: string;
+};
+
+type CropType = {
+  id: string;
+  name: string;
+};
+
+type Crop = {
+  id: string;
+  name: string;
+  user_id: string;
+  crop_type_id: string;
+  active: boolean;
+};
+
 export default function AdminCropsPage() {
+  const router = useRouter();
+  const [crops, setCrops] = useState<Crop[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
+  const [cropTypes, setCropTypes] = useState<CropType[]>([]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [userFilter, setUserFilter] = useState("all");
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const role = localStorage.getItem("role");
+    if (!token || role !== "admin") {
+      router.push("/login");
+      return;
+    }
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      const [cropsData, usersData, cropTypesData] = await Promise.all([
+        getCrops(),
+        getUsers(),
+        getCropTypes(),
+      ]);
+      setCrops(cropsData);
+      setUsers(usersData.filter((u: User) => u.role === "user"));
+      setCropTypes(cropTypesData);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getUserName = (userId: string) => {
+    const user = users.find((u) => u.id === userId);
+    return user?.username || "Desconocido";
+  };
+
+  const getCropTypeName = (typeId: string) => {
+    const type = cropTypes.find((t) => t.id === typeId);
+    return type?.name || "Desconocido";
+  };
+
   const filtered = useMemo(() => {
-    return MOCK_CROPS.filter((c) => {
+    return crops.filter((c) => {
       const matchSearch = c.name.toLowerCase().includes(search.toLowerCase());
-      const matchUser = userFilter === "all" || userFilter === "user-1";
+      const matchUser = userFilter === "all" || c.user_id === userFilter;
       return matchSearch && matchUser;
     });
-  }, [search, userFilter]);
+  }, [crops, search, userFilter]);
+
+  const handleDelete = async () => {
+    if (!deleteId) return;
+    try {
+      await deleteCrop(deleteId);
+      await fetchData();
+      setDeleteId(null);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  if (loading) {
+    return (
+      <>
+        <PageHeader title="Cultivos" subtitle="Todos los cultivos del sistema" />
+        <DashboardCard>
+          <p className="text-center text-white/50">Cargando...</p>
+        </DashboardCard>
+      </>
+    );
+  }
 
   return (
     <>
@@ -41,7 +125,7 @@ export default function AdminCropsPage() {
           <option value="all" className="bg-cultiva-dark">
             Todos los usuarios
           </option>
-          {MOCK_ADMIN_USERS.filter((u) => u.role === "user").map((u) => (
+          {users.map((u) => (
             <option key={u.id} value={u.id} className="bg-cultiva-dark">
               {u.username}
             </option>
@@ -58,21 +142,17 @@ export default function AdminCropsPage() {
                 <th className="pb-3 pr-4">Propietario</th>
                 <th className="pb-3 pr-4">Tipo</th>
                 <th className="pb-3 pr-4">Estado</th>
-                <th className="pb-3 pr-4">Simulaciones</th>
                 <th className="pb-3">Acciones</th>
-              </tr>
+               </tr>
             </thead>
             <tbody>
               {filtered.map((crop) => (
                 <tr key={crop.id} className="border-b border-white/5">
                   <td className="py-3 pr-4 font-medium text-white">{crop.name}</td>
-                  <td className="py-3 pr-4 text-white/70">cultivador_lab</td>
-                  <td className="py-3 pr-4 text-white/70">{crop.cropTypeName}</td>
+                  <td className="py-3 pr-4 text-white/70">{getUserName(crop.user_id)}</td>
+                  <td className="py-3 pr-4 text-white/70">{getCropTypeName(crop.crop_type_id)}</td>
                   <td className="py-3 pr-4">
                     {crop.active ? "Activo" : "Cosechado"}
-                  </td>
-                  <td className="py-3 pr-4 text-white/70">
-                    {crop.daysSimulated}
                   </td>
                   <td className="py-3">
                     <div className="flex gap-3">
@@ -103,7 +183,7 @@ export default function AdminCropsPage() {
         title="Eliminar cultivo"
         message="¿Eliminar este cultivo del sistema?"
         onCancel={() => setDeleteId(null)}
-        onConfirm={() => setDeleteId(null)}
+        onConfirm={handleDelete}
       />
     </>
   );

@@ -1,29 +1,107 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { CropTypeFormModal } from "@/components/admin/CropTypeFormModal";
 import { ConfirmModal } from "@/components/dashboard/ConfirmModal";
 import { DashboardCard } from "@/components/dashboard/DashboardCard";
 import { PageHeader } from "@/components/dashboard/PageHeader";
-import { MOCK_CROP_TYPES, MOCK_CROPS } from "@/lib/mock-data";
+import { getCropTypes, deleteCropType, getCrops } from "@/lib/api";
+
+type CropType = {
+  id: string;
+  name: string;
+  optimal_temp: number;
+  needed_water: number;
+  needed_light: number;
+  days_cycle: number;
+  initial_biomass: number;
+  potential_performance: number;
+};
+
+type Crop = {
+  id: string;
+  crop_type_id: string;
+  active: boolean;
+};
 
 export default function AdminCropTypesPage() {
+  const router = useRouter();
+  const [cropTypes, setCropTypes] = useState<CropType[]>([]);
+  const [crops, setCrops] = useState<Crop[]>([]);
+  const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState<"create" | "edit">("create");
+  const [editingType, setEditingType] = useState<CropType | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
-  const isTypeInUse = (typeId: string) =>
-    MOCK_CROPS.some((c) => c.cropTypeId === typeId && c.active);
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const role = localStorage.getItem("role");
+    if (!token || role !== "admin") {
+      router.push("/login");
+      return;
+    }
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      const [typesData, cropsData] = await Promise.all([
+        getCropTypes(),
+        getCrops(),
+      ]);
+      setCropTypes(typesData);
+      setCrops(cropsData);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const isTypeInUse = (typeId: string) => {
+    return crops.some((c) => c.crop_type_id === typeId && c.active);
+  };
 
   const openCreate = () => {
+    setEditingType(null);
     setModalMode("create");
     setModalOpen(true);
   };
 
-  const openEdit = () => {
+  const openEdit = (type: CropType) => {
+    setEditingType(type);
     setModalMode("edit");
     setModalOpen(true);
   };
+
+  const handleDelete = async () => {
+    if (!deleteId) return;
+    try {
+      await deleteCropType(deleteId);
+      await fetchData();
+      setDeleteId(null);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleModalClose = async (refresh?: boolean) => {
+    setModalOpen(false);
+    if (refresh) await fetchData();
+  };
+
+  if (loading) {
+    return (
+      <>
+        <PageHeader title="Tipos de cultivo" subtitle="Cargando..." />
+        <DashboardCard>
+          <p className="text-center text-white/50">Cargando tipos de cultivo...</p>
+        </DashboardCard>
+      </>
+    );
+  }
 
   return (
     <>
@@ -55,28 +133,28 @@ export default function AdminCropTypesPage() {
                 <th className="pb-3 pr-4">Biomasa ini.</th>
                 <th className="pb-3 pr-4">Potencial</th>
                 <th className="pb-3">Acciones</th>
-              </tr>
+               </tr>
             </thead>
             <tbody>
-              {MOCK_CROP_TYPES.map((type) => {
+              {cropTypes.map((type) => {
                 const inUse = isTypeInUse(type.id);
                 return (
                   <tr key={type.id} className="border-b border-white/5">
                     <td className="py-3 pr-4 font-medium text-white">{type.name}</td>
-                    <td className="py-3 pr-4 text-white/70">{type.optimalTemp}°C</td>
-                    <td className="py-3 pr-4 text-white/70">{type.neededWater} mm</td>
-                    <td className="py-3 pr-4 text-white/70">{type.neededLight} h</td>
-                    <td className="py-3 pr-4 text-white/70">{type.daysCycle} días</td>
-                    <td className="py-3 pr-4 text-white/70">{type.initialBiomass}</td>
+                    <td className="py-3 pr-4 text-white/70">{type.optimal_temp}°C</td>
+                    <td className="py-3 pr-4 text-white/70">{type.needed_water} mm</td>
+                    <td className="py-3 pr-4 text-white/70">{type.needed_light} h</td>
+                    <td className="py-3 pr-4 text-white/70">{type.days_cycle} días</td>
+                    <td className="py-3 pr-4 text-white/70">{type.initial_biomass}</td>
                     <td className="py-3 pr-4 text-white/70">
-                      {type.potentialPerformance}
+                      {type.potential_performance}
                     </td>
                     <td className="py-3">
                       <div className="flex gap-3">
                         <button
                           type="button"
                           className="text-cultiva-green hover:underline"
-                          onClick={openEdit}
+                          onClick={() => openEdit(type)}
                         >
                           Editar
                         </button>
@@ -110,7 +188,8 @@ export default function AdminCropTypesPage() {
       <CropTypeFormModal
         open={modalOpen}
         mode={modalMode}
-        onClose={() => setModalOpen(false)}
+        editData={editingType}
+        onClose={handleModalClose}
       />
 
       <ConfirmModal
@@ -118,7 +197,7 @@ export default function AdminCropTypesPage() {
         title="Eliminar tipo de cultivo"
         message="¿Confirmas la eliminación de este tipo?"
         onCancel={() => setDeleteId(null)}
-        onConfirm={() => setDeleteId(null)}
+        onConfirm={handleDelete}
       />
     </>
   );

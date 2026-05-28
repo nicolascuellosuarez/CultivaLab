@@ -1,37 +1,126 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { adminRoutes } from "@/lib/routes";
 import { AdminBarChart } from "@/components/dashboard/charts/AdminBarChart";
 import { DashboardCard } from "@/components/dashboard/DashboardCard";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { MetricCard } from "@/components/dashboard/MetricCard";
 import { PageHeader } from "@/components/dashboard/PageHeader";
-import { MOCK_ADMIN_USERS, getAdminMetrics } from "@/lib/mock-data";
+import { getUsers, getCrops, getCropTypes } from "@/lib/api";
 
-const ADMIN_NAME =
-  MOCK_ADMIN_USERS.find((u) => u.role === "admin")?.username ?? "admin";
+type User = {
+  id: string;
+  username: string;
+  role: string;
+};
 
-const growthTimeline = [
-  { month: "Ene", users: 2, crops: 4, sims: 20 },
-  { month: "Feb", users: 3, crops: 8, sims: 45 },
-  { month: "Mar", users: 3, crops: 12, sims: 80 },
-  { month: "Abr", users: 4, crops: 15, sims: 110 },
-  { month: "May", users: 4, crops: 18, sims: 145 },
-];
+type Crop = {
+  id: string;
+  name: string;
+  user_id: string;
+  active: boolean;
+};
+
+type CropType = {
+  id: string;
+  name: string;
+};
 
 export default function AdminDashboardPage() {
-  const metrics = getAdminMetrics();
-  const cropsByUser = [...MOCK_ADMIN_USERS]
-    .filter((u) => u.role === "user")
-    .sort((a, b) => b.cropCount - a.cropCount)
-    .slice(0, 5)
-    .map((u) => ({ name: u.username, value: u.cropCount }));
+  const router = useRouter();
+  const [adminName, setAdminName] = useState("");
+  const [users, setUsers] = useState<User[]>([]);
+  const [crops, setCrops] = useState<Crop[]>([]);
+  const [cropTypes, setCropTypes] = useState<CropType[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [metrics, setMetrics] = useState({
+    totalUsers: 0,
+    totalCrops: 0,
+    activeCrops: 0,
+    totalSimulations: 0,
+    cropTypesCount: 0,
+    cropTypesInUse: 0,
+  });
 
-  const hasChartData = cropsByUser.some((d) => d.value > 0);
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const role = localStorage.getItem("role");
+    const username = localStorage.getItem("username");
+    
+    if (!token || role !== "admin") {
+      router.push("/login");
+      return;
+    }
+    
+    setAdminName(username || "Admin");
+    fetchDashboardData();
+  }, []);
+
+  const fetchDashboardData = async () => {
+    try {
+      const [usersData, cropsData, cropTypesData] = await Promise.all([
+        getUsers(),
+        getCrops(),
+        getCropTypes(),
+      ]);
+
+      setUsers(usersData);
+      setCrops(cropsData);
+      setCropTypes(cropTypesData);
+
+      // Calcular simulaciones (condiciones diarias)
+      let totalSims = 0;
+      for (const crop of cropsData) {
+        // Si tienes un endpoint para contar condiciones, úsalo. Por ahora asumimos 0.
+        totalSims += 0;
+      }
+
+      const cropTypesInUse = new Set(cropsData.map((c: any) => c.crop_type_id)).size;
+
+      setMetrics({
+        totalUsers: usersData.length,
+        totalCrops: cropsData.length,
+        activeCrops: cropsData.filter((c: any) => c.active).length,
+        totalSimulations: totalSims,
+        cropTypesCount: cropTypesData.length,
+        cropTypesInUse: cropTypesInUse,
+      });
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const cropsByUser = users
+    .filter(u => u.role === "user")
+    .map(u => ({
+      name: u.username,
+      value: crops.filter(c => c.user_id === u.id).length,
+    }))
+    .sort((a, b) => b.value - a.value)
+    .slice(0, 5);
+
+  const hasChartData = cropsByUser.some(d => d.value > 0);
+
+  if (loading) {
+    return (
+      <>
+        <PageHeader title="Panel de Administración" subtitle="Cargando datos..." />
+        <DashboardCard>
+          <p className="text-center text-white/50">Cargando...</p>
+        </DashboardCard>
+      </>
+    );
+  }
 
   return (
     <>
       <PageHeader
-        title={`¡Bienvenido, ${ADMIN_NAME}!`}
+        title={`¡Bienvenido, ${adminName}!`}
         subtitle="Panel de administración del laboratorio"
       />
 
@@ -53,33 +142,30 @@ export default function AdminDashboardPage() {
           )}
         </DashboardCard>
 
-        <DashboardCard title="Evolución de registros">
-          {growthTimeline.length === 0 ? (
-            <EmptyState message="No hay información para ver" />
-          ) : (
-            <ul className="space-y-3">
-              {growthTimeline.map((row) => (
-                <li
-                  key={row.month}
-                  className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.02] px-4 py-3 text-sm"
-                >
-                  <span className="font-medium text-white">{row.month}</span>
-                  <span className="text-white/55">
-                    {row.users} usr · {row.crops} cultivos · {row.sims} sim.
-                  </span>
-                </li>
-              ))}
-            </ul>
-          )}
-          <p className="mt-4 text-xs text-white/40">
-            Gráfica de líneas mensual — disponible al conectar el backend.
-          </p>
+        <DashboardCard title="Estadísticas generales">
+          <div className="space-y-3">
+            <div className="rounded-xl border border-white/10 bg-white/[0.02] px-4 py-3 text-sm">
+              <span className="text-white/55">Total de cultivos activos: </span>
+              <span className="font-semibold text-cultiva-green">{metrics.activeCrops}</span>
+            </div>
+            <div className="rounded-xl border border-white/10 bg-white/[0.02] px-4 py-3 text-sm">
+              <span className="text-white/55">Tipos de cultivo disponibles: </span>
+              <span className="font-semibold text-cultiva-green">{metrics.cropTypesCount}</span>
+            </div>
+            <div className="rounded-xl border border-white/10 bg-white/[0.02] px-4 py-3 text-sm">
+              <span className="text-white/55">Usuarios registrados: </span>
+              <span className="font-semibold text-cultiva-green">{metrics.totalUsers}</span>
+            </div>
+          </div>
         </DashboardCard>
       </div>
 
       <div className="mt-6 flex flex-wrap gap-4">
         <Link href={adminRoutes.cropTypes} className="text-sm text-cultiva-green hover:underline">
           Gestionar tipos de cultivo →
+        </Link>
+        <Link href={adminRoutes.users} className="text-sm text-cultiva-green hover:underline">
+          Gestionar usuarios →
         </Link>
       </div>
     </>

@@ -1,28 +1,109 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { ConfirmModal } from "@/components/dashboard/ConfirmModal";
 import { DashboardCard } from "@/components/dashboard/DashboardCard";
 import { PageHeader } from "@/components/dashboard/PageHeader";
-import { MOCK_ADMIN_USERS } from "@/lib/mock-data";
+import { getUsers, getCrops, getCropHistory, deleteUser } from "@/lib/api";
+
+type User = {
+  id: string;
+  username: string;
+  role: string;
+};
+
+type Crop = {
+  id: string;
+  user_id: string;
+};
 
 export default function AdminUsersPage() {
+  const router = useRouter();
+  const [users, setUsers] = useState<User[]>([]);
+  const [crops, setCrops] = useState<Crop[]>([]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState<"all" | "user" | "admin">("all");
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [page, setPage] = useState(0);
   const pageSize = 5;
 
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const role = localStorage.getItem("role");
+    if (!token || role !== "admin") {
+      router.push("/login");
+      return;
+    }
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      const [usersData, cropsData] = await Promise.all([
+        getUsers(),
+        getCrops(),
+      ]);
+      setUsers(usersData);
+      setCrops(cropsData);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getUserCropCount = (userId: string) => {
+    return crops.filter((c) => c.user_id === userId).length;
+  };
+
+  const getUserSimulationCount = async (userId: string) => {
+    const userCrops = crops.filter((c) => c.user_id === userId);
+    let totalSims = 0;
+    for (const crop of userCrops) {
+      try {
+        const history = await getCropHistory(crop.id);
+        totalSims += history.length;
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    return totalSims;
+  };
+
   const filtered = useMemo(() => {
-    return MOCK_ADMIN_USERS.filter((u) => {
+    return users.filter((u) => {
       const matchSearch = u.username.toLowerCase().includes(search.toLowerCase());
       const matchRole = roleFilter === "all" || u.role === roleFilter;
       return matchSearch && matchRole;
     });
-  }, [search, roleFilter]);
+  }, [users, search, roleFilter]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
   const items = filtered.slice(page * pageSize, page * pageSize + pageSize);
+
+  const handleDelete = async () => {
+    if (!deleteId) return;
+    try {
+      await deleteUser(deleteId);
+      await fetchData();
+      setDeleteId(null);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  if (loading) {
+    return (
+      <>
+        <PageHeader title="Usuarios" subtitle="Cargando..." />
+        <DashboardCard>
+          <p className="text-center text-white/50">Cargando usuarios...</p>
+        </DashboardCard>
+      </>
+    );
+  }
 
   return (
     <>
@@ -63,32 +144,33 @@ export default function AdminUsersPage() {
                 <th className="pb-3 pr-4">Usuario</th>
                 <th className="pb-3 pr-4">Rol</th>
                 <th className="pb-3 pr-4">Cultivos</th>
-                <th className="pb-3 pr-4">Simulaciones</th>
                 <th className="pb-3">Acciones</th>
               </tr>
             </thead>
             <tbody>
-              {items.map((user) => (
-                <tr key={user.id} className="border-b border-white/5">
-                  <td className="py-3 pr-4 font-medium text-white">
-                    {user.username}
-                  </td>
-                  <td className="py-3 pr-4 capitalize text-white/70">{user.role}</td>
-                  <td className="py-3 pr-4 text-white/70">{user.cropCount}</td>
-                  <td className="py-3 pr-4 text-white/70">
-                    {user.simulationCount}
-                  </td>
-                  <td className="py-3">
-                    <button
-                      type="button"
-                      onClick={() => setDeleteId(user.id)}
-                      className="text-xs text-red-400 hover:text-red-300"
-                    >
-                      Eliminar usuario
-                    </button>
-                  </td>
-                </tr>
-              ))}
+              {items.map((user) => {
+                const cropCount = getUserCropCount(user.id);
+                return (
+                  <tr key={user.id} className="border-b border-white/5">
+                    <td className="py-3 pr-4 font-medium text-white">
+                      {user.username}
+                    </td>
+                    <td className="py-3 pr-4 capitalize text-white/70">{user.role}</td>
+                    <td className="py-3 pr-4 text-white/70">{cropCount}</td>
+                    <td className="py-3">
+                      {user.role !== "admin" && (
+                        <button
+                          type="button"
+                          onClick={() => setDeleteId(user.id)}
+                          className="text-xs text-red-400 hover:text-red-300"
+                        >
+                          Eliminar usuario
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
@@ -122,7 +204,7 @@ export default function AdminUsersPage() {
         title="Eliminar usuario"
         message="Se eliminarán también sus cultivos y simulaciones. ¿Continuar?"
         onCancel={() => setDeleteId(null)}
-        onConfirm={() => setDeleteId(null)}
+        onConfirm={handleDelete}
       />
     </>
   );
