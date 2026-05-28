@@ -1,8 +1,35 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { FormFieldRow } from "@/components/FormFieldRow";
 import { PageShell } from "@/components/PageShell";
+import { registerAdmin } from "@/lib/api";
 
 export default function RegisterAdminPage() {
+  const router = useRouter();
+  const [admin_key, setAdminKey] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+
+    try {
+      await registerAdmin(admin_key, username, password);
+      router.push("/login?registered=admin");
+    } catch (err: any) {
+      setError(err.message || "Error al registrar administrador");
+    } finally {
+      setLoading(false);
+    }
+  };
+  
   return (
     <PageShell glowVariant="register-admin">
       <section className="mx-auto flex min-h-screen max-w-5xl flex-col justify-center px-6 pb-32 pt-24 md:px-10 md:pt-28 lg:px-12">
@@ -25,7 +52,7 @@ export default function RegisterAdminPage() {
           crear la cuenta de administrador
         </p>
 
-        <form className="relative mt-12 space-y-8 md:mt-1 md:space-y-10">
+        <form onSubmit={handleSubmit} className="relative mt-12 space-y-8 md:mt-1 md:space-y-10">
           <div
             className="pointer-events-none absolute -left-8 top-1/2 h-40 w-full max-w-xl -translate-y-1/2 rounded-full bg-cultiva-green/20 blur-3xl"
             aria-hidden
@@ -36,12 +63,16 @@ export default function RegisterAdminPage() {
               label="Usuario"
               htmlFor="username"
               placeholder="ej. admin_lab"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
             />
             <FormFieldRow
               label="Contraseña"
               htmlFor="password"
               type="password"
               placeholder="Mínimo 8 caracteres"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
             <FormFieldRow
               label="Llave maestra"
@@ -49,6 +80,8 @@ export default function RegisterAdminPage() {
               type="password"
               placeholder="Llave de acceso maestra del administrador"
               autoComplete="off"
+              value={admin_key}
+              onChange={(e) => setAdminKey(e.target.value)}
             />
           </div>
 

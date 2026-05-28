@@ -1,8 +1,42 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { FormFieldRow } from "@/components/FormFieldRow";
 import { PageShell } from "@/components/PageShell";
+import { login } from "@/lib/api";
 
 export default function LoginPage() {
+  const router = useRouter();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+
+    try {
+      const data = await login(username, password);
+      localStorage.setItem("token", data.access_token);
+      localStorage.setItem("username", data.username);
+      localStorage.setItem("role", data.role);
+      
+      if (data.role === "admin") {
+        router.push("/admin");
+      } else {
+        router.push("/dashboard");
+      }
+    } catch (err: any) {
+      setError(err.message || "Error al iniciar sesión");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <PageShell glowVariant="login">
       <section className="mx-auto flex min-h-screen max-w-5xl flex-col justify-center px-6 pb-32 pt-24 md:px-10 md:pt-28 lg:px-12">
@@ -24,7 +58,7 @@ export default function LoginPage() {
           Ingresa tu usuario y contraseña para acceder a tu cuenta
         </p>
 
-        <form className="relative mt-12 space-y-8 md:mt-1 md:space-y-10">
+        <form onSubmit={handleSubmit} className="relative mt-12 space-y-8 md:mt-1 md:space-y-10">
           <div
             className="pointer-events-none absolute -left-8 top-1/2 h-40 w-full max-w-xl -translate-y-1/2 rounded-full bg-cultiva-green/20 blur-3xl"
             aria-hidden
@@ -35,6 +69,8 @@ export default function LoginPage() {
               label="Usuario"
               htmlFor="username"
               placeholder="ej. cultivador_lab"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
             />
             <FormFieldRow
               label="Contraseña"
@@ -42,8 +78,14 @@ export default function LoginPage() {
               type="password"
               placeholder="Tu Contraseña"
               autoComplete="current-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
           </div>
+
+          {error && (
+            <div className="text-center text-sm text-red-400">{error}</div>
+          )}
 
           <div className="relative flex w-full justify-center pt-4">
             <div
@@ -52,9 +94,10 @@ export default function LoginPage() {
             />
             <button
               type="submit"
+              disabled={loading}
               className="relative inline-flex items-center justify-center rounded-full bg-cultiva-green px-7 py-2.5 text-sm font-semibold text-cultiva-dark shadow-cultiva-glow-sm transition-all duration-200 hover:scale-105 hover:shadow-cultiva-glow"
             >
-              Iniciar sesión
+              {loading ? "Iniciando..." : "Iniciar sesión"}
             </button>
           </div>
         </form>
