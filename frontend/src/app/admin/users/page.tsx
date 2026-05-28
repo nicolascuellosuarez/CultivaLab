@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { ConfirmModal } from "@/components/dashboard/ConfirmModal";
 import { DashboardCard } from "@/components/dashboard/DashboardCard";
 import { PageHeader } from "@/components/dashboard/PageHeader";
-import { getUsers, getCrops, getCropHistory, deleteUser } from "@/lib/api";
+import { getUsers, getAdminCrops, getCropHistory, deleteUser } from "@/lib/api";
 
 type User = {
   id: string;
@@ -43,7 +43,7 @@ export default function AdminUsersPage() {
     try {
       const [usersData, cropsData] = await Promise.all([
         getUsers(),
-        getCrops(),
+        getAdminCrops(),
       ]);
       setUsers(usersData);
       setCrops(cropsData);

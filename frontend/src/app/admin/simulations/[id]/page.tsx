@@ -40,7 +40,9 @@ export default function AdminSimulationDetailPage({ params }: Props) {
     const fetchData = async () => {
       try {
         // El id recibido es: "cropId-day" (ej. "abc123-5")
-        const [cropId, dayStr] = id.split("-");
+        const lastHyphenIndex = id.lastIndexOf("-");
+        const cropId = id.substring(0, lastHyphenIndex);
+        const dayStr = id.substring(lastHyphenIndex + 1);
         const simDay = parseInt(dayStr, 10);
         setDay(simDay);
         

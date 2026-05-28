@@ -9,7 +9,7 @@ import { DashboardCard } from "@/components/dashboard/DashboardCard";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { MetricCard } from "@/components/dashboard/MetricCard";
 import { PageHeader } from "@/components/dashboard/PageHeader";
-import { getUsers, getCrops, getCropTypes } from "@/lib/api";
+import { getUsers, getAdminCrops, getCropTypes } from "@/lib/api";
 
 type User = {
   id: string;
@@ -63,7 +63,7 @@ export default function AdminDashboardPage() {
     try {
       const [usersData, cropsData, cropTypesData] = await Promise.all([
         getUsers(),
-        getCrops(),
+        getAdminCrops(),
         getCropTypes(),
       ]);
 

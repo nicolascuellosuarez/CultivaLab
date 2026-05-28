@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { DashboardCard } from "@/components/dashboard/DashboardCard";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { PageHeader } from "@/components/dashboard/PageHeader";
-import { getCrops, getCropHistory, getUsers } from "@/lib/api";
+import { getAdminCrops, getCropHistory, getUsers } from "@/lib/api";
 import { adminRoutes } from "@/lib/routes";
 
 type User = {
@@ -54,10 +54,11 @@ export default function AdminSimulationsPage() {
   const fetchData = async () => {
     try {
       const [cropsData, usersData] = await Promise.all([
-        getCrops(),
+        getAdminCrops(),
         getUsers(),
       ]);
       
+      console.log("Crop ID completo:", cropsData[0]?.id);
       setUsers(usersData);
       
       // Construir simulaciones desde el historial de cada cultivo
@@ -65,8 +66,11 @@ export default function AdminSimulationsPage() {
       
       for (const crop of cropsData) {
         const history = await getCropHistory(crop.id);
+        console.log("Buscando usuario para crop.user_id:", crop.user_id);
+        console.log("Usuarios disponibles:", usersData.map((u: User) => ({ id: u.id, name: u.username })));
         const user = usersData.find((u: User) => u.id === crop.user_id);
         const userName = user?.username || "Desconocido";
+        console.log("Usuario encontrado:", userName);
         
         for (const day of history) {
           sims.push({

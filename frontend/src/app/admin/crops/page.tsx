@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { ConfirmModal } from "@/components/dashboard/ConfirmModal";
 import { DashboardCard } from "@/components/dashboard/DashboardCard";
 import { PageHeader } from "@/components/dashboard/PageHeader";
-import { getCrops, getUsers, getCropTypes, deleteCrop } from "@/lib/api";
+import { getAdminCrops, getUsers, getCropTypes, deleteCrop } from "@/lib/api";
 import { adminRoutes } from "@/lib/routes";
 
 type User = {
@@ -51,7 +51,7 @@ export default function AdminCropsPage() {
   const fetchData = async () => {
     try {
       const [cropsData, usersData, cropTypesData] = await Promise.all([
-        getCrops(),
+        getAdminCrops(),
         getUsers(),
         getCropTypes(),
       ]);

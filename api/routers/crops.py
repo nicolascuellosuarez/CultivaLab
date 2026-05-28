@@ -199,10 +199,23 @@ def get_crop_statistics(
 @router.get("/admin/all", response_model=list[CropResponse])
 def get_all_crops_admin(
     current_user: dict = Depends(get_current_admin_user),
-    crop_service=Depends(get_crop_service),
+    crop_service = Depends(get_crop_service)
 ):
     crops = crop_service.storage.get_crops()
-    return [CropResponse(...) for c in crops]
+    return [
+        CropResponse(
+            id=c.id,
+            name=c.name,
+            user_id=c.user_id,
+            crop_type_id=c.crop_type_id,
+            start_date=c.start_date,
+            last_sim_date=c.last_sim_date,
+            active=c.active,
+            water_stored=c.water_stored,
+            consecutive_stress_days=c.consecutive_stress_days,
+            current_phase=c.current_phase
+        ) for c in crops
+    ]
 
 
 @router.get("/user/{user_id}", response_model=List[CropResponse])

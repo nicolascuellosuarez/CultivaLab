@@ -14,6 +14,7 @@ class DailyConditionResponse(BaseModel):
 class CropResponse(BaseModel):
     id: str
     name: str
+    user_id: str
     crop_type_id: str
     start_date: datetime
     last_sim_date: datetime
