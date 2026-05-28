@@ -1,31 +1,99 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { DashboardCard } from "@/components/dashboard/DashboardCard";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { PageHeader } from "@/components/dashboard/PageHeader";
-import { MOCK_SIMULATIONS } from "@/lib/mock-data";
+import { getCrops, getCropHistory } from "@/lib/api";
 import { userRoutes } from "@/lib/routes";
 
 const PAGE_SIZE = 5;
 
+type Simulation = {
+  id: string;
+  cropId: string;
+  cropName: string;
+  day: number;
+  temperature: number;
+  rain: number;
+  sunHours: number;
+  estimatedBiomass: number;
+};
+
 export default function SimulationsPage() {
+  const router = useRouter();
+  const [simulations, setSimulations] = useState<Simulation[]>([]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(0);
   const [sortAsc, setSortAsc] = useState(false);
 
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      router.push("/login");
+      return;
+    }
+    fetchSimulations();
+  }, []);
+
+  const fetchSimulations = async () => {
+    try {
+      const crops = await getCrops();
+      let allSimulations: Simulation[] = [];
+
+      for (const crop of crops) {
+        const history = await getCropHistory(crop.id);
+        const cropSimulations = history.map((h: any) => ({
+          id: `${crop.id}-${h.day}`,
+          cropId: crop.id,
+          cropName: crop.name,
+          day: h.day,
+          temperature: h.temperature,
+          rain: h.rain,
+          sunHours: h.sun_hours,
+          estimatedBiomass: h.estimated_biomass,
+        }));
+        allSimulations = [...allSimulations, ...cropSimulations];
+      }
+
+      // Ordenar por día descendente
+      allSimulations.sort((a, b) => b.day - a.day);
+      setSimulations(allSimulations);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const filtered = useMemo(() => {
-    const list = MOCK_SIMULATIONS.filter((s) =>
+    const list = simulations.filter((s) =>
       s.cropName.toLowerCase().includes(search.toLowerCase())
     );
     return [...list].sort((a, b) =>
       sortAsc ? a.day - b.day : b.day - a.day
     );
-  }, [search, sortAsc]);
+  }, [simulations, search, sortAsc]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const pageItems = filtered.slice(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE);
+
+  if (loading) {
+    return (
+      <>
+        <PageHeader
+          title="Simulaciones recientes"
+          subtitle="Historial de todas tus simulaciones"
+        />
+        <DashboardCard>
+          <p className="text-center text-white/50">Cargando simulaciones...</p>
+        </DashboardCard>
+      </>
+    );
+  }
 
   return (
     <>
@@ -79,7 +147,7 @@ export default function SimulationsPage() {
                   <th className="pb-3 pr-4">Sol</th>
                   <th className="pb-3 pr-4">Biomasa</th>
                   <th className="pb-3">Detalle</th>
-                </tr>
+                 </tr>
               </thead>
               <tbody>
                 {pageItems.map((sim) => (
@@ -102,7 +170,7 @@ export default function SimulationsPage() {
                         Ver detalle
                       </Link>
                     </td>
-                  </tr>
+                   </tr>
                 ))}
               </tbody>
             </table>

@@ -1,20 +1,61 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { DashboardCard } from "@/components/dashboard/DashboardCard";
 import { FormFieldRow } from "@/components/FormFieldRow";
 import { PageHeader } from "@/components/dashboard/PageHeader";
-import { MOCK_CROP_TYPES } from "@/lib/mock-data";
+import { getCropTypes, createCrop } from "@/lib/api";
 import { userRoutes } from "@/lib/routes";
 
-export default function NewCropPage() {
-  const [typeId, setTypeId] = useState(MOCK_CROP_TYPES[0]?.id ?? "");
-  const [water, setWater] = useState("");
+type CropType = {
+  id: string;
+  name: string;
+  optimal_temp: number;
+  needed_water: number;
+  days_cycle: number;
+  potential_performance: number;
+  water_opt_low: number;
+  water_opt_high: number;
+};
 
-  const selectedType = MOCK_CROP_TYPES.find((t) => t.id === typeId);
+export default function NewCropPage() {
+  const router = useRouter();
+  const [cropTypes, setCropTypes] = useState<CropType[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [typeId, setTypeId] = useState("");
+  const [name, setName] = useState("");
+  const [water, setWater] = useState("");
+  const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      router.push("/login");
+      return;
+    }
+    fetchCropTypes();
+  }, []);
+
+  const fetchCropTypes = async () => {
+    try {
+      const types = await getCropTypes();
+      setCropTypes(types);
+      if (types.length > 0) {
+        setTypeId(types[0].id);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const selectedType = cropTypes.find((t) => t.id === typeId);
   const defaultWater = selectedType
-    ? Math.round((selectedType.waterOptLow + selectedType.waterOptHigh) / 2)
+    ? Math.round((selectedType.water_opt_low + selectedType.water_opt_high) / 2)
     : 0;
 
   const waterValue = water === "" ? String(defaultWater) : water;
@@ -23,16 +64,60 @@ export default function NewCropPage() {
     if (!selectedType) return null;
     return (
       <ul className="mt-4 space-y-1 text-sm text-white/65">
-        <li>Temp. óptima: {selectedType.optimalTemp}°C</li>
-        <li>Agua necesaria/día: {selectedType.neededWater} mm</li>
-        <li>Ciclo: {selectedType.daysCycle} días</li>
-        <li>Rendimiento potencial: {selectedType.potentialPerformance} g/m²</li>
+        <li>Temp. óptima: {selectedType.optimal_temp}°C</li>
+        <li>Agua necesaria/día: {selectedType.needed_water} mm</li>
+        <li>Ciclo: {selectedType.days_cycle} días</li>
+        <li>Rendimiento potencial: {selectedType.potential_performance} g/m²</li>
         <li>
-          Agua inicial sugerida: {selectedType.waterOptLow}–{selectedType.waterOptHigh} mm
+          Agua inicial sugerida: {selectedType.water_opt_low}–{selectedType.water_opt_high} mm
         </li>
       </ul>
     );
   }, [selectedType]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name.trim()) {
+      setError("El nombre del cultivo es obligatorio");
+      return;
+    }
+    if (!typeId) {
+      setError("Debes seleccionar un tipo de cultivo");
+      return;
+    }
+    const waterNum = parseFloat(waterValue);
+    if (isNaN(waterNum) || waterNum < (selectedType?.water_opt_low || 0)) {
+      setError(`El agua inicial debe ser al menos ${selectedType?.water_opt_low} mm`);
+      return;
+    }
+
+    setSubmitting(true);
+    setError("");
+
+    try {
+      await createCrop(name, typeId, waterNum);
+      router.push(userRoutes.crops);
+    } catch (err: any) {
+      setError(err.message || "Error al crear el cultivo");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  if (loading) {
+    return <div className="p-8 text-center text-white">Cargando tipos de cultivo...</div>;
+  }
+
+  if (cropTypes.length === 0) {
+    return (
+      <div className="p-8 text-center text-white">
+        <p>No hay tipos de cultivo disponibles.</p>
+        <Link href="/admin/crop-types" className="mt-4 inline-block text-cultiva-green">
+          Gestionar tipos
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -42,14 +127,13 @@ export default function NewCropPage() {
       />
 
       <DashboardCard>
-        <form
-          className="mx-auto max-w-2xl space-y-8"
-          onSubmit={(e) => e.preventDefault()}
-        >
+        <form className="mx-auto max-w-2xl space-y-8" onSubmit={handleSubmit}>
           <FormFieldRow
             label="Nombre"
             htmlFor="crop_name"
             placeholder="ej. Parcela Norte"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
           />
 
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-5">
@@ -68,7 +152,7 @@ export default function NewCropPage() {
               }}
               className="cultiva-input w-full rounded-full border border-white/10 bg-white/[0.04] px-6 py-3.5 text-white outline-none focus:border-cultiva-green/40"
             >
-              {MOCK_CROP_TYPES.map((t) => (
+              {cropTypes.map((t) => (
                 <option key={t.id} value={t.id} className="bg-cultiva-dark">
                   {t.name}
                 </option>
@@ -95,8 +179,9 @@ export default function NewCropPage() {
             <input
               id="water_stored"
               type="number"
-              min={selectedType?.waterOptLow}
-              max={selectedType?.waterOptHigh}
+              step="0.1"
+              min={selectedType?.water_opt_low}
+              max={selectedType?.water_opt_high}
               value={waterValue}
               onChange={(e) => setWater(e.target.value)}
               placeholder={`${defaultWater} mm sugerido`}
@@ -104,12 +189,17 @@ export default function NewCropPage() {
             />
           </div>
 
+          {error && (
+            <div className="text-center text-sm text-red-400">{error}</div>
+          )}
+
           <div className="flex justify-center gap-4 pt-4">
             <button
               type="submit"
-              className="rounded-full bg-cultiva-green px-8 py-2.5 text-sm font-semibold text-cultiva-dark shadow-cultiva-glow-sm hover:scale-105"
+              disabled={submitting}
+              className="rounded-full bg-cultiva-green px-8 py-2.5 text-sm font-semibold text-cultiva-dark shadow-cultiva-glow-sm hover:scale-105 disabled:opacity-50"
             >
-              Crear cultivo
+              {submitting ? "Creando..." : "Crear cultivo"}
             </button>
             <Link
               href={userRoutes.crops}

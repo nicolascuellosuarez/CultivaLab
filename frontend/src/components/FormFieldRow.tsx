@@ -8,6 +8,7 @@ type FormFieldRowProps = {
   autoComplete?: string;
   value?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  disabled?: boolean;
 };
 
 export function FormFieldRow({
@@ -18,6 +19,7 @@ export function FormFieldRow({
   autoComplete,
   value,
   onChange,
+  disabled
 }: FormFieldRowProps) {
   const resolvedAutoComplete =
     autoComplete ?? (type === "password" ? "new-password" : "username");
@@ -37,6 +39,7 @@ export function FormFieldRow({
         autoComplete={resolvedAutoComplete}
         value={value}
         onChange={onChange}
+        disabled={disabled}
         className="cultiva-input w-full rounded-full border border-white/10 bg-white/[0.04] px-6 py-3.5 text-base text-white outline-none transition-colors placeholder:text-white/25 focus:border-cultiva-green/40 focus:bg-white/[0.06] sm:py-4"
       />
     </div>

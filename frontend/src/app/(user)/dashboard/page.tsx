@@ -150,7 +150,7 @@ export default function UserDashboardPage() {
         <MetricCard label="Días simulados" value={metrics.totalDaysSimulated} />
         <MetricCard
           label="Rendimiento promedio"
-          value={`${metrics.avgPerformance.toFixed(0)}`}
+          value={`${metrics.avgPerformance.toFixed(3)}`}
           suffix="%"
         />
       </section>
