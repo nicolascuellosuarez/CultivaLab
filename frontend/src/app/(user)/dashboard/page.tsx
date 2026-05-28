@@ -1,32 +1,146 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { DashboardCard } from "@/components/dashboard/DashboardCard";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { MetricCard } from "@/components/dashboard/MetricCard";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import { MiniBiomassChart } from "@/components/dashboard/charts/MiniBiomassChart";
-import {
-  MOCK_CROPS,
-  MOCK_SIMULATIONS,
-  MOCK_USER,
-  getCropHistory,
-  getMostActiveCrop,
-  getUserMetrics,
-} from "@/lib/mock-data";
+import { getCrops, getCropHistory, getCropStats, getCropTypes } from "@/lib/api";
 import { userRoutes } from "@/lib/routes";
 
+type Crop = {
+  id: string;
+  name: string;
+  crop_type_id: string;
+  active: boolean;
+  water_stored: number;
+};
+
+type CropType = {
+  id: string;
+  name: string;
+};
+
+type HistoryPoint = {
+  day: number;
+  estimated_biomass: number;
+};
+
 export default function UserDashboardPage() {
-  const metrics = getUserMetrics();
-  const featured = [...MOCK_CROPS]
-    .sort((a, b) => b.daysSimulated - a.daysSimulated)
+  const router = useRouter();
+  const [username, setUsername] = useState("");
+  const [crops, setCrops] = useState<Crop[]>([]);
+  const [cropTypes, setCropTypes] = useState<CropType[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [metrics, setMetrics] = useState({
+    totalCrops: 0,
+    activeCrops: 0,
+    totalDaysSimulated: 0,
+    avgPerformance: 0,
+  });
+  const [recentSims, setRecentSims] = useState<any[]>([]);
+  const [mostActive, setMostActive] = useState<Crop | null>(null);
+  const [activeHistory, setActiveHistory] = useState<HistoryPoint[]>([]);
+
+  useEffect(() => {
+    const storedUsername = localStorage.getItem("username");
+    if (storedUsername) setUsername(storedUsername);
+    fetchDashboardData();
+  }, []);
+
+  const fetchDashboardData = async () => {
+    try {
+      const cropsData = await getCrops();
+      const typesData = await getCropTypes();
+      setCrops(cropsData);
+      setCropTypes(typesData);
+
+      let totalDays = 0;
+      let activeCount = 0;
+      let totalPerformance = 0;
+      let allSimulations: any[] = [];
+      let mostActiveCrop: Crop | null = null;
+      let maxDays = 0;
+
+      for (const crop of cropsData) {
+        const history = await getCropHistory(crop.id);
+        totalDays += history.length;
+        if (crop.active) activeCount++;
+
+        const stats = await getCropStats(crop.id);
+        totalPerformance += stats.performance_ratio;
+
+        const lastSim = history[history.length - 1];
+        if (lastSim) {
+          const cropType = typesData.find((t: CropType) => t.id === crop.crop_type_id);
+          allSimulations.push({
+            id: crop.id,
+            cropId: crop.id,
+            cropName: crop.name,
+            day: lastSim.day,
+            temperature: lastSim.temperature,
+            rain: lastSim.rain,
+            sunHours: lastSim.sun_hours,
+            estimatedBiomass: lastSim.estimated_biomass,
+          });
+        }
+
+        // Encontrar cultivo más activo
+        if (history.length > maxDays) {
+          maxDays = history.length;
+          mostActiveCrop = crop;
+        }
+      }
+
+      setMetrics({
+        totalCrops: cropsData.length,
+        activeCrops: activeCount,
+        totalDaysSimulated: totalDays,
+        avgPerformance: cropsData.length ? (totalPerformance / cropsData.length) * 100 : 0,
+      });
+
+      setRecentSims(allSimulations.slice(0, 5));
+
+      if (mostActiveCrop) {
+        setMostActive(mostActiveCrop);
+        const history = await getCropHistory(mostActiveCrop.id);
+        setActiveHistory(history.map((h: any) => ({ day: h.day, estimated_biomass: h.estimated_biomass })));
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getCropTypeName = (cropTypeId: string) => {
+    const type = cropTypes.find(t => t.id === cropTypeId);
+    return type ? type.name : "Desconocido";
+  };
+
+  const getCropBiomass = (crop: Crop) => {
+    // Esto debería venir del historial, pero por ahora usamos un placeholder
+    return "0";
+  };
+
+  if (loading) {
+    return <div className="p-8 text-center text-white">Cargando...</div>;
+  }
+
+  const featuredCrops = [...crops]
+    .sort((a, b) => {
+      // Ordenar por días simulados (simplificado)
+      return 0;
+    })
     .slice(0, 4);
-  const recentSims = MOCK_SIMULATIONS.slice(0, 5);
-  const mostActive = getMostActiveCrop();
-  const activeHistory = mostActive ? getCropHistory(mostActive.id) : [];
 
   return (
     <>
       <PageHeader
-        title={`¡Bienvenido, ${MOCK_USER.username}!`}
+        title={`¡Bienvenido, ${username}!`}
         subtitle="Qué bueno tenerte por aquí"
       />
 
@@ -36,7 +150,7 @@ export default function UserDashboardPage() {
         <MetricCard label="Días simulados" value={metrics.totalDaysSimulated} />
         <MetricCard
           label="Rendimiento promedio"
-          value={`${(metrics.avgPerformance * 100).toFixed(0)}`}
+          value={`${metrics.avgPerformance.toFixed(0)}`}
           suffix="%"
         />
       </section>
@@ -47,7 +161,7 @@ export default function UserDashboardPage() {
           href={userRoutes.crops}
           actionLabel="Ver todos"
         >
-          {featured.length === 0 ? (
+          {featuredCrops.length === 0 ? (
             <EmptyState
               message="No tienes cultivos creados"
               actionLabel="Crear cultivo"
@@ -55,7 +169,7 @@ export default function UserDashboardPage() {
             />
           ) : (
             <div className="grid gap-4 sm:grid-cols-2">
-              {featured.map((crop) => (
+              {featuredCrops.map((crop) => (
                 <Link
                   key={crop.id}
                   href={userRoutes.cropStats(crop.id)}
@@ -73,12 +187,12 @@ export default function UserDashboardPage() {
                       {crop.active ? "Activo" : "Cosechado"}
                     </span>
                   </div>
-                  <p className="mt-1 text-sm text-white/55">{crop.cropTypeName}</p>
+                  <p className="mt-1 text-sm text-white/55">{getCropTypeName(crop.crop_type_id)}</p>
                   <p className="mt-3 text-lg font-bold text-cultiva-green">
-                    {crop.biomass} g/m²
+                    {getCropBiomass(crop)} g/m²
                   </p>
                   <p className="text-xs text-white/45">
-                    {crop.daysSimulated} días simulados
+                    {/* Días simulados pendiente */}
                   </p>
                 </Link>
               ))}
@@ -127,7 +241,7 @@ export default function UserDashboardPage() {
             >
               <p className="mb-2 font-semibold text-white">{mostActive.name}</p>
               <p className="mb-4 text-sm text-white/55">
-                {mostActive.daysSimulated} días simulados · {mostActive.cropTypeName}
+                {activeHistory.length} días simulados · {getCropTypeName(mostActive.crop_type_id)}
               </p>
               <MiniBiomassChart data={activeHistory} />
             </Link>

@@ -24,7 +24,7 @@ export default function LoginPage() {
       localStorage.setItem("token", data.access_token);
       localStorage.setItem("username", data.username);
       localStorage.setItem("role", data.role);
-      
+      document.cookie = `token=${data.access_token}; path=/`;
       if (data.role === "admin") {
         router.push("/admin");
       } else {

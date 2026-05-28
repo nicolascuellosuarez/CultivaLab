@@ -1,10 +1,14 @@
 "use client";
 
 import { Line, LineChart, ResponsiveContainer } from "recharts";
-import type { MockDailyCondition } from "@/lib/types";
 
-export function MiniBiomassChart({ data }: { data: MockDailyCondition[] }) {
-  const chartData = data.map((d) => ({ day: d.day, biomass: d.estimatedBiomass }));
+type DailyConditionResponse = {
+  day: number;
+  estimated_biomass: number;
+};
+
+export function MiniBiomassChart({ data }: { data: DailyConditionResponse[] }) {
+  const chartData = data.map((d) => ({ day: d.day, biomass: d.estimated_biomass }));
 
   return (
     <ResponsiveContainer width="100%" height={120}>

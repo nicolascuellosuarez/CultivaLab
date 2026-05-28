@@ -78,13 +78,19 @@ export function Sidebar({
         )}
       </nav>
 
-      <Link
-        href="/login"
-        className="mt-4 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-white/60 transition-colors hover:bg-white/5 hover:text-white"
+      <button
+        onClick={() => {
+          localStorage.removeItem("token");
+          localStorage.removeItem("username");
+          localStorage.removeItem("role");
+          document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+          window.location.href = "/login";
+        }}
+        className="mt-4 flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-white/60 transition-colors hover:bg-white/5 hover:text-white"
       >
         <LogOut className="h-5 w-5" />
         Cerrar sesión
-      </Link>
+      </button>
     </>
   );
 
