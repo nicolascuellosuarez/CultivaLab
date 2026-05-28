@@ -59,9 +59,9 @@ export default function CropStatsPage({ params }: Props) {
     daysSimulated: history.length,
     biomass: history.length > 0 ? history[history.length - 1].estimated_biomass.toFixed(5) : 0,
     cycleDays: 0,
-    waterStored: crop.water_stored || 0, // Agrega este campo
+    waterStored: crop.water_stored || 0,
     cropTypeId: crop.crop_type_id,
-    performanceRatio: stats?.performance_ratio || 0,
+    performanceRatio: stats?.performance_ratio ? Number((stats.performance_ratio).toFixed(6)) : 0,
   };
 
   const adaptedHistory = history.map(h => ({
@@ -78,7 +78,7 @@ const adaptedStats = {
   averageSunHours: stats?.average_sun_hours || 0,
   totalGrowth: stats?.total_growth || 0,
   stressDays: stats?.stress_days || 0,
-  performanceRatio: stats?.performance_ratio || 0,
+  performanceRatio: stats?.performance_ratio ? Number((stats.performance_ratio).toFixed(3)) : 0,
 };
 
   return (

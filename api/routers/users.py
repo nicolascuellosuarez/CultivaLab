@@ -79,11 +79,11 @@ def get_all_users(
     ]
 
 
-@router.delete("/admin/users/{user/id}")
+@router.delete("/admin/{user_id}")
 def delete_user_by_admin(
     user_id: str,
     current_user: dict = Depends(get_current_admin_user),
-    user_service=Depends(get_user_service),
+    user_service=Depends(get_user_service),  # ← Esto ya es el servicio
 ):
-    get_user_service.delete_user(user_id, current_user["id"])
+    user_service.delete_user(user_id, current_user["id"])  # ← Quita get_user_service.
     return {"message": "User Deleted"}

@@ -30,6 +30,7 @@ def get_my_crops(
         CropResponse(
             id=c.id,
             name=c.name,
+            user_id=c.user_id,
             crop_type_id=c.crop_type_id,
             start_date=c.start_date,
             last_sim_date=c.last_sim_date,
@@ -53,6 +54,7 @@ def get_crop_by_id(
         return CropResponse(
             id=crop.id,
             name=crop.name,
+            user_id=crop.user_id,
             crop_type_id=crop.crop_type_id,
             start_date=crop.start_date,
             last_sim_date=crop.last_sim_date,
@@ -82,6 +84,7 @@ def create_crop(
         return CropResponse(
             id=crop.id,
             name=crop.name,
+            user_id=crop.user_id,
             crop_type_id=crop.crop_type_id,
             start_date=crop.start_date,
             last_sim_date=crop.last_sim_date,
@@ -107,6 +110,7 @@ def update_crop(
         return CropResponse(
             id=updated.id,
             name=updated.name,
+            user_id=updated.user_id,
             crop_type_id=updated.crop_type_id,
             start_date=updated.start_date,
             last_sim_date=updated.last_sim_date,
@@ -149,6 +153,7 @@ def simulate_day(
         return CropResponse(
             id=updated.id,
             name=updated.name,
+            user_id=updated.user_id,
             crop_type_id=updated.crop_type_id,
             start_date=updated.start_date,
             last_sim_date=updated.last_sim_date,
@@ -230,6 +235,7 @@ def get_crops_by_user_id(
             CropResponse(
                 id=c.id,
                 name=c.name,
+                user_id=c.user_id,
                 crop_type_id=c.crop_type_id,
                 start_date=c.start_date,
                 last_sim_date=c.last_sim_date,
@@ -242,3 +248,27 @@ def get_crops_by_user_id(
         ]
     except UserNotFoundError as e:
         raise HTTPException(status_code=404, detail=str(e))
+
+@router.get("/admin/{crop_id}", response_model=CropResponse)
+def get_crop_by_id_admin(
+    crop_id: str,
+    current_user: dict = Depends(get_current_admin_user),
+    crop_service=Depends(get_crop_service),
+):
+    try:
+        crop = crop_service.get_crop_by_id(crop_id, current_user["id"])
+        return CropResponse(
+            id=crop.id,
+            name=crop.name,
+            user_id=crop.user_id, 
+            crop_type_id=crop.crop_type_id,
+            start_date=crop.start_date,
+            last_sim_date=crop.last_sim_date,
+            active=crop.active,
+            water_stored=crop.water_stored,
+            consecutive_stress_days=crop.consecutive_stress_days,
+            current_phase=crop.current_phase,
+        )
+    except (CropNotFoundError, ResourceOwnershipError) as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    

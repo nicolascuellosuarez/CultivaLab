@@ -126,7 +126,7 @@ export function CropTypeFormModal({
                         step={field.type !== "integer" ? field.step ?? "any" : "1"}
                         min={field.type === "integer" ? "0" : undefined}
                         required={field.key === "name"}
-                        value={values[field.key]}
+                        value={values[field.key] ?? ""}
                         onChange={(e) => setField(field.key, e.target.value)}
                         placeholder={field.placeholder}
                         className="cultiva-input w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 py-2.5 text-sm text-white outline-none focus:border-cultiva-green/40"

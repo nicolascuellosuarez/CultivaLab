@@ -7,7 +7,7 @@ import { BiomassLineChart } from "@/components/dashboard/charts/BiomassLineChart
 import { DashboardCard } from "@/components/dashboard/DashboardCard";
 import { MetricCard } from "@/components/dashboard/MetricCard";
 import { PageHeader } from "@/components/dashboard/PageHeader";
-import { getCropById, getCropHistory, getCropStats, getCropTypes } from "@/lib/api";
+import { getCropByIdAdmin, getCropHistory, getCropStats, getCropTypes } from "@/lib/api";
 import { adminRoutes } from "@/lib/routes";
 
 type Props = { params: Promise<{ id: string }> };
@@ -47,7 +47,7 @@ export default function AdminSimulationDetailPage({ params }: Props) {
         setDay(simDay);
         
         const [cropData, historyData, statsData, typesData] = await Promise.all([
-          getCropById(cropId),
+          getCropByIdAdmin(cropId),
           getCropHistory(cropId),
           getCropStats(cropId),
           getCropTypes(),
@@ -146,7 +146,10 @@ export default function AdminSimulationDetailPage({ params }: Props) {
 
       <DashboardCard title="Evolución de biomasa hasta este día">
         {historyUpToDay.length > 0 ? (
-          <BiomassLineChart data={historyUpToDay} />
+          <BiomassLineChart data={historyUpToDay.map(h => ({ 
+            day: h.day, 
+            estimatedBiomass: h.estimated_biomass 
+          })) as any} />
         ) : (
           <p className="text-center text-lg font-semibold text-cultiva-green">
             No hay información para ver
