@@ -1,9 +1,13 @@
+import React from "react";
+
 type FormFieldRowProps = {
   label: string;
   htmlFor: string;
   type?: "text" | "password";
   placeholder: string;
   autoComplete?: string;
+  value?: string;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
 export function FormFieldRow({
@@ -12,6 +16,8 @@ export function FormFieldRow({
   type = "text",
   placeholder,
   autoComplete,
+  value,
+  onChange,
 }: FormFieldRowProps) {
   const resolvedAutoComplete =
     autoComplete ?? (type === "password" ? "new-password" : "username");
@@ -29,6 +35,8 @@ export function FormFieldRow({
         type={type}
         placeholder={placeholder}
         autoComplete={resolvedAutoComplete}
+        value={value}
+        onChange={onChange}
         className="cultiva-input w-full rounded-full border border-white/10 bg-white/[0.04] px-6 py-3.5 text-base text-white outline-none transition-colors placeholder:text-white/25 focus:border-cultiva-green/40 focus:bg-white/[0.06] sm:py-4"
       />
     </div>

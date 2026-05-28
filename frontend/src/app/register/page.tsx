@@ -1,8 +1,38 @@
+"use client";
+
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { FormFieldRow } from "@/components/FormFieldRow";
 import { PageShell } from "@/components/PageShell";
+import { registerUser } from "@/lib/api";
 
 export default function RegisterPage() {
+  const router = useRouter();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+
+    try {
+      await registerUser(username, password);
+      router.push("/login?registered=true");
+    } catch (err: any) {
+      if (err.message.includes("ya existe")) {
+        setError("El nombre de usuario ya está en uso, elige otro.");
+      } else {
+        setError(err.message || "Error al registrarse");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+  
   return (
     <PageShell glowVariant="form">
       <section className="mx-auto flex min-h-screen max-w-5xl flex-col justify-center px-6 pb-32 pt-24 md:px-10 md:pt-28 lg:px-12">
@@ -25,7 +55,7 @@ export default function RegisterPage() {
           válida para iniciar
         </p>
 
-        <form className="relative mt-12 space-y-8 md:mt-1 md:space-y-10">
+        <form onSubmit={handleSubmit} className="relative mt-12 space-y-8 md:mt-1 md:space-y-10">
           <div
             className="pointer-events-none absolute -left-8 top-1/2 h-40 w-full max-w-xl -translate-y-1/2 rounded-full bg-cultiva-green/20 blur-3xl"
             aria-hidden
@@ -36,14 +66,22 @@ export default function RegisterPage() {
               label="Usuario"
               htmlFor="username"
               placeholder="ej. cultivador_lab"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
             />
             <FormFieldRow
               label="Contraseña"
               htmlFor="password"
               type="password"
               placeholder="Mínimo 8 caracteres"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
           </div>
+
+          {error && (
+            <div className="text-center text-sm text-red-400">{error}</div>
+          )}
 
           <div className="relative flex w-full justify-center pt-4">
             <div
@@ -52,9 +90,10 @@ export default function RegisterPage() {
             />
             <button
               type="submit"
+              disabled={loading}
               className="relative inline-flex items-center justify-center rounded-full bg-cultiva-green px-7 py-2.5 text-sm font-semibold text-cultiva-dark shadow-cultiva-glow-sm transition-all duration-200 hover:scale-105 hover:shadow-cultiva-glow"
             >
-              Registrarse
+              {loading ? "Registrando..." : "Registrarse"}
             </button>
           </div>
         </form>
